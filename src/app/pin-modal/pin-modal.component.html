@@ -1,0 +1,37 @@
+<!-- pin-modal.component.html -->
+<div class="modal-header elegant-header">
+    <h4 class="modal-title">Xác minh PIN cho {{ staff?.name }}</h4>
+    <button type="button" class="close-btn" (click)="activeModal.dismiss()">×</button>
+  </div>
+  
+  <div class="modal-body pin-container">
+    <div class="input-wrapper">
+      <input 
+        type="password" 
+        class="pin-input" 
+        [(ngModel)]="pin" 
+        placeholder="••••" 
+        maxlength="4"
+        autofocus
+      />
+      <small class="hint-text">Nhập mã PIN </small>
+    </div>
+  </div>
+  
+  <div class="modal-footer footer-buttons">
+    <button 
+      type="button" 
+      class="btn btn-outline-secondary cancel-btn" 
+      (click)="activeModal.dismiss()"
+    >
+      Hủy bỏ
+    </button>
+    <button 
+      type="button" 
+      class="btn btn-primary confirm-btn" 
+      (click)="submitPin()"
+
+    >
+      Xác nhận
+    </button>
+  </div>

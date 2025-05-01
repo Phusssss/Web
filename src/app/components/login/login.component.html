@@ -1,0 +1,52 @@
+<div class="login-container">
+  <div class="login-form-wrapper">
+    <div class="login-box">
+      <div class="brand">
+        <i class="fas fa-hotel logo-icon"></i>
+        <span class="brand-name">Hotel Manager</span>
+      </div>
+      <h2>Đăng nhập</h2>
+      <form (ngSubmit)="login()">
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email"
+            [(ngModel)]="email" 
+            name="email" 
+            placeholder="Nhập email" 
+            required 
+            (ngModelChange)="onInputChange()" />
+        </div>
+        <div class="input-group">
+          <label for="password">Mật khẩu</label>
+          <input 
+            type="password" 
+            id="password"
+            [(ngModel)]="password" 
+            name="password" 
+            placeholder="Nhập mật khẩu" 
+            required 
+            (ngModelChange)="onInputChange()" />
+        </div>
+        <button 
+          type="submit" 
+          class="login-btn"
+          [disabled]="isFormIncomplete || isLoading">
+          Đăng nhập
+        </button>
+      </form>
+      <button 
+        class="register-btn"
+        (click)="navigateToRegister()"
+        [disabled]="isLoading">
+        Đăng ký tài khoản mới
+      </button>
+      <p *ngIf="isFormIncomplete" class="error-message">
+        <i class="fas fa-exclamation-circle"></i> Vui lòng nhập đầy đủ email và mật khẩu!
+      </p>
+    </div>
+  </div>
+</div>
+
+<app-loading-spinner *ngIf="isLoading" message="Đang đăng nhập..."></app-loading-spinner>

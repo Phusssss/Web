@@ -1,0 +1,153 @@
+<div class="main-content">
+  <div class="invoice-container">
+    <h2 class="invoice-title">Hóa Đơn Đặt Chỗ</h2>
+
+    <!-- Stats Boxes -->
+    <div class="stats-container">
+      <div class="stats-box total-revenue">
+        <h3>Tổng Thu</h3>
+        <p>120,000,000</p>
+      </div>
+      <div class="stats-box expected-revenue">
+        <h3>Thu Dự Kiến</h3>
+        <p>120,000,000</p>
+      </div>
+      <div class="stats-box total-expenses">
+        <h3>Tổng Chi</h3>
+        <p>120,000,000</p>
+      </div>
+      <div class="stats-box profit">
+        <h3>Lợi Nhuận</h3>
+        <p>120,000,000</p>
+      </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="card mb-4 shadow filter-container">
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label for="startDate" class="form-label fw-bold">Từ ngày:</label>
+            <input id="startDate" type="date" class="form-control" [(ngModel)]="startDate" (change)="filterBookings()" />
+          </div>
+          <div class="col-md-4">
+            <label for="endDate" class="form-label fw-bold">Đến ngày:</label>
+            <input id="endDate" type="date" class="form-control" [(ngModel)]="endDate" (change)="filterBookings()" />
+          </div>
+          <div class="col-md-4">
+            <label for="roomSelect" class="form-label fw-bold">Chọn phòng:</label>
+            <select id="roomSelect" class="form-select" [(ngModel)]="selectedRoom" (change)="filterBookings()">
+              <option value="">Tất cả phòng</option>
+              <option *ngFor="let room of availableRooms" [value]="room">{{ room }}</option>
+            </select>
+          </div>
+          <div class="col-12 mt-3">
+            <button class="btn btn-danger reset-filter-btn" (click)="resetFilters()">Đặt lại</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row charts-container mb-4">
+      <!-- Pie Chart (Revenue by Room) -->
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <div class="card shadow chart-container">
+          <div class="card-body">
+            <h3 class="chart-title"><i class="fas fa-chart-pie"></i> Doanh thu theo phòng</h3>
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <!-- Bar Chart (Monthly Revenue) -->
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <div class="card shadow chart-container">
+          <div class="card-body">
+            <h3 class="chart-title"><i class="fas fa-chart-bar"></i> Doanh thu theo tháng</h3>
+            <canvas id="monthlyRevenueChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <!-- Pie Chart (Revenue by Room Type) -->
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <div class="card shadow chart-container">
+          <div class="card-body">
+            <h3 class="chart-title"><i class="fas fa-chart-pie"></i> Doanh thu theo loại phòng</h3>
+            <canvas id="roomTypeRevenueChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <!-- Pie Chart (Revenue by Service) -->
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <div class="card shadow chart-container">
+          <div class="card-body">
+            <h3 class="chart-title"><i class="fas fa-chart-pie"></i> Phòng sử dụng </h3>
+            <canvas id="roomUsageChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenue Summary -->
+    <div class="card mb-4 shadow revenue-summary">
+      <div class="card-body text-end">
+        <h3 class="mb-3">Tổng doanh thu đặt chỗ: <span>{{ totalRevenue | currency:'VND' }}</span></h3>
+        <h3 class="mb-3">Tổng doanh thu dịch vụ: <span>{{ totalServiceRevenue | currency:'VND' }}</span></h3>
+        <h3>Tổng doanh thu: <span>{{ (totalRevenue + totalServiceRevenue) | currency:'VND' }}</span></h3>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card shadow invoice-table-wrapper">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-bordered invoice-table">
+            <thead>
+              <tr>
+                <th>Mã đặt chỗ</th>
+                <th>Tổng giá trị</th>
+                <th>Dịch vụ bổ sung</th>
+                <th>Chi tiết</th>
+                <th>Tổng tiền</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let booking of filteredBookings">
+                <td>{{ booking.id }}</td>
+                <td>{{ getTotalPrice(booking, selectedRoom) | currency:'VND' }}</td>
+                <td>
+                  <ul class="list-unstyled">
+                    <li *ngFor="let service of serviceRequests[booking.id] || []">
+                      <ng-container *ngIf="!selectedRoom || service.nameRoom === selectedRoom">
+                        {{ service.nameService }} - {{ service.price | currency:'VND' }} x {{ service.quantity }} = {{ (service.price * service.quantity) | currency:'VND' }}
+                      </ng-container>
+                    </li>
+                  </ul>
+                </td>
+                <td>
+                  <ul class="list-unstyled">
+                    <li *ngFor="let detail of booking.details">
+                      <ng-container *ngIf="!selectedRoom || detail.roomName === selectedRoom">
+                        <strong>Phòng:</strong> {{ detail.roomName }}<br>
+                        <strong>Nhận:</strong> {{ getDateFromTimestamp(detail.checkin) | date:'dd/MM/yyyy' }}<br>
+                        <strong>Trả:</strong> {{ getDateFromTimestamp(detail.checkout) | date:'dd/MM/yyyy' }}<br>
+                        <strong>Tổng:</strong> {{ (getTotalNights(detail.checkin, detail.checkout) * detail.price) | currency:'VND' }}
+                      </ng-container>
+                    </li>
+                  </ul>
+                </td>
+                <td>{{ getTotalAmount(booking) | currency:'VND' }}</td>
+                <td>
+                  <button class="btn btn-outline-danger delete-btn" (click)="deleteBooking(booking.id)">
+                    <i class="fas fa-trash"></i> Xóa
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

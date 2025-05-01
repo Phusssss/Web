@@ -1,0 +1,243 @@
+/* Main content styling */
+.main-content {
+  margin-left: 250px;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #f0f5ff 0%, #e6f0fa 100%);
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Container styling */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Title styling */
+.title {
+  font-size: 2.2rem;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Subtitle styling */
+.subtitle {
+  font-size: 1rem;
+  color: #7f8c8d;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+/* Staff list styling */
+.staff-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  justify-items: center;
+}
+
+/* Staff item styling */
+.staff-item {
+  background: #fff;
+  padding: 24px;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  border: 1px solid #f1f1f1;
+  overflow: hidden;
+}
+
+/* Hover effect */
+.staff-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  border-color: #e1e8ed;
+}
+
+/* Selected state */
+.staff-item.selected {
+  background-color: #f0f7ff;
+  border: 2px solid #3498db;
+  box-shadow: 0 8px 16px rgba(52, 152, 219, 0.2);
+}
+
+/* Icon container */
+.icon-container {
+  position: relative;
+  margin-bottom: 15px;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* User icon styling */
+.user-icon {
+  font-size: 80px;
+  color: #3498db;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.staff-item:hover .user-icon {
+  transform: scale(1.05);
+  color: #2980b9;
+}
+
+/* Online status indicator */
+.online-status {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #ddd;
+  border: 2px solid #fff;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+}
+
+.online-status.online {
+  background-color: #2ecc71;
+}
+
+/* Staff details styling */
+.staff-details {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+/* Staff name styling */
+.staff-name {
+  margin: 0 0 6px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Staff email styling */
+.staff-email {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  word-break: break-all;
+}
+
+/* Staff position styling */
+.staff-position {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #3498db;
+  font-weight: 500;
+}
+
+/* Select button styling */
+.select-btn {
+  margin-top: 8px;
+  padding: 10px 24px;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+  width: 80%;
+}
+
+.select-btn:hover {
+  background-color: #2980b9;
+  box-shadow: 0 6px 12px rgba(52, 152, 219, 0.4);
+}
+
+/* Empty state styling */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #7f8c8d;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  color: #bdc3c7;
+}
+
+.empty-text {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .staff-list {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: 2rem 1rem;
+  }
+  
+  .container {
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  .title {
+    font-size: 1.8rem;
+  }
+  
+  .staff-list {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  
+  .user-icon {
+    font-size: 60px;
+  }
+  
+  .icon-container {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .staff-name {
+    font-size: 1.1rem;
+  }
+  
+  .select-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .staff-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .staff-item {
+    max-width: 100%;
+  }
+}

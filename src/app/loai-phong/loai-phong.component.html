@@ -1,0 +1,93 @@
+<div class="main-content">
+  <div class="container">
+    <h2 class="page-title"><i class="fas fa-home"></i> Quản lý Loại Phòng</h2>
+
+    <div class="content-wrapper">
+      <!-- Danh sách loại phòng (bên trái) -->
+      <div class="table-container">
+        <h3 class="table-title"><i class="fas fa-list"></i> Danh sách loại phòng</h3>
+        <table class="loaiphong-table">
+          <thead>
+            <tr>
+              <th>Tên loại phòng</th>
+              <th>Mô tả</th>
+              <th>Số người tối đa</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let loaiPhong of userLoaiPhong">
+              <td>{{ loaiPhong.name }}</td>
+              <td>{{ loaiPhong.description }}</td>
+              <td>{{ loaiPhong.maxPeople }}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn-edit" (click)="openEditModal(loaiPhong)" data-text="Sửa"></button>
+                  <button class="btn-delete" (click)="deleteLoaiPhong(loaiPhong.id)" data-text="Xóa"></button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="userLoaiPhong.length === 0">
+              <td colspan="4" class="no-data">
+                <i class="fas fa-info-circle"></i> Chưa có loại phòng nào
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Form thêm loại phòng (bên phải) -->
+      <div class="add-form">
+        <h3 class="form-title"><i class="fas fa-plus-circle"></i> Thêm loại phòng mới</h3>
+        <input
+          type="text"
+          [(ngModel)]="loaiPhongName"
+          placeholder="Tên loại phòng"
+          class="form-control"
+        />
+        <input
+          type="text"
+          [(ngModel)]="description"
+          placeholder="Mô tả"
+          class="form-control"
+        />
+        <input
+          type="number"
+          [(ngModel)]="maxPeople"
+          placeholder="Số người tối đa"
+          class="form-control"
+        />
+        <button class="btn-add" (click)="addLoaiPhong()" data-text="Thêm"></button>
+      </div>
+    </div>
+
+    <!-- Modal chỉnh sửa -->
+    <div class="modal" *ngIf="isModalOpen">
+      <div class="modal-content">
+        <h4><i class="fas fa-edit"></i> Sửa loại phòng</h4>
+        <input
+          type="text"
+          [(ngModel)]="editLoaiPhongName"
+          placeholder="Tên loại phòng"
+          class="form-control"
+        />
+        <input
+          type="text"
+          [(ngModel)]="editLoaiPhongDescription"
+          placeholder="Mô tả"
+          class="form-control"
+        />
+        <input
+          type="number"
+          [(ngModel)]="editMaxPeople"
+          placeholder="Số người tối đa"
+          class="form-control"
+        />
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="closeModal()" data-text="Hủy"></button>
+          <button class="btn-save" (click)="saveEdit()" data-text="Lưu"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

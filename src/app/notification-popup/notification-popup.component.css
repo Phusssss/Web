@@ -1,0 +1,79 @@
+.custom-header {
+    background: linear-gradient(90deg, #2c5282, #38b2ac);
+    color: white;
+    border-bottom: none;
+    border-radius: 15px 15px 0 0;
+    padding: 15px 20px;
+  }
+  
+  .custom-header .btn-close {
+    filter: invert(1);
+  }
+  
+  .custom-body {
+    padding: 20px;
+    text-align: center;
+    background: white;
+    border-radius: 0 0 15px 15px;
+  }
+  
+  .notification-icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+  }
+  
+  .notification-icon .text-success {
+    color: #38b2ac;
+  }
+  
+  .notification-icon .text-danger {
+    color: #e53e3e;
+  }
+  
+  .message {
+    margin: 0;
+    font-size: 16px;
+    color: #2d3748;
+    font-weight: 500;
+  }
+  
+  .custom-footer {
+    border-top: none;
+    justify-content: center;
+    background: white;
+    padding-bottom: 20px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn-success {
+    background: #38b2ac;
+  }
+  
+  .btn-success:hover {
+    background: #2d9c97;
+    transform: translateY(-2px);
+    box-shadow: 0 7px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  .btn-danger {
+    background: #e53e3e;
+  }
+  
+  .btn-danger:hover {
+    background: #c53030;
+    transform: translateY(-2px);
+    box-shadow: 0 7px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  .mr-2 {
+    margin-right: 8px;
+  }

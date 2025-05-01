@@ -1,0 +1,576 @@
+<div class="main-content">
+  <div class="container">
+    <!-- Mobile Tab Navigation -->
+    <div class="tab-container">
+      <div class="tab-buttons">
+        <button class="tab-button active" (click)="switchTab('room-types')" data-tab="room-types">
+          <i class="fas fa-tags"></i> Loại phòng
+        </button>
+        <button class="tab-button" (click)="switchTab('rooms')" data-tab="rooms">
+          <i class="fas fa-door-open"></i> Phòng
+        </button>
+        <button class="tab-button" (click)="switchTab('areas')" data-tab="areas">
+          <i class="fas fa-map-marked-alt"></i> Khu vực
+        </button>
+      </div>
+    </div>
+
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+      <!-- Room Type Management -->
+      <div id="room-types" class="room-type-section tab-content active">
+        <div class="table-container">
+          <h3 class="table-title"><i class="fas fa-list"></i> Danh sách loại phòng</h3>
+          <div class="toolbar-container">
+            <div class="search-container">
+              <input
+                type="text"
+                class="search-input"
+                placeholder="Tìm kiếm loại phòng..."
+                [(ngModel)]="loaiPhongSearchTerm"
+                (input)="searchLoaiPhong()"
+              />
+              <i class="fas fa-search search-icon"></i>
+            </div>
+            <div class="toolbar">
+              <button class="btn-toolbar btn-add" (click)="openLoaiPhongAddModal()">
+                <i class="fas fa-plus"></i> Thêm
+              </button>
+              <button class="btn-toolbar btn-edit" [disabled]="isLoaiPhongEditDeleteDisabled" (click)="openLoaiPhongEditModal()">
+                <i class="fas fa-edit"></i> Sửa
+              </button>
+              <button class="btn-toolbar btn-view" [disabled]="isLoaiPhongEditDeleteDisabled" (click)="openLoaiPhongViewModal()">
+                <i class="fas fa-eye"></i> Xem
+              </button>
+              <button class="btn-toolbar btn-delete" [disabled]="isLoaiPhongEditDeleteDisabled" (click)="deleteLoaiPhong()">
+                <i class="fas fa-trash"></i> Xóa
+              </button>
+            </div>
+          </div>
+          <table class="service-table" *ngIf="!isLoading; else loadingTemplate">
+            <thead>
+              <tr>
+                <th style="width: 50px;"></th>
+                <th>Tên loại phòng</th>
+                <th>Mô tả</th>
+                <th>Số người tối đa</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let type of filteredLoaiPhong; trackBy: trackById" (click)="toggleLoaiPhongSelection(type.id)">
+                <td>
+                  <input
+                    type="radio"
+                    [checked]="type.selected"
+                    (change)="toggleLoaiPhongSelection(type.id)"
+                  />
+                </td>
+                <td>{{ type.name }}</td>
+                <td>{{ type.description }}</td>
+                <td>{{ type.maxPeople }}</td>
+              </tr>
+              <tr *ngIf="filteredLoaiPhong.length === 0">
+                <td colspan="4" class="no-data">
+                  <i class="fas fa-info-circle"></i> Chưa có loại phòng nào
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <ng-template #loadingTemplate>
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Room Management -->
+      <div id="rooms" class="room-section tab-content">
+        <div class="table-container">
+          <h3 class="table-title"><i class="fas fa-list"></i> Danh sách phòng</h3>
+          <div class="toolbar-container">
+            <div class="search-container">
+              <input
+                type="text"
+                class="search-input"
+                placeholder="Tìm kiếm phòng..."
+                [(ngModel)]="roomSearchTerm"
+                (input)="searchRooms()"
+              />
+              <i class="fas fa-search search-icon"></i>
+            </div>
+            <div class="toolbar">
+              <button class="btn-toolbar btn-add" (click)="openRoomAddModal()">
+                <i class="fas fa-plus"></i> Thêm
+              </button>
+              <button class="btn-toolbar btn-edit" [disabled]="isRoomEditDeleteDisabled" (click)="openRoomEditModal()">
+                <i class="fas fa-edit"></i> Sửa
+              </button>
+              <button class="btn-toolbar btn-view" [disabled]="isRoomEditDeleteDisabled" (click)="openRoomViewModal()">
+                <i class="fas fa-eye"></i> Xem
+              </button>
+              <button class="btn-toolbar btn-delete" [disabled]="isRoomEditDeleteDisabled" (click)="deleteRoom()">
+                <i class="fas fa-trash"></i> Xóa
+              </button>
+            </div>
+          </div>
+          <table class="service-table" *ngIf="!isLoading; else loadingTemplate">
+            <thead>
+              <tr>
+                <th style="width: 50px;"></th>
+                <th>Tên phòng</th>
+                <th>Mô tả</th>
+                <th>Giá/ngày</th>
+                <th>Giá/giờ</th>
+                <th>Loại phòng</th>
+                <th>Khu vực</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let room of filteredRooms; trackBy: trackById" (click)="toggleRoomSelection(room.id)">
+                <td>
+                  <input
+                    type="radio"
+                    [checked]="room.selected"
+                    (change)="toggleRoomSelection(room.id)"
+                  />
+                </td>
+                <td>{{ room.name }}</td>
+                <td>{{ room.description }}</td>
+                <td>{{ room.roomPriceByDay | currency:'VND' }}</td>
+                <td>{{ room.roomPriceByHour | currency:'VND' }}</td>
+                <td>{{ room.roomtypename }}</td>
+                <td>{{ room.khuVucName }}</td>
+              </tr>
+              <tr *ngIf="filteredRooms.length === 0">
+                <td colspan="7" class="no-data">
+                  <i class="fas fa-info-circle"></i> Chưa có phòng nào
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Area Management -->
+      <div id="areas" class="area-section tab-content">
+        <div class="table-container">
+          <h3 class="table-title"><i class="fas fa-list"></i> Danh sách khu vực</h3>
+          <div class="toolbar-container">
+            <div class="search-container">
+              <input
+                type="text"
+                class="search-input"
+                placeholder="Tìm kiếm khu vực..."
+                [(ngModel)]="areaSearchTerm"
+                (input)="searchAreas()"
+              />
+              <i class="fas fa-search search-icon"></i>
+            </div>
+            <div class="toolbar">
+              <button class="btn-toolbar btn-add" (click)="openKhuVucAddModal()">
+                <i class="fas fa-plus"></i> Thêm
+              </button>
+              <button class="btn-toolbar btn-edit" [disabled]="isKhuVucEditDeleteDisabled" (click)="openKhuVucEditModal()">
+                <i class="fas fa-edit"></i> Sửa
+              </button>
+              <button class="btn-toolbar btn-view" [disabled]="isKhuVucEditDeleteDisabled" (click)="openKhuVucViewModal()">
+                <i class="fas fa-eye"></i> Xem
+              </button>
+              <button class="btn-toolbar btn-delete" [disabled]="isKhuVucEditDeleteDisabled" (click)="deleteKhuVuc()">
+                <i class="fas fa-trash"></i> Xóa
+              </button>
+            </div>
+          </div>
+          <table class="service-table" *ngIf="!isLoading; else loadingTemplate">
+            <thead>
+              <tr>
+                <th style="width: 50px;"></th>
+                <th>Tên khu vực</th>
+                <th>Mô tả</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let area of filteredAreas; trackBy: trackById" (click)="toggleAreaSelection(area.id)">
+                <td>
+                  <input
+                    type="radio"
+                    [checked]="area.selected"
+                    (change)="toggleAreaSelection(area.id)"
+                  />
+                </td>
+                <td>{{ area.name }}</td>
+                <td>{{ area.description }}</td>
+              </tr>
+              <tr *ngIf="filteredAreas.length === 0">
+                <td colspan="3" class="no-data">
+                  <i class="fas fa-info-circle"></i> Chưa có khu vực nào
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Room Add/Edit Modal -->
+    <div class="modal" *ngIf="isRoomModalOpen">
+      <div class="modal-overlay" (click)="closeRoomModal()"></div>
+      <div class="modal-content">
+        <h2 class="modal-title">{{ isRoomEditMode ? 'Chỉnh sửa phòng' : 'Thêm phòng mới' }}</h2>
+        <form [formGroup]="roomForm" (ngSubmit)="saveRoom()">
+          <div class="form-group">
+            <input
+              formControlName="name"
+              type="text"
+              placeholder="Tên phòng"
+              class="form-control"
+              [class.invalid]="roomForm.get('name')?.touched && roomForm.get('name')?.invalid"
+            />
+            <span
+              class="error"
+              *ngIf="roomForm.get('name')?.touched && roomForm.get('name')?.errors?.['required']"
+            >
+              Tên phòng là bắt buộc
+            </span>
+            <span
+              class="error"
+              *ngIf="roomForm.get('name')?.touched && roomForm.get('name')?.errors?.['minlength']"
+            >
+              Tên phòng phải dài ít nhất 2 ký tự
+            </span>
+          </div>
+          <div class="form-group">
+            <input
+              formControlName="description"
+              type="text"
+              placeholder="Mô tả phòng"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <input
+              formControlName="roomPriceByDay"
+              type="number"
+              placeholder="Giá theo ngày (VND)"
+              class="form-control"
+              [class.invalid]="roomForm.get('roomPriceByDay')?.touched && roomForm.get('roomPriceByDay')?.invalid"
+            />
+            <span
+              class="error"
+              *ngIf="roomForm.get('roomPriceByDay')?.touched && roomForm.get('roomPriceByDay')?.errors?.['required']"
+            >
+              Giá theo ngày là bắt buộc
+            </span>
+            <span
+              class="error"
+              *ngIf="roomForm.get('roomPriceByDay')?.touched && roomForm.get('roomPriceByDay')?.errors?.['min']"
+            >
+              Giá theo ngày không được âm
+            </span>
+          </div>
+          <div class="form-group">
+            <input
+              formControlName="roomPriceByHour"
+              type="number"
+              placeholder="Giá theo giờ (VND)"
+              class="form-control"
+              [class.invalid]="roomForm.get('roomPriceByHour')?.touched && roomForm.get('roomPriceByHour')?.invalid"
+            />
+            <span
+              class="error"
+              *ngIf="roomForm.get('roomPriceByHour')?.touched && roomForm.get('roomPriceByHour')?.errors?.['required']"
+            >
+              Giá theo giờ là bắt buộc
+            </span>
+            <span
+              class="error"
+              *ngIf="roomForm.get('roomPriceByHour')?.touched && roomForm.get('roomPriceByHour')?.errors?.['min']"
+            >
+              Giá theo giờ không được âm
+            </span>
+          </div>
+          <div class="form-group">
+            <select
+              formControlName="roomTypeId"
+              class="form-control"
+              [class.invalid]="roomForm.get('roomTypeId')?.touched && roomForm.get('roomTypeId')?.invalid"
+            >
+              <option value="" disabled selected>Chọn loại phòng</option>
+              <option *ngFor="let type of userLoaiPhong" [value]="type.id">{{ type.name }}</option>
+            </select>
+            <span
+              class="error"
+              *ngIf="roomForm.get('roomTypeId')?.touched && roomForm.get('roomTypeId')?.errors?.['required']"
+            >
+              Loại phòng là bắt buộc
+            </span>
+          </div>
+          <div class="form-group">
+            <select
+              formControlName="areaId"
+              class="form-control"
+              [class.invalid]="roomForm.get('areaId')?.touched && roomForm.get('areaId')?.invalid"
+            >
+              <option value="" disabled selected>Chọn khu vực</option>
+              <option *ngFor="let area of areaList" [value]="area.id">{{ area.name }}</option>
+            </select>
+            <span
+              class="error"
+              *ngIf="roomForm.get('areaId')?.touched && roomForm.get('areaId')?.errors?.['required']"
+            >
+              Khu vực là bắt buộc
+            </span>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeRoomModal()">Hủy</button>
+            <button type="submit" class="btn-save" [disabled]="roomForm.invalid">
+              {{ isRoomEditMode ? 'Cập nhật' : 'Thêm' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Room View Modal -->
+    <div class="modal" *ngIf="isRoomViewModalOpen">
+      <div class="modal-overlay" (click)="closeRoomViewModal()"></div>
+      <div class="modal-content">
+        <h2 class="modal-title">Chi tiết phòng</h2>
+        <div class="form-group">
+          <label>Tên phòng:</label>
+          <input
+            type="text"
+            [value]="selectedRoom?.name || ''"
+            class="form-control"
+            readonly
+          />
+        </div>
+        <div class="form-group">
+          <label>Mô tả:</label>
+          <input
+            type="text"
+            [value]="selectedRoom?.description || ''"
+            class="form-control"
+            readonly
+          />
+        </div>
+        <div class="form-group">
+          <label>Giá theo ngày:</label>
+          <input
+            type="text"
+            [value]="selectedRoom?.roomPriceByDay | currency:'VND'"
+            class="form-control"
+            readonly
+          />
+        </div>
+        <div class="form-group">
+          <label>Giá theo giờ:</label>
+          <input
+            type="text"
+            [value]="selectedRoom?.roomPriceByHour | currency:'VND'"
+            class="form-control"
+            readonly
+          />
+        </div>
+        <div class="form-group">
+          <label>Loại phòng:</label>
+          <input
+            type="text"
+            [value]="selectedRoom?.roomtypename || ''"
+            class="form-control"
+            readonly
+          />
+        </div>
+        <div class="form-group">
+          <label>Khu vực:</label>
+          <input
+            type="text"
+            [value]="selectedRoom?.khuVucName || ''"
+            class="form-control"
+            readonly
+          />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="closeRoomViewModal()">Đóng</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Room Type Add/Edit Modal -->
+    <div class="modal" *ngIf="isLoaiPhongModalOpen">
+      <div class="modal-overlay" (click)="closeLoaiPhongModal()"></div>
+      <div class="modal-content">
+        <h2 class="modal-title">{{ isLoaiPhongEditMode ? 'Chỉnh sửa loại phòng' : 'Thêm loại phòng mới' }}</h2>
+        <form [formGroup]="loaiPhongForm" (ngSubmit)="saveLoaiPhong()">
+          <div class="form-group">
+            <input
+              formControlName="name"
+              type="text"
+              placeholder="Tên loại phòng"
+              class="form-control"
+              [class.invalid]="loaiPhongForm.get('name')?.touched && loaiPhongForm.get('name')?.invalid"
+            />
+            <span
+              class="error"
+              *ngIf="loaiPhongForm.get('name')?.touched && loaiPhongForm.get('name')?.errors?.['required']"
+            >
+              Tên loại phòng là bắt buộc
+            </span>
+            <span
+              class="error"
+              *ngIf="loaiPhongForm.get('name')?.touched && loaiPhongForm.get('name')?.errors?.['minlength']"
+            >
+              Tên loại phòng phải dài ít nhất 2 ký tự
+            </span>
+          </div>
+          <div class="form-group">
+            <input
+              formControlName="description"
+              type="text"
+              placeholder="Mô tả"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <input
+              formControlName="maxPeople"
+              type="number"
+              placeholder="Số người tối đa"
+              class="form-control"
+              [class.invalid]="loaiPhongForm.get('maxPeople')?.touched && loaiPhongForm.get('maxPeople')?.invalid"
+            />
+            <span
+              class="error"
+              *ngIf="loaiPhongForm.get('maxPeople')?.touched && loaiPhongForm.get('maxPeople')?.errors?.['required']"
+            >
+              Số người tối đa là bắt buộc
+            </span>
+            <span
+              class="error"
+              *ngIf="loaiPhongForm.get('maxPeople')?.touched && loaiPhongForm.get('maxPeople')?.errors?.['min']"
+            >
+              Số người tối đa phải là số dương
+            </span>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeLoaiPhongModal()">Hủy</button>
+            <button type="submit" class="btn-save" [disabled]="loaiPhongForm.invalid">
+              {{ isLoaiPhongEditMode ? 'Cập nhật' : 'Thêm' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Room Type View Modal -->
+    <div class="modal" *ngIf="isLoaiPhongViewModalOpen">
+      <div class="modal-overlay" (click)="closeLoaiPhongViewModal()"></div>
+      <div class="modal-content">
+        <h2 class="modal-title">Chi tiết loại phòng</h2>
+        <div class="form-group">
+          <label>Tên loại phòng:</label>
+          <input
+            type="text"
+            [value]="selectedLoaiPhong?.name || ''"
+            class="form-control"
+            readonly
+          />
+        </div>
+        <div class="form-group">
+          <label>Mô tả:</label>
+          <input
+            type="text"
+            [value]="selectedLoaiPhong?.description || ''"
+            class="form-control"
+            readonly
+          />
+        </div>
+        <div class="form-group">
+          <label>Số người tối đa:</label>
+          <input
+            type="text"
+            [value]="selectedLoaiPhong?.maxPeople || ''"
+            class="form-control"
+            readonly
+          />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="closeLoaiPhongViewModal()">Đóng</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Area Add/Edit Modal -->
+    <div class="modal" *ngIf="isKhuVucModalOpen">
+      <div class="modal-overlay" (click)="closeKhuVucModal()"></div>
+      <div class="modal-content">
+        <h2 class="modal-title">{{ isKhuVucEditMode ? 'Chỉnh sửa khu vực' : 'Thêm khu vực mới' }}</h2>
+        <form [formGroup]="khuVucForm" (ngSubmit)="saveKhuVuc()">
+          <div class="form-group">
+            <input
+              formControlName="name"
+              type="text"
+              placeholder="Tên khu vực"
+              class="form-control"
+              [class.invalid]="khuVucForm.get('name')?.touched && khuVucForm.get('name')?.invalid"
+            />
+            <span
+              class="error"
+              *ngIf="khuVucForm.get('name')?.touched && khuVucForm.get('name')?.errors?.['required']"
+            >
+              Tên khu vực là bắt buộc
+            </span>
+            <span
+              class="error"
+              *ngIf="khuVucForm.get('name')?.touched && khuVucForm.get('name')?.errors?.['minlength']"
+            >
+              Tên khu vực phải dài ít nhất 2 ký tự
+            </span>
+          </div>
+          <div class="form-group">
+            <input
+              formControlName="description"
+              type="text"
+              placeholder="Mô tả"
+              class="form-control"
+            />
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeKhuVucModal()">Hủy</button>
+            <button type="submit" class="btn-save" [disabled]="khuVucForm.invalid">
+              {{ isKhuVucEditMode ? 'Cập nhật' : 'Thêm' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Area View Modal -->
+    <div class="modal" *ngIf="isKhuVucViewModalOpen">
+      <div class="modal-overlay" (click)="closeKhuVucViewModal()"></div>
+      <div class="modal-content">
+        <h2 class="modal-title">Chi tiết khu vực</h2>
+        <div class="form-group">
+          <label>Tên khu vực:</label>
+          <input
+            type="text"
+            [value]="selectedArea?.name || ''"
+            class="form-control"
+            readonly
+          />
+        </div>
+        <div class="form-group">
+          <label>Mô tả:</label>
+          <input
+            type="text"
+            [value]="selectedArea?.description || ''"
+            class="form-control"
+            readonly
+          />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="closeKhuVucViewModal()">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

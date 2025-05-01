@@ -1,0 +1,367 @@
+/* CSS chung cho tất cả giao diện */
+.main-content,
+.customer-container {
+  margin-left: 250px;
+  padding: 3rem 2rem;
+  background: #f0f5ff;
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+.container,
+.customer-header {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.page-title,
+.title,
+.customer-header h2 {
+  text-align: center;
+  color: #2c5282;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.page-title::after,
+.title::after,
+.customer-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(to right, #2c5282, #38b2ac);
+  border-radius: 2px;
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+}
+
+.table-container,
+.customer-table-container {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  overflow-x: auto;
+}
+
+.table-container:hover,
+.customer-table-container:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.loaiphong-table,
+.service-table,
+.customer-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.loaiphong-table th,
+.loaiphong-table td,
+.service-table th,
+.service-table td,
+.customer-table th,
+.customer-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+  color: #2d3748;
+}
+
+.loaiphong-table th,
+.service-table th,
+.customer-table th {
+  background: #f0f5ff;
+  font-weight: 600;
+  color: #2c5282;
+}
+
+.loaiphong-table td,
+.service-table td,
+.customer-table td {
+  color: #718096;
+}
+
+.no-data {
+  text-align: center;
+  color: #718096;
+  font-style: italic;
+  padding: 20px;
+}
+
+.no-data i {
+  margin-right: 8px;
+}
+
+.add-form,
+.add-customer-form {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.add-form:hover,
+.add-customer-form:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.table-title,
+.form-title,
+.subtitle {
+  color: #2c5282;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.table-title i,
+.form-title i,
+.subtitle i {
+  margin-right: 8px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #2d3748;
+  background: #f7fafc;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #38b2ac;
+  outline: none;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* CSS cho nút */
+.btn-add,
+.btn-edit,
+.btn-delete,
+.btn-save,
+.btn-cancel {
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: 5px;
+}
+
+.btn-add {
+  background: #38b2ac;
+  padding: 10px 20px;
+  width: 100%;
+}
+
+.btn-edit,
+.btn-save {
+  background: #38b2ac;
+  padding: 4px 10px;
+  width: 70px;
+  height: 30px;
+}
+
+.btn-delete {
+  background: #fff1f1;
+  border: #ff5b3e 1px solid;
+  color: #ff5b3e;
+  padding: 4px 10px;
+  width: 70px;
+  height: 30px;
+}
+
+.btn-cancel {
+  background: #718096;
+  padding: 10px 20px;
+}
+
+.btn-add::before,
+.btn-edit::before,
+.btn-delete::before,
+.btn-save::before,
+.btn-cancel::before {
+  content: attr(data-text);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1rem;
+}
+
+.btn-add:hover::before {
+  content: '\f067'; /* Icon "plus" */
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+}
+
+.btn-edit:hover::before,
+.btn-save:hover::before {
+  content: '\f044'; /* Icon "edit" */
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+}
+
+.btn-delete:hover::before {
+  content: '\f2ed'; /* Icon "trash" */
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+}
+
+.btn-cancel:hover::before {
+  content: '\f00d'; /* Icon "times" */
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+}
+
+.btn-add:hover:not(:disabled) {
+  background: #2d9c97;
+  transform: translateY(-3px);
+  box-shadow: 0 7px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-edit:hover:not(:disabled),
+.btn-save:hover:not(:disabled) {
+  background: #2d9c97;
+  transform: translateY(-3px);
+  box-shadow: 0 7px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-delete:hover {
+  background: #ffdcdc;
+  transform: translateY(-3px);
+  box-shadow: 0 7px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-cancel:hover {
+  background: #5a6e86;
+  transform: translateY(-3px);
+  box-shadow: 0 7px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-add:active:not(:disabled) {
+  background: #1f7a76;
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-edit:active:not(:disabled),
+.btn-save:active:not(:disabled) {
+  background: #1f7a76;
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-delete:active {
+  background: #ff9696;
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-cancel:active {
+  background: #4a5568;
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 25px;
+  width: 450px;
+  border-radius: 15px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, #2c5282, #38b2ac);
+}
+
+.modal-content h4 {
+  color: #2c5282;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.modal-content h4 i {
+  margin-right: 8px;
+}
+
+.modal-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .main-content,
+  .customer-container {
+    margin-left: 0;
+    padding: 1.5rem 1rem;
+  }
+
+  .content-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .loaiphong-table td,
+  .service-table td,
+  .customer-table td {
+    font-size: 0.9rem;
+  }
+}

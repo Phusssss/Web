@@ -1,0 +1,216 @@
+.main-content {
+  margin-left: 250px;
+  padding: 3rem 2rem;
+  background: #f0f5ff; /* Nền nhạt giống Hotel Manager */
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.title {
+  text-align: center;
+  color: #2c5282; /* --primary */
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(to right, #2c5282, #38b2ac); /* Gradient từ primary sang secondary */
+  border-radius: 2px;
+}
+
+.title i {
+  margin-right: 10px;
+  
+}
+
+.content-wrapper {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Bảng bên trái, form bên phải */
+  gap: 30px;
+}
+
+.table-container {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* --shadow */
+  transition: all 0.3s ease;
+}
+
+.table-container:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* --shadow-lg */
+}
+
+.table-title {
+  color: #2c5282; /* --primary */
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.table-title i {
+  margin-right: 8px;
+}
+
+.khu-vuc-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.khu-vuc-table th,
+.khu-vuc-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+  color: #2d3748; /* --text */
+}
+
+.khu-vuc-table th {
+  background: #f0f5ff; /* Nền nhạt giống body */
+  font-weight: 600;
+  color: #2c5282; /* --primary */
+}
+
+.khu-vuc-table td {
+  color: #718096; /* --text-light */
+}
+
+.no-data {
+  text-align: center;
+  color: #718096; /* --text-light */
+  font-style: italic;
+  padding: 20px;
+}
+
+.no-data i {
+  margin-right: 8px;
+}
+
+.form-container {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* --shadow */
+  transition: all 0.3s ease;
+}
+
+.form-container:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* --shadow-lg */
+}
+
+.form-title {
+  color: #2c5282; /* --primary */
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.form-title i {
+  margin-right: 8px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #2d3748; /* --text */
+  background: #f7fafc; /* --light */
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #38b2ac; /* --secondary */
+  outline: none;
+}
+
+.btn-primary,
+.btn-edit,
+.btn-delete {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary:hover,
+.btn-edit:hover,
+.btn-delete:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary {
+  background: #38b2ac; /* --secondary */
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: #2d9c97; /* Tông đậm hơn của secondary */
+}
+
+.btn-edit {
+  background: #ed8936; /* --accent */
+  margin-right: 10px;
+}
+
+.btn-edit:hover {
+  background: #dd6b20; /* Tông đậm hơn của accent */
+}
+
+.btn-edit i {
+  margin-right: 5px;
+}
+
+.btn-delete {
+  background: #e53e3e; /* Màu đỏ nhẹ nhàng */
+}
+
+.btn-delete:hover {
+  background: #c53030; /* Tông đậm hơn */
+}
+
+.btn-delete i {
+  margin-right: 5px;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: 1.5rem 1rem;
+  }
+
+  .content-wrapper {
+    grid-template-columns: 1fr; /* Chuyển thành 1 cột trên mobile */
+  }
+
+  .btn-primary, .btn-edit, .btn-delete {
+    width: 100%;
+    padding: 8px 15px;
+  }
+}

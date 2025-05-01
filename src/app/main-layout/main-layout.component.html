@@ -1,0 +1,210 @@
+<div class="layout-wrapper" [ngClass]="{ 'sidebar-collapsed': isSidebarCollapsed }">
+  <!-- Mobile Menu Toggle Button -->
+  <button class="mobile-menu-toggle" (click)="toggleSidebar()" aria-label="Toggle mobile menu" *ngIf="isMobileView">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Vertical Sidebar -->
+  <aside class="sidebar" [ngClass]="{ 'open': isMobileMenuOpen }">
+    <div class="sidebar-header">
+      <div class="logo">
+        <a routerLink="/home1">
+          <img src="assets/images/logo.png" alt="Hotel Manager Logo" class="logo-img">
+        </a>
+      </div>
+      <button class="toggle-btn" (click)="toggleSidebar()" aria-label="Toggle sidebar">
+        <i class="fas" [ngClass]="isSidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+      </button>
+    </div>
+    <nav class="sidebar-menu">
+      <ul>
+        <!-- Home -->
+        <li>
+          <a routerLink="/home1" routerLinkActive="active" (click)="closeMobileMenu()">
+            <i class="fas fa-home"></i>
+            <span>Trang Chủ</span>
+          </a>
+        </li>
+
+        <!-- Staff Group -->
+        <li class="menu-group">
+          <a class="menu-group-header" (click)="toggleGroup('staff')">
+            <span><i class="fas fa-user"></i> Nhân viên</span>
+            <i class="fas fa-chevron-down" [ngClass]="{'rotate': activeGroup === 'staff'}"></i>
+          </a>
+          <ul class="submenu" [ngClass]="{'open': activeGroup === 'staff'}">
+            <li>
+              <a routerLink="/booking" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-calendar-check"></i>
+                <span>Booking</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/trangthai" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-bed"></i>
+                <span>Trạng Thái Phòng</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/chat" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-comments"></i>
+                <span>Chat</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/bookinglist" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-list-alt"></i>
+                <span>Đơn Đặt Phòng</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/servicerequest" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Đặt Dịch Vụ</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Manager Group -->
+        <li class="menu-group">
+          <a class="menu-group-header" (click)="toggleGroup('manager')">
+            <span><i class="fas fa-user-tie"></i> Quản lý</span>
+            <i class="fas fa-chevron-down" [ngClass]="{'rotate': activeGroup === 'manager'}"></i>
+          </a>
+          <ul class="submenu" [ngClass]="{'open': activeGroup === 'manager'}">
+            <li>
+              <a routerLink="/rooms" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-door-open"></i>
+                <span>Quản Lý Phòng</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/staff" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-user"></i>
+                <span>Quản Lý Nhân Viên</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/khachhang" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-users"></i>
+                <span>Danh Sách Khách Hàng</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/dichvu" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-concierge-bell"></i>
+                <span>Danh Sách Dịch Vụ</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/invoice" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-file-invoice"></i>
+                <span>Hóa Đơn & Doanh Thu</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/qrmanager" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-qrcode"></i>
+                <span>Cài Đặt Thanh Toán</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/set-account" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-key"></i>
+                <span>Cài Đặt Mã PIN</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Authentication Links -->
+        <li *ngIf="userEmail">
+          <a href="#" (click)="logout($event)">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Đăng Xuất</span>
+          </a>
+        </li>
+        <li *ngIf="!userEmail">
+          <a routerLink="/login" routerLinkActive="active" (click)="closeMobileMenu()">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>Đăng Nhập</span>
+          </a>
+        </li>
+        <li *ngIf="!userEmail">
+          <a routerLink="/register" routerLinkActive="active" (click)="closeMobileMenu()">
+            <i class="fas fa-user-plus"></i>
+            <span>Đăng Ký</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Mobile Overlay -->
+  <div class="mobile-overlay" [ngClass]="{'visible': isMobileMenuOpen}" (click)="closeMobileMenu()"></div>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <!-- Header -->
+    <header class="main-header">
+      <div class="header-content">
+        <span class="greeting">Xin chào {{ userEmail || 'Khách' }}</span>
+        <div class="header-actions">
+          <a href="#" class="header-link" >Hướng Dẫn</a>
+          <button class="header-icon-btn"  aria-label="Notifications">
+            <i class="fas fa-bell"></i>
+            <span class="badge" ></span>
+          </button>
+          <button class="header-icon-btn"  aria-label="Account">
+            <i class="fas fa-user"></i>
+          </button>
+          <button class="header-btn" >Đổi Nhân Viên</button>
+        </div>
+      </div>
+    </header>
+    <router-outlet></router-outlet>
+    <footer class="footer">
+      <div class="footer-content">
+        <span class="copyright">Copyright © 2018 TCSOFT HOTEL. All rights reserved.</span>
+        <span class="version">Version 1.0.0</span>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Social Media Floating Bar -->
+  <div class="social-bar">
+    <a href="http://zaloapp.com/qr/p/12hwzs87v2b9g" target="_blank" class="social-link zalo">
+      <i class="fas fa-comment"></i>
+    </a>
+    <a href="https://www.facebook.com/profile.php?id=100067494805661" target="_blank" class="social-link facebook">
+      <i class="fab fa-facebook-f"></i>
+    </a>
+  </div>
+
+  <!-- Modal Template for New Notifications -->
+  <ng-template #notificationModal let-modal>
+    <div class="modal-header custom-header">
+      <h5 class="modal-title"><i class="fas fa-bell mr-2"></i> Thông báo mới</h5>
+      <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body custom-body">
+      <div class="notification-icon">
+        <i class="fas fa-check-circle text-success"></i>
+      </div>
+      <p class="message"><strong>Thông điệp:</strong> {{ latestNotification?.message }}</p>
+      <p class="timestamp"><strong>Thời gian:</strong> {{ latestNotification?.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+    </div>
+    <div class="modal-footer custom-footer">
+      <button class="btn btn-success" (click)="markAsRead(latestNotification.id); modal.close()">
+        <i class="fas fa-check mr-2"></i> Đánh dấu đã đọc
+      </button>
+      <button class="btn btn-secondary" (click)="modal.close()">
+        <i class="fas fa-times mr-2"></i> Đóng
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- Audio for Notification -->
+  <audio #notificationSound src="assets/notification.mp3" preload="auto"></audio>
+</div>

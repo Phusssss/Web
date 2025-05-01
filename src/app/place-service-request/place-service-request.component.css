@@ -1,0 +1,287 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    background-color: #f0f5ff;
+  }
+  
+  .main-content {
+    margin-left: 250px;
+    padding: 3rem 2rem;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .title {
+    text-align: center;
+    color: #2c5282; /* --primary */
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 15px;
+  }
+  
+  .title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, #2c5282, #38b2ac); /* Gradient từ primary sang secondary */
+    border-radius: 2px;
+  }
+  
+  .title i {
+    margin-right: 10px;
+  }
+  
+  .content-wrapper {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* Bảng bên trái, form bên phải */
+    gap: 30px;
+  }
+  
+  .table-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* --shadow */
+    padding: 20px;
+    transition: all 0.3s ease;
+  }
+  
+  .table-container:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* --shadow-lg */
+  }
+  
+  .table-title {
+    color: #2c5282; /* --primary */
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+  
+  .table-title i {
+    margin-right: 8px;
+  }
+  
+  .custom-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .custom-table th,
+  .custom-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+    color: #2d3748; /* --text */
+  }
+  
+  .custom-table th {
+    background: #f0f5ff; /* Nền nhạt giống body */
+    font-weight: 600;
+    color: #2c5282; /* --primary */
+  }
+  
+  .custom-table td {
+    color: #718096; /* --text-light */
+  }
+  
+  .no-data {
+    text-align: center;
+    color: #718096; /* --text-light */
+    font-style: italic;
+    padding: 20px;
+  }
+  
+  .no-data i {
+    margin-right: 8px;
+  }
+  
+  .status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+  }
+  
+  .status.pending {
+    background: #fef3c7; /* Tông vàng nhạt */
+    color: #d97706; /* Tông vàng đậm */
+  }
+  
+  .status.confirmed {
+    background: #d1fae5; /* Tông xanh nhạt */
+    color: #059669; /* Tông xanh đậm */
+  }
+  
+  .status.cancelled {
+    background: #fee2e2; /* Tông đỏ nhạt */
+    color: #dc2626; /* Tông đỏ đậm */
+  }
+  
+  .form-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* --shadow */
+    padding: 20px;
+    transition: all 0.3s ease;
+  }
+  
+  .form-container:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* --shadow-lg */
+  }
+  
+  .form-title {
+    color: #2c5282; /* --primary */
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+  
+  .form-title i {
+    margin-right: 8px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #2c5282; /* --primary */
+  }
+  
+  .form-group label i {
+    margin-right: 8px;
+    color: #718096; /* --text-light */
+  }
+  
+  .form-control, .form-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #2d3748; /* --text */
+    background: #f7fafc; /* --light */
+    transition: border-color 0.3s ease;
+  }
+  
+  .form-control:focus, .form-select:focus {
+    border-color: #38b2ac; /* --secondary */
+    outline: none;
+  }
+  
+  .btn-primary,
+  .btn-success,
+  .btn-secondary {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .btn-primary:hover,
+  .btn-success:hover:not(:disabled),
+  .btn-secondary:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  .btn-primary {
+    background: #38b2ac; /* --secondary */
+    width: 100%;
+  }
+  
+  .btn-primary:hover {
+    background: #2d9c97; /* Tông đậm hơn của secondary */
+  }
+  
+  .btn-primary i {
+    margin-right: 5px;
+  }
+  
+  .btn-success {
+    background: #38b2ac; /* --secondary */
+  }
+  
+  .btn-success:hover:not(:disabled) {
+    background: #2d9c97; /* Tông đậm hơn của secondary */
+  }
+  
+  .btn-success:disabled {
+    background: #718096; /* --text-light */
+    cursor: not-allowed;
+  }
+  
+  .btn-success i {
+    margin-right: 5px;
+  }
+  
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+    gap: 15px;
+  }
+  
+  .btn-secondary {
+    background: #718096; /* --text-light */
+  }
+  
+  .btn-secondary:hover:not(:disabled) {
+    background: #5a6e86; /* Tông đậm hơn của text-light */
+  }
+  
+  .btn-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .btn-secondary i {
+    margin: 0 5px;
+  }
+  
+  @media (max-width: 768px) {
+    .main-content {
+      margin-left: 0;
+      padding: 1.5rem 1rem;
+    }
+  
+    .content-wrapper {
+      grid-template-columns: 1fr; /* Chuyển thành 1 cột trên mobile */
+    }
+  
+    .custom-table td {
+      font-size: 0.9rem;
+    }
+  
+    .btn-primary, .btn-success, .btn-secondary {
+      width: 100%;
+      padding: 8px 15px;
+    }
+  }

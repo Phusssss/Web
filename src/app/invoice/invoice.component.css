@@ -1,0 +1,242 @@
+:host {
+  display: block;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+}
+
+.main-content {
+  padding: 3rem 2rem;
+  background: #f0f5ff;
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+.invoice-container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.invoice-title {
+  text-align: center;
+  color: #2c5282;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.invoice-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(to right, #2c5282, #38b2ac);
+  border-radius: 2px;
+}
+
+.stats-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.stats-box {
+  flex: 1;
+  background: #ffffff;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+.stats-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 7px 10px rgba(0, 0, 0, 0.15);
+}
+
+.stats-box h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.stats-box p {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.total-revenue {
+  background-color: #00C0EF;
+}
+
+.expected-revenue {
+  background-color: #00A65A;
+}
+
+.total-expenses {
+  background-color: #F39C13;
+}
+
+.profit {
+  background-color: #DD4B38;
+}
+
+.filter-container .form-control,
+.filter-container .form-select {
+  background: #f7fafc;
+  border-color: #e2e8f0;
+  color: #2d3748;
+  transition: border-color 0.3s ease;
+}
+
+.filter-container .form-control:focus,
+.filter-container .form-select:focus {
+  border-color: #38b2ac;
+  box-shadow: none;
+}
+
+.filter-container .form-label {
+  color: #2d3748;
+}
+
+.reset-filter-btn {
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.reset-filter-btn:hover {
+  transform: translateY(-3px);
+  box-shadow : 0 7px 10px rgba(0, 0, 0, 0.15);
+}
+
+.chart-container {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  height: 400px; /* Fixed height for all chart containers */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chart-container canvas {
+  width: 100% !important; /* Full width of container */
+  height: 350px !important; /* Fixed height for all chart canvases */
+  max-height: 350px; /* Prevent overflow */
+  max-width: 100%; /* Ensure responsiveness */
+}
+
+.chart-container .chart-title {
+  color: #2c5282;
+  font-size: 1.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.revenue-summary {
+  text-align: right;
+  color: #2d3748;
+}
+
+.revenue-summary h3 {
+  font-weight: 600;
+}
+
+.revenue-summary span {
+  color: #38b2ac;
+}
+
+.invoice-table thead th {
+  background: #f0f5ff;
+  color: #2c5282;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.invoice-table td {
+  color: #718096;
+  vertical-align: top;
+}
+
+.invoice-table tr:hover {
+  background-color: #f7fafc;
+}
+
+.delete-btn {
+  font-weight: 600;
+  width: 70px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #ffdcdc;
+  transform: translateY(-3px);
+  box-shadow: 0 7px 10px rgba(0, 0, 0, 0.15);
+}
+
+.delete-btn:active {
+  background-color: #ff9696;
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .charts-container .col-lg-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: 1.5rem 1rem;
+  }
+
+  .invoice-container {
+    padding: 0;
+  }
+
+  .stats-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .revenue-summary {
+    text-align: center;
+  }
+
+  .invoice-table th,
+  .invoice-table td {
+    font-size: 0.9rem;
+  }
+
+  .chart-container {
+    height: 300px; /* Smaller height for mobile */
+  }
+
+  .chart-container canvas {
+    height: 250px !important;
+    max-height: 250px;
+  }
+}

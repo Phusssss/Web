@@ -1,0 +1,30 @@
+<!-- HTML Template -->
+<div class="main-content">
+  <div class="container">
+    <h1 class="title">Chọn tài khoản nhân viên</h1>
+    <p class="subtitle">Nhấp vào thẻ nhân viên để đăng nhập với tài khoản tương ứng</p>
+    
+    <div class="staff-list">
+      <div class="staff-item" *ngFor="let staff of staffList" 
+           [class.selected]="selectedStaff?.uid === staff.uid"
+           (click)="selectStaff(staff)">
+        <div class="icon-container">
+          <i class="user-icon fas fa-user-circle"></i>
+          <div class="online-status" [class.online]="staff.isOnline"></div>
+        </div>
+        <div class="staff-details">
+          <h3 class="staff-name">{{ staff.name }}</h3>
+          <p class="staff-email">{{ staff.email }}</p>
+          <p class="staff-position">{{ staff.position || 'Nhân viên' }}</p>
+        </div>
+        <button class="select-btn">Chọn</button>
+      </div>
+    </div>
+    
+    <div class="empty-state" *ngIf="staffList.length === 0">
+      <i class="empty-icon fas fa-users-slash"></i>
+      <p class="empty-text">Không tìm thấy nhân viên nào</p>
+      <small>Hãy thêm nhân viên mới để hiển thị tại đây</small>
+    </div>
+  </div>
+</div>

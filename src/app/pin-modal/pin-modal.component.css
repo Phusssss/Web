@@ -1,0 +1,106 @@
+/* pin-modal.component.css */
+.modal-header.elegant-header {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-bottom: none;
+    padding: 1.5rem;
+    border-radius: 10px 10px 0 0;
+  }
+  
+  .modal-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .close-btn {
+    border: none;
+    background: transparent;
+    font-size: 1.5rem;
+    color: #7f8c8d;
+    transition: color 0.2s;
+  }
+  
+  .close-btn:hover {
+    color: #e74c3c;
+  }
+  
+  .pin-container {
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .input-wrapper {
+    text-align: center;
+  }
+  
+  .pin-input {
+    width: 120px;
+    padding: 0.8rem;
+    font-size: 1.5rem;
+    text-align: center;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    letter-spacing: 10px;
+  }
+  
+  .pin-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0,123,255,0.2);
+    outline: none;
+  }
+  
+  .hint-text {
+    display: block;
+    margin-top: 0.5rem;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+  }
+  
+  .footer-buttons {
+    padding: 1rem 1.5rem;
+    border-top: none;
+    gap: 10px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .btn {
+    padding: 0.6rem 1.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+  
+  .confirm-btn {
+    background-color: #007bff;
+    border: none;
+  }
+  
+  .confirm-btn:hover:not(:disabled) {
+    background-color: #0069d9;
+    transform: translateY(-2px);
+  }
+  
+  .confirm-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .cancel-btn {
+    border-color: #ddd;
+    color: #666;
+  }
+  /* pin-modal.component.css - Thêm style cho thông báo lỗi */
+.error-text {
+    display: block;
+    margin-top: 0.5rem;
+    color: #e74c3c;
+    font-size: 0.9rem;
+  }
+  .cancel-btn:hover {
+    border-color: #bbb;
+    color: #333;
+    background-color: #f8f9fa;
+  }

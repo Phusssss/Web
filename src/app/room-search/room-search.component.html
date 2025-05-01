@@ -1,0 +1,151 @@
+<main class="main-panel">
+  <div class="main-content">
+    <div class="container">
+      <header class="page-header">
+        <h2><i class="fas fa-book"></i> Quản lý Đặt Phòng</h2>
+      </header>
+
+      <div class="booking-layout">
+        <!-- Cột trái: Form tìm kiếm -->
+        <section class="search-section">
+          <h3><i class="fas fa-search"></i> Tìm kiếm phòng trống</h3>
+          <div class="form-container">
+            <div class="input-group">
+              <label for="roomTypeSelect">Loại phòng <span class="required">*</span></label>
+              <select id="roomTypeSelect" [(ngModel)]="selectedRoomTypeId">
+                <option value="">Chọn loại phòng</option>
+                <option *ngFor="let roomType of roomTypes" [value]="roomType.id">
+                  {{ roomType.name }}
+                </option>
+              </select>
+            </div>
+
+            <div class="input-group customer-group">
+              <label for="customerSearch">Khách hàng <span class="required">*</span></label>
+              <div class="customer-search-wrapper">
+                <input 
+                  id="customerSearch" 
+                  type="text" 
+                  placeholder="Tìm kiếm khách hàng..." 
+                  [(ngModel)]="customerSearchTerm"
+                  (input)="filterCustomers()"
+                  class="search-input"
+                />
+                <select 
+                  id="customerSelect" 
+                  [(ngModel)]="selectedCustomerId"
+                  (change)="onCustomerSelect()"
+                  class="customer-dropdown"
+                >
+                  <option value="">Chọn khách hàng</option>
+                  <option *ngFor="let customer of filteredCustomers" [value]="customer.id">
+                    {{ customer.name }} - {{ customer.email }}
+                  </option>
+                </select>
+                <button class="add-customer-btn" (click)="toggleAddCustomerForm()">
+                  <i class="fas fa-plus"></i> {{ showAddCustomerForm ? 'Hủy' : 'Thêm mới' }}
+                </button>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="checkinDate">Ngày nhận phòng <span class="required">*</span></label>
+              <input id="checkinDate" type="date" [(ngModel)]="checkinDate" (change)="calculateNights()" />
+            </div>
+
+            <div class="input-group">
+              <label for="checkoutDate">Ngày trả phòng <span class="required">*</span></label>
+              <input id="checkoutDate" type="date" [(ngModel)]="checkoutDate" (change)="calculateNights()" />
+            </div>
+
+            <button class="search-button" (click)="findRoomsByType()" data-text="Tìm phòng"></button>
+          </div>
+        </section>
+        <div *ngIf="rooms.length > 0">
+          <h3>Phòng khả dụng</h3>
+          <ul>
+            <li *ngFor="let room of rooms">
+              <input type="checkbox" (change)="toggleRoomSelection(room)" [checked]="selectedRooms.includes(room)">
+              {{ room.name }} - Giá: {{ room.roomPriceByDay | currency }} / ngày
+              <span>(Khoảng trống: {{ room.totalGapDays }} ngày)</span>
+            </li>
+          </ul>
+        </div>
+        <!-- Cột phải: Kết quả phòng trống -->
+        <section class="rooms-section" *ngIf="rooms.length > 0; else noRoomsFound">
+          <h3><i class="fas fa-door-open"></i> Danh sách phòng trống</h3>
+          <div class="rooms-grid">
+            <div *ngFor="let room of rooms" class="room-card">
+              <input
+                type="checkbox"
+                class="room-checkbox"
+                [checked]="selectedRooms.includes(room)"
+                (change)="toggleRoomSelection(room)"
+              />
+              <div class="room-info">
+                <h4 class="room-name">{{ room.name }}</h4>
+                <p class="room-id">Mã phòng: {{ room.id }}</p>
+                <div class="price-info">
+                  <span>Giá ngày:</span>
+                  <span class="price-tag">{{ room.roomPriceByDay | number:'1.0-0' }} ₫</span>
+                </div>
+                <div class="price-info">
+                  <span>Giá giờ:</span>
+                  <span class="price-tag">{{ room.roomPriceByHour | number:'1.0-0' }} ₫</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="booking-section" *ngIf="selectedRooms.length > 0">
+            <div class="booking-summary">
+              <span>Tổng tiền: {{ totalCost | number:'1.0-0' }} ₫ ({{ selectedRooms.length }} phòng)</span>
+              <button class="book-button" (click)="createBooking()" data-text="Đặt phòng"></button>
+            </div>
+          </div>
+        </section>
+
+        <ng-template #noRoomsFound>
+          <div class="no-rooms">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Không tìm thấy phòng phù hợp với yêu cầu của bạn.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Modal thêm khách hàng mới -->
+      <div class="modal" *ngIf="showAddCustomerForm">
+        <div class="modal-overlay" (click)="toggleAddCustomerForm()"></div>
+        <div class="modal-content">
+          <h4><i class="fas fa-user-plus"></i> Thêm khách hàng mới</h4>
+          <div class="form-group">
+            <div class="input-group">
+              <label for="customerName">Họ tên <span class="required">*</span></label>
+              <input id="customerName" type="text" [(ngModel)]="newCustomer.name" placeholder="Nhập họ tên" />
+            </div>
+            <div class="input-group">
+              <label for="customerEmail">Email <span class="required">*</span></label>
+              <input id="customerEmail" type="email" [(ngModel)]="newCustomer.email" placeholder="Nhập email" />
+            </div>
+            <div class="input-group">
+              <label for="customerPhone">Số điện thoại <span class="required">*</span></label>
+              <input id="customerPhone" type="text" [(ngModel)]="newCustomer.phone" placeholder="Nhập số điện thoại" />
+            </div>
+            <div class="input-group">
+              <label for="customerAddress">Địa chỉ</label>
+              <input id="customerAddress" type="text" [(ngModel)]="newCustomer.address" placeholder="Nhập địa chỉ" />
+            </div>
+            <div class="input-group">
+              <label for="customerCCCD">CCCD <span class="optional">(Tùy chọn)</span></label>
+              <input id="customerCCCD" type="text" [(ngModel)]="newCustomer.cccd" placeholder="Nhập CCCD" />
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="save-customer-btn" (click)="addNewCustomer()" data-text="Lưu"></button>
+            <button class="cancel-btn" (click)="toggleAddCustomerForm()" data-text="Hủy"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

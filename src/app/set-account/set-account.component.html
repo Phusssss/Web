@@ -1,0 +1,44 @@
+<div class="main-content">
+    <div class="container">
+      <h2 class="title">Cài Đặt Mã PIN</h2>
+  
+      <div class="card">
+        <div class="card-body">
+          <div *ngIf="!hasPin">
+            <h5 class="form-title">Thiết lập mã PIN mới</h5>
+            <form (ngSubmit)="setPin()">
+              <div class="mb-3">
+                <label class="form-label">Nhập mã PIN mới</label>
+                <input 
+                  type="password" 
+                  class="form-control" 
+                  [(ngModel)]="pin" 
+                  name="pin"
+                  placeholder="Nhập mã PIN mới" 
+                  required
+                >
+              </div>
+              <button 
+                type="submit" 
+                class="btn-submit"
+                [disabled]="!pin"
+              >
+                Đặt mã PIN
+              </button>
+            </form>
+          </div>
+  
+          <div *ngIf="hasPin">
+            <h5 class="table-title">Trạng thái mã PIN</h5>
+            <p><strong>Thông tin:</strong> Bạn đã đặt mã PIN.</p>
+            <button 
+              class="btn-submit"
+              (click)="removePin()"
+            >
+              Xóa mã PIN
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

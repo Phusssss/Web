@@ -1,0 +1,90 @@
+<div class="main-content">
+  <div class="room-container">
+    <h2 class="title text-center">
+      <i class="fas fa-bed mr-2"></i> Thuê phòng theo giờ và quản lý trạng thái
+    </h2>
+
+    <div class="filter-container">
+      <div class="filter-group">
+        <label for="statusFilter">Trạng thái:</label>
+        <select 
+          id="statusFilter" 
+          [(ngModel)]="selectedStatus" 
+          (ngModelChange)="onFilterChange()"
+          class="form-select">
+          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="floorFilter">Tầng:</label>
+        <select 
+          id="floorFilter" 
+          [(ngModel)]="selectedFloor" 
+          (ngModelChange)="onFilterChange()"
+          class="form-select">
+          <option *ngFor="let floor of floors" [value]="floor">{{ floor }}</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="roomTypeFilter">Loại phòng:</label>
+        <select 
+          id="roomTypeFilter" 
+          [(ngModel)]="selectedRoomType" 
+          (ngModelChange)="onFilterChange()"
+          class="form-select">
+          <option *ngFor="let type of roomTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="room-cards">
+      <div *ngFor="let room of filteredRooms" class="room-card" [ngClass]="{
+        'status-empty': room.status === 'Trống',
+        'status-dirty': room.status === 'Dơ',
+        'status-rented': room.status === 'Đang thuê',
+        'status-checked-in': room.status === 'Đã nhận phòng'
+      }">
+        <div class="card-header">
+          <h3>{{ room.name }}</h3>
+          <span class="badge" [ngClass]="{
+            'bg-success': room.status === 'Trống',
+            'bg-danger': room.status === 'Dơ' || room.status === 'Đã nhận phòng',
+            'bg-warning': room.status === 'Đang thuê'
+          }">
+            {{ room.status }}
+          </span>
+        </div>
+        <div class="card-body">
+          <p><i class="fas fa-clock mr-2 text-danger"></i> {{ room.roomPriceByHour | number }} VND</p>
+          <p><i class="fas fa-door-open mr-2"></i> {{ room.roomtypename }}</p>
+          <p><i class="fas fa-map-marker-alt mr-2"></i> {{ room.khuVucName }}</p>
+        </div>
+        <div class="card-actions">
+          <button 
+            *ngIf="room.status === 'Dơ'"
+            (click)="cleanRoom(room.id)"
+            class="btn btn-primary btn-sm me-2"
+            [disabled]="isLoading">
+            <i class="fas fa-broom mr-2"></i> Dọn phòng
+          </button>
+          <button 
+            *ngIf="room.status === 'Trống'"
+            (click)="rentByHour(room.id, room.name)"
+            class="btn btn-success btn-sm me-2"
+            [disabled]="isLoading">
+            <i class="fas fa-clock mr-2"></i> Thuê theo giờ
+          </button>
+          <button 
+            *ngIf="room.status === 'Đang thuê'"
+            (click)="checkoutRoom(room.id, room.roomPriceByHour)"
+            class="btn btn-warning btn-sm"
+            [disabled]="isLoading">
+            <i class="fas fa-money-bill-wave mr-2"></i> Trả phòng
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-spinner *ngIf="isLoading" message="Đang xử lý..."></app-loading-spinner>

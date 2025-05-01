@@ -1,0 +1,29 @@
+<div class="modal-header custom-header">
+  <h5 class="modal-title">
+    <i class="fas mr-2" [ngClass]="type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-question-circle'"></i>
+    {{ type === 'success' ? 'Thành công' : type === 'error' ? 'Lỗi' : 'Xác nhận' }}
+  </h5>
+  <button type="button" class="btn-close" (click)="dismiss()"></button>
+</div>
+<div class="modal-body custom-body">
+  <div class="notification-icon">
+    <i class="fas" [ngClass]="{
+      'fa-check-circle text-success': type === 'success',
+      'fa-exclamation-circle text-danger': type === 'error',
+      'fa-question-circle text-primary': type === 'confirm'
+    }"></i>
+  </div>
+  <p class="message">{{ message }}</p>
+</div>
+<div class="modal-footer custom-footer">
+  <button *ngIf="type === 'confirm'" class="btn btn-success" (click)="confirm()">
+    <i class="fas fa-check mr-2"></i> Xác nhận
+  </button>
+  <button class="btn" [ngClass]="{
+    'btn-success': type === 'success',
+    'btn-danger': type === 'error',
+    'btn-secondary': type === 'confirm'
+  }" (click)="dismiss()">
+    <i class="fas fa-times mr-2"></i> {{ type === 'confirm' ? 'Hủy' : 'Đóng' }}
+  </button>
+</div>

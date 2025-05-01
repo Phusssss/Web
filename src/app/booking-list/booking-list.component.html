@@ -1,0 +1,136 @@
+<div class="main-content">
+  <div class="booking-container">
+    <div class="booking-header">
+      <h2 class="section-title">
+        <i class="fas fa-book"></i> Danh sách đặt phòng
+      </h2>
+
+      <div class="filter-section">
+        <div class="search-box">
+          <i class="fas fa-calendar-alt"></i>
+          <input
+            type="date"
+            [(ngModel)]="dateFilter"
+            (change)="filterBookingsByDate()"
+            class="form-control"
+            placeholder="Chọn ngày..."
+          />
+          <button 
+            class="btn-detail"
+            (click)="filterTodayBookings()"
+            data-text="Hôm nay">
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="filteredBookings.length > 0; else noBookings" class="booking-grid">
+      <div *ngFor="let booking of filteredBookings" class="booking-card">
+        <div class="card">
+          <div class="card-header">
+            <div class="booking-id">
+              <i class="fas fa-bookmark"></i> Mã đặt phòng: #{{ booking.id }}
+            </div>
+            <div class="customer-name">
+              <i class="fas fa-user"></i> {{ booking.customerName || 'Đang tải...' }}
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="booking-info">
+              <div class="info-row">
+                <span class="label"><i class="fas fa-money-bill"></i> Tổng tiền:</span>
+                <span class="value price">{{ booking.totalCost | number:'1.0-0' }} ₫</span>
+              </div>
+              <div class="info-row">
+                <span class="label"><i class="fas fa-clock"></i> Ngày đặt:</span>
+                <span class="value">{{ booking.date.toDate() | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label"><i class="fas fa-info-circle"></i> Trạng thái:</span>
+                <span class="status-badge" [ngClass]="{
+                  'pending': booking.status === 'Đang chờ xử lý',
+                  'checked-in': booking.status === 'Đã nhận phòng',
+                  'confirmed': booking.status === 'confirmed'
+                }">
+                  {{ booking.status }}
+                </span>
+              </div>
+            </div>
+
+            <div class="action-buttons">
+              <button class="btn-detail" (click)="showBookingDetails(booking)" data-text="Chi tiết"></button>
+              <button 
+                class="btn-cancel"
+                (click)="cancelBooking(booking.id)"
+                *ngIf="booking.status === 'Đang chờ xử lý' || booking.status === 'confirmed'"
+                data-text="Hủy">
+              </button>
+              <button 
+                class="btn-delete"
+                (click)="deleteBooking(booking.id)"
+                data-text="Xóa">
+              </button>
+              <button 
+                class="btn-checkin"
+                (click)="checkinBooking(booking.id)"
+                *ngIf="booking.status === 'Đang chờ xử lý' && isCheckInToday(booking)"
+                data-text="Check-in">
+              </button>
+              <button 
+                class="btn-checkout"
+                (click)="checkout(booking.id)"
+                *ngIf="booking.status === 'Đã nhận phòng'"
+                data-text="Checkout">
+              </button>
+            </div>
+
+            <div *ngIf="selectedBooking === booking" class="booking-details">
+              <div class="details-section">
+                <h5><i class="fas fa-bed"></i> Chi tiết phòng</h5>
+                <div class="room-details">
+                  <div *ngFor="let detail of booking.details" class="room-card">
+                    <div class="room-info">
+                      <div class="room-name">{{ detail.roomName || 'Đang tải...' }}</div>
+                      <div class="room-price">{{ detail.price | number:'1.0-0' }} ₫</div>
+                    </div>
+                    <div class="date-info">
+                      <div><i class="fas fa-calendar-check"></i> {{ detail.checkin.toDate() | date:'dd/MM/yyyy' }}</div>
+                      <div><i class="fas fa-calendar-times"></i> {{ detail.checkout.toDate() | date:'dd/MM/yyyy' }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="service-section">
+                <h5><i class="fas fa-concierge-bell"></i> Yêu cầu dịch vụ</h5>
+                <div class="service-grid">
+                  <div *ngFor="let request of serviceRequests" class="service-card">
+                    <div class="service-header">
+                      <span class="service-name">{{ request.nameService }}</span>
+                      <span class="service-status">{{ request.status }}</span>
+                    </div>
+                    <div class="service-info">
+                      <div><i class="fas fa-door-open"></i> Phòng: {{ request.nameRoom }}</div>
+                      <div><i class="fas fa-hashtag"></i> Số lượng: {{ request.quantity }}</div>
+                      <div><i class="fas fa-tag"></i> Đơn giá: {{ request.price }}</div>
+                      <div><i class="fas fa-money-bill-wave"></i> Thành tiền: {{ request.price * request.quantity }}</div>
+                      <div><i class="fas fa-calendar-day"></i> {{ request.bookingTime | date:'dd/MM/yyyy' }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noBookings>
+      <div class="no-bookings">
+        <i class="fas fa-calendar-times"></i>
+        <p>Bạn chưa có đặt phòng nào.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
