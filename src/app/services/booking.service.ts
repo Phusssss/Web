@@ -11,7 +11,6 @@ import { forkJoin } from 'rxjs';
 // Define interfaces for better type safety
 interface User {
   uid: string;
-  // Add other user properties as needed
 }
 interface RevenueStats {
   total: number;
@@ -23,7 +22,6 @@ interface RevenueStats {
     roomName?: string;
   }>;
 }
-
 interface Invoice {
   id: string;
   date: Date;
@@ -37,22 +35,26 @@ interface Invoice {
     price: number;
   }>;
 }
-
 interface RoomDetail {
   idRoom: string;
-  roomName : string;
+  roomName: string;
   price: number;
   checkin: string;
   checkout: string;
 }
-
 interface DetailBooking {
   idBooking: string;
   idRoom: string;
   price: number;
   checkin: Timestamp;
   checkout: Timestamp;
-  
+  status: string;
+}
+interface Event {
+  roomName: string;
+  customerName: string;
+  eventType: 'Check-in' | 'Check-out';
+  time: Date;
 }
 
 @Injectable({
@@ -66,8 +68,7 @@ export class BookingService {
   ) {}
 
   checkin(bookingId: string): Observable<any> {
-    console.log('checkin called with bookingId:', bookingId); // Debug log
-  
+    console.log('checkin called with bookingId:', bookingId);
     return this.firestore.collection('detailbooking', ref =>
       ref.where('idBooking', '==', bookingId)
     ).get().pipe(
@@ -76,29 +77,18 @@ export class BookingService {
         const updatePromises = snapshot.docs.map(doc => {
           const detailBooking = doc.data() as DetailBooking;
           const roomId = detailBooking.idRoom;
-  
-          console.log('Updating room with id:', roomId, 'for bookingId:', bookingId);
-  
-          // Cập nhật trạng thái của phòng
           const roomUpdate = this.firestore.collection('rooms').doc(roomId).update({
             currentBookingId: bookingId,
             status: 'Đã nhận phòng'
           });
-  
-          // Cập nhật trạng thái của từng detailbooking
           const detailBookingUpdate = this.firestore.collection('detailbooking').doc(doc.id).update({
             status: 'Đã nhận phòng'
           });
-  
           return Promise.all([roomUpdate, detailBookingUpdate]);
         });
-  
-        // Cập nhật trạng thái của booking chính
         const bookingUpdate = this.firestore.collection('booking')
           .doc(bookingId)
           .update({ status: 'Đã nhận phòng' });
-  
-        // Chờ tất cả cập nhật hoàn tất
         return from(Promise.all([...updatePromises, bookingUpdate]));
       }),
       map(() => ({
@@ -107,7 +97,7 @@ export class BookingService {
       }))
     );
   }
-  // In BookingService class, add this new method
+
   deleteBooking(bookingId: string): Observable<any> {
     return from(
       this.firestore
@@ -121,16 +111,10 @@ export class BookingService {
             message: 'No detail bookings found, deleting main booking only'
           });
         }
-  
-        // Delete all detail bookings
         const detailDeletePromises = snapshot.docs.map(doc =>
           this.firestore.collection('detailbooking').doc(doc.id).delete()
         );
-  
-        // Delete the main booking
         const bookingDelete = this.firestore.collection('booking').doc(bookingId).delete();
-  
-        // Execute all delete operations
         return from(Promise.all([...detailDeletePromises, bookingDelete])).pipe(
           map(() => ({
             status: 'success',
@@ -148,6 +132,7 @@ export class BookingService {
       })
     );
   }
+
   getAvailableRooms(
     roomTypeId: string, 
     checkinDate: Date, 
@@ -162,7 +147,6 @@ export class BookingService {
         return { id, ...data };
       }))
     );
-  
     const bookingsQuery = this.firestore.collection('detailbooking').snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as any;
@@ -170,36 +154,25 @@ export class BookingService {
         return { id, ...data };
       }))
     );
-  
     return combineLatest([roomsQuery, bookingsQuery]).pipe(
       map(([rooms, bookings]) => {
         const checkinTimestamp = Timestamp.fromDate(checkinDate);
         const checkoutTimestamp = Timestamp.fromDate(checkoutDate);
-  
-        // Lọc phòng khả dụng
         const availableRooms = rooms.filter(room => {
           const roomBookings = bookings.filter(booking => booking.idRoom === room.id);
-  
-          // Kiểm tra trạng thái hợp lệ
           const hasBookingWithValidStatus = roomBookings.some(booking => 
             booking.status === 'Đã thanh toán' || booking.status === 'cancelled'
           );
-  
           if (hasBookingWithValidStatus) {
             return true;
           }
-  
-          // Kiểm tra trùng lặp thời gian
           const hasOverlap = roomBookings.some(booking => {
             const bookingCheckin = booking.checkin.toDate();
             const bookingCheckout = booking.checkout.toDate();
             return !(checkoutDate <= bookingCheckin || checkinDate >= bookingCheckout);
           });
-  
           return !hasOverlap;
         });
-  
-        // Tính toán khoảng trống và sắp xếp phòng
         const optimizedRooms = availableRooms.map(room => {
           const roomBookings = bookings
             .filter(booking => booking.idRoom === room.id && booking.status !== 'cancelled')
@@ -208,16 +181,11 @@ export class BookingService {
               checkout: booking.checkout.toDate()
             }))
             .sort((a, b) => a.checkin.getTime() - b.checkin.getTime());
-  
-          // Tính tổng số ngày trống nếu đặt phòng mới
           let totalGapDays = 0;
           let previousCheckout = new Date();
           previousCheckout.setHours(0, 0, 0, 0);
-  
-          // Giả sử đặt phòng mới
           const newBooking = { checkin: checkinDate, checkout: checkoutDate };
           const allBookings = [...roomBookings, newBooking].sort((a, b) => a.checkin.getTime() - b.checkin.getTime());
-  
           for (let i = 0; i < allBookings.length; i++) {
             const currentBooking = allBookings[i];
             if (i === 0) {
@@ -232,17 +200,13 @@ export class BookingService {
             }
             previousCheckout = currentBooking.checkout;
           }
-  
           return { ...room, totalGapDays };
         });
-  
-        // Sắp xếp phòng theo số ngày trống (ít nhất lên đầu)
         return optimizedRooms.sort((a, b) => a.totalGapDays - b.totalGapDays);
       })
     );
   }
-  
-  
+
   getUserBookings(): Observable<any[]> {
     return this.authService.getUser().pipe(
       take(1),
@@ -250,7 +214,6 @@ export class BookingService {
         if (!user) {
           throw new Error('Vui lòng đăng nhập để xem danh sách đặt phòng!');
         }
-  
         return this.firestore.collection('booking', ref => 
           ref.where('idUser', '==', user.uid)
         ).snapshotChanges().pipe(
@@ -260,7 +223,6 @@ export class BookingService {
               const id = a.payload.doc.id;
               return { id, ...data };
             });
-            
             return combineLatest(
               bookings.map((booking) =>
                 this.firestore.collection('detailbooking', ref =>
@@ -278,33 +240,28 @@ export class BookingService {
       })
     );
   }
+
   markAsPaid(bookingId: string): Promise<void> {
     return this.firestore.collection('booking').doc(bookingId).update({
       status: 'Đã thanh toán'
     });
   }
+
   cancelBooking(bookingId: string): Promise<void> {
     return this.firestore.collection('detailbooking', ref =>
       ref.where('idBooking', '==', bookingId)
     ).get().toPromise().then(snapshot => {
-      // Kiểm tra xem snapshot.docs có tồn tại và không phải undefined
       if (!snapshot || !snapshot.docs) {
         throw new Error('Không tìm thấy thông tin chi tiết đặt phòng');
       }
-  
-      // Tạo một danh sách các Promise để cập nhật trạng thái của tất cả các detailbooking
       const updatePromises = snapshot.docs.map(doc => {
         return this.firestore.collection('detailbooking').doc(doc.id).update({
           status: 'cancelled'
         });
       });
-  
-      // Cập nhật trạng thái của booking chính thành 'cancelled'
       const bookingUpdate = this.firestore.collection('booking').doc(bookingId).update({
         status: 'cancelled'
       });
-  
-      // Chờ tất cả các cập nhật hoàn tất
       return Promise.all([...updatePromises, bookingUpdate]).then(() => {
         console.log('Booking and detail bookings have been cancelled.');
       });
@@ -313,7 +270,7 @@ export class BookingService {
       throw new Error('Lỗi khi hủy đặt phòng');
     });
   }
-  
+
   getDetailBookingById(bookingId: string): Observable<any[]> {
     return this.firestore.collection('detailbooking', ref =>
       ref.where('idBooking', '==', bookingId)
@@ -322,8 +279,6 @@ export class BookingService {
         const detailsObservable = actions.map(a => {
           const data = a.payload.doc.data() as any;
           const id = a.payload.doc.id;
-  
-          // Fetch room name from the rooms collection using idRoom
           const roomObservable = this.firestore.collection('rooms').doc(data.idRoom).get().pipe(
             map(roomDoc => {
               if (roomDoc.exists) {
@@ -334,7 +289,6 @@ export class BookingService {
               }
             })
           );
-  
           return roomObservable.pipe(
             map(roomName => {
               data.roomName = roomName;
@@ -342,16 +296,16 @@ export class BookingService {
             })
           );
         });
-  
-        return forkJoin(detailsObservable); // forkJoin to handle all room fetches
+        return forkJoin(detailsObservable);
       })
     );
   }
+
   createBooking(
     roomDetails: RoomDetail[],
     totalCost: number,
     customerId: string,
-    customerName: string // Thêm tham số customerName
+    customerName: string
   ): Observable<any> {
     return this.authService.getUser().pipe(
       take(1),
@@ -359,17 +313,12 @@ export class BookingService {
         if (!user) {
           throw new Error('Vui lòng đăng nhập để đặt phòng!');
         }
-  
         const date = new Date();
-  
-        // Chuyển đổi ngày checkin & checkout thành Timestamp
         const roomDetailsWithTimestamp = roomDetails.map(roomDetail => ({
           ...roomDetail,
           checkin: Timestamp.fromDate(new Date(roomDetail.checkin)),
           checkout: Timestamp.fromDate(new Date(roomDetail.checkout)),
         }));
-  
-        // Tạo ID booking mới
         const bookingRef = this.firestore.collection('booking').doc();
         const bookingData = {
           date: date,
@@ -377,12 +326,10 @@ export class BookingService {
           idUser: user.uid,
           status: 'Đang chờ xử lý',
           customerId: customerId,
-          customerName: customerName // Lưu tên khách hàng vào booking
+          customerName: customerName
         };
-  
         return from(bookingRef.set(bookingData)).pipe(
           switchMap(() => {
-            // Tạo danh sách promises để lưu từng booking detail
             const detailBookingsPromises = roomDetailsWithTimestamp.map((roomDetail) => {
               const detailBookingData = {
                 idBooking: bookingRef.ref.id,
@@ -393,10 +340,8 @@ export class BookingService {
                 checkout: roomDetail.checkout,
                 status: 'Chờ xác nhận'
               };
-  
               return this.firestore.collection('detailbooking').add(detailBookingData);
             });
-  
             return from(Promise.all(detailBookingsPromises)).pipe(
               map(() => ({
                 bookingId: bookingRef.ref.id,
@@ -408,5 +353,77 @@ export class BookingService {
       })
     );
   }
-  
+
+  getTodayCheckInOut(): Observable<Event[]> {
+    return this.authService.getUser().pipe(
+      take(1),
+      switchMap((user: User | null) => {
+        if (!user) {
+          throw new Error('Vui lòng đăng nhập để xem thông báo check-in/check-out!');
+        }
+        const today = new Date('2025-05-02'); // Fixed date based on context
+        const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+        const startTimestamp = Timestamp.fromDate(startOfDay);
+        const endTimestamp = Timestamp.fromDate(endOfDay);
+        return this.firestore.collection('detailbooking', ref =>
+          ref.where('checkin', '>=', startTimestamp)
+             .where('checkin', '<=', endTimestamp)
+        ).snapshotChanges().pipe(
+          switchMap(checkinActions => {
+            const checkinEvents = checkinActions.map(a => {
+              const data = a.payload.doc.data() as any;
+              return { idBooking: data.idBooking, idRoom: data.idRoom, eventType: 'Check-in' as const, time: data.checkin };
+            });
+            return this.firestore.collection('detailbooking', ref =>
+              ref.where('checkout', '>=', startTimestamp)
+                 .where('checkout', '<=', endTimestamp)
+            ).snapshotChanges().pipe(
+              switchMap(checkoutActions => {
+                const checkoutEvents = checkoutActions.map(a => {
+                  const data = a.payload.doc.data() as any;
+                  return { idBooking: data.idBooking, idRoom: data.idRoom, eventType: 'Check-out' as const, time: data.checkout };
+                });
+                const allEvents = [...checkinEvents, ...checkoutEvents];
+                if (!allEvents.length) {
+                  return of([] as Event[]);
+                }
+                const eventObservables = allEvents.map(event =>
+                  combineLatest([
+                    this.firestore.collection('rooms').doc(event.idRoom).get().pipe(
+                      map(roomDoc => {
+                        if (roomDoc.exists) {
+                          const roomData = roomDoc.data() as { name: string };
+                          return roomData?.name || 'Room not found';
+                        }
+                        return 'Room not found';
+                      })
+                    ),
+                    this.firestore.collection('booking').doc(event.idBooking).get().pipe(
+                      map(bookingDoc => {
+                        if (bookingDoc.exists) {
+                          const bookingData = bookingDoc.data() as { customerName: string };
+                          return bookingData?.customerName || 'Unknown Customer';
+                        }
+                        return 'Unknown Customer';
+                      })
+                    )
+                  ]).pipe(
+                    map(([roomName, customerName]) => ({
+                      roomName,
+                      customerName,
+                      eventType: event.eventType,
+                      time: event.time.toDate(),
+                    } as Event))
+                  )
+                );
+                return forkJoin(eventObservables);
+              })
+            );
+          }),
+          map((events: Event[]) => events.sort((a: Event, b: Event) => a.time.getTime() - b.time.getTime()))
+        );
+      })
+    );
+  }
 }

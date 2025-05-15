@@ -1,6 +1,6 @@
 <div class="main-content">
   <div class="container">
-    <div class="table-container">
+    <div class="header-container">
       <h3 class="table-title"><i class="fas fa-users"></i> Danh sách khách hàng</h3>
       <div class="toolbar-container">
         <div class="search-container">
@@ -28,6 +28,8 @@
           </button>
         </div>
       </div>
+    </div>
+    <div class="table-container">
       <table class="service-table" *ngIf="!isLoading; else loadingTemplate">
         <thead>
           <tr>
@@ -42,23 +44,23 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let customer of customers; trackBy: trackByCustomerId" (click)="toggleSelection(customer.id)">
-            <td>
+          <tr *ngFor="let customer of paginatedCustomers; trackBy: trackByCustomerId" (click)="toggleSelection(customer.id)">
+            <td data-label="Chọn">
               <input
                 type="radio"
                 [checked]="customer.selected"
                 (change)="toggleSelection(customer.id)"
               />
             </td>
-            <td>{{ customer.name }}</td>
-            <td>{{ customer.email }}</td>
-            <td>{{ customer.phone }}</td>
-            <td>{{ customer.address }}</td>
-            <td>{{ customer.status }}</td>
-            <td>{{ customer.cccd }}</td>
-            <td>{{ customer.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td data-label="Tên khách hàng">{{ customer.name }}</td>
+            <td data-label="Email">{{ customer.email }}</td>
+            <td data-label="Số điện thoại">{{ customer.phone }}</td>
+            <td data-label="Địa chỉ">{{ customer.address }}</td>
+            <td data-label="Trạng thái">{{ customer.status === 'active' ? 'Hoạt động' : 'Không hoạt động' }}</td>
+            <td data-label="CCCD">{{ customer.cccd }}</td>
+            <td data-label="Ngày tạo">{{ customer.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
           </tr>
-          <tr *ngIf="customers.length === 0">
+          <tr *ngIf="paginatedCustomers.length === 0">
             <td colspan="8" class="no-data">
               <i class="fas fa-info-circle"></i> Chưa có khách hàng nào
             </td>
@@ -68,8 +70,32 @@
       <ng-template #loadingTemplate>
         <div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</div>
       </ng-template>
+      <div class="pagination-container">
+        <div class="record-count">
+          Hiển thị {{ paginatedCustomers.length }} / {{ filteredCustomers.length }} khách hàng
+        </div>
+        <div class="pagination">
+          <button
+            class="btn-pagination"
+            [disabled]="currentPage === 1"
+            (click)="previousPage()"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <span class="page-info">
+            Trang {{ currentPage }} / {{ totalPages }}
+          </span>
+          <button
+            class="btn-pagination"
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()"
+          >
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
     </div>
-    
+
     <!-- Modal for Add/Edit -->
     <div class="modal" *ngIf="showModal">
       <div class="modal-overlay" (click)="closeModal()"></div>
@@ -97,7 +123,6 @@
               Tên khách hàng phải dài ít nhất 2 ký tự
             </span>
           </div>
-          
           <div class="form-group">
             <input
               formControlName="email"
@@ -119,7 +144,6 @@
               Email không hợp lệ
             </span>
           </div>
-          
           <div class="form-group">
             <input
               formControlName="phone"
@@ -141,7 +165,6 @@
               Số điện thoại phải có 10-11 chữ số
             </span>
           </div>
-          
           <div class="form-group">
             <input
               formControlName="address"
@@ -157,7 +180,6 @@
               Địa chỉ là bắt buộc
             </span>
           </div>
-          
           <div class="form-group">
             <select
               formControlName="status"
@@ -174,7 +196,6 @@
               Trạng thái là bắt buộc
             </span>
           </div>
-          
           <div class="form-group">
             <input
               formControlName="cccd"
@@ -196,37 +217,34 @@
               CCCD phải có 9-12 chữ số
             </span>
           </div>
-          
           <div class="form-group" *ngIf="isEditMode">
+            <label>Ngày tạo:</label>
             <input
               formControlName="createdAt"
               type="text"
-              placeholder="Ngày tạo"
               class="form-control"
               readonly
             />
           </div>
-          
           <div class="form-group" *ngIf="isEditMode">
+            <label>Ngày cập nhật:</label>
             <input
               formControlName="updatedAt"
               type="text"
-              placeholder="Ngày cập nhật"
               class="form-control"
               readonly
             />
           </div>
-          
           <div class="modal-actions">
             <button type="button" class="btn-cancel" (click)="closeModal()">Hủy</button>
-            <button type="submit" class="btn-save" [disabled]="isFormInvalid">
+            <button type="submit" class="btn-save" [disabled]="customerForm.invalid">
               {{ isEditMode ? 'Cập nhật' : 'Thêm' }}
             </button>
           </div>
         </form>
       </div>
     </div>
-    
+
     <!-- Modal for View Details -->
     <div class="modal" *ngIf="showViewModal">
       <div class="modal-overlay" (click)="closeViewModal()"></div>
@@ -272,7 +290,7 @@
           <label>Trạng thái:</label>
           <input
             type="text"
-            [value]="selectedCustomer?.status || ''"
+            [value]="selectedCustomer?.status === 'active' ? 'Hoạt động' : 'Không hoạt động'"
             class="form-control"
             readonly
           />

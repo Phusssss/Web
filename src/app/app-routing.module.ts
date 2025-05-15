@@ -23,6 +23,10 @@ import { StaffComponent } from './staff/staff.component';
 import { SelectStaffComponent } from './select-staff/select-staff.component';
 import { SetAccountComponent } from './set-account/set-account.component';
 import { ChatComponent } from './chat/chat.component';
+import { ExpenseManagementComponent } from './expense-management/expense-management.component';
+import { FundStatisticsComponent } from './fund-statistics/fund-statistics.component';
+import { GoodsReceiptComponent } from './goods-receipt/goods-receipt.component';
+import { GoodsIssueComponent } from './goods-issue/goods-issue.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -53,6 +57,10 @@ const routes: Routes = [
       { path: 'notifications', component: NotificationsComponent },
       { path: '', redirectTo: 'home1', pathMatch: 'full' } ,// Trang mặc định khi đăng nhập
       { path: 'chat', component: ChatComponent }, // Add chat route with recipientId param
+      { path: 'expense-management', component: ExpenseManagementComponent }, 
+      { path: 'fund-statistics', component: FundStatisticsComponent },
+      { path: 'goods-receipt', component: GoodsReceiptComponent },
+  { path: 'goods-issue', component: GoodsIssueComponent },
     ]
   },
   { path: '**', redirectTo: 'login' }

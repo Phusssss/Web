@@ -1,0 +1,72 @@
+<div class="main-content">
+    <div class="container">
+      <div class="table-container">
+        <h3 class="table-title"><i class="fas fa-wallet"></i> Thống kê tồn quỹ</h3>
+        <div class="summary">
+          <h4>Tồn quỹ hiện tại: {{ balance | currency: 'VND' }}</h4>
+        </div>
+        <div class="toolbar-container">
+          <div class="search-container">
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Tìm kiếm giao dịch..."
+              [(ngModel)]="searchQuery"
+              (input)="onSearch()"
+            />
+            <i class="fas fa-search search-icon"></i>
+          </div>
+          <div class="filter-container">
+            <form [formGroup]="fundForm" (ngSubmit)="onFilter()">
+              <div class="form-group">
+                <label>Từ ngày:</label>
+                <input
+                  formControlName="startDate"
+                  type="date"
+                  class="form-control"
+                />
+              </div>
+              <div class="form-group">
+                <label>Đến ngày:</label>
+                <input
+                  formControlName="endDate"
+                  type="date"
+                  class="form-control"
+                />
+              </div>
+              <div class="filter-actions">
+                <button type="submit" class="btn-filter">Lọc</button>
+                <button type="button" class="btn-reset" (click)="resetFilter()">Xóa bộ lọc</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <table class="fund-table" *ngIf="!isLoading; else loadingTemplate">
+          <thead>
+            <tr>
+              <th>Loại</th>
+              <th>Mô tả</th>
+              <th>Số tiền (VND)</th>
+              <th>Ngày</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let transaction of filteredTransactions; trackBy: trackByTransactionId">
+              <td>{{ transaction.type === 'income' ? 'Thu nhập' : 'Chi tiêu' }}</td>
+              <td>{{ transaction.description }}</td>
+              <td>{{ transaction.amount | currency: 'VND' }}</td>
+              <td>{{ transaction.date | date: 'dd/MM/yyyy' }}</td>
+            </tr>
+            <tr *ngIf="filteredTransactions.length === 0">
+              <td colspan="4" class="no-data">
+                <i class="fas fa-info-circle"></i> Chưa có giao dịch nào
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #loadingTemplate>
+          <div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</div>
+        </ng-template>
+      </div>
+    </div>
+  </div>

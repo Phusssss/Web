@@ -12,6 +12,7 @@ export class StaffComponent implements OnInit {
   staffForm: FormGroup;
   staffList: any[] = [];
   originalStaffList: any[] = [];
+  filteredStaffList: any[] = [];
   isLoading = false;
   selectedStaffId: string | null = null;
   selectedStaff: any = null;
@@ -20,6 +21,11 @@ export class StaffComponent implements OnInit {
   isEditMode = false;
   searchQuery: string = '';
   currentUserUid: string = '';
+
+  // Pagination properties
+  currentPage: number = 1;
+  pageSize: number = 10;
+  totalPages: number = 1;
 
   constructor(
     private fb: FormBuilder,
@@ -32,7 +38,7 @@ export class StaffComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.minLength(6)]],
       name: ['', [Validators.required, Validators.minLength(2)]],
-      phone: ['', [Validators.pattern(/^\d{10,11}$/)]], // Updated to allow 10-11 digits
+      phone: ['', [Validators.pattern(/^\d{10,11}$/)]],
       address: [''],
       gender: [''],
       birthday: [''],
@@ -62,7 +68,8 @@ export class StaffComponent implements OnInit {
           updatedAt: staff.updatedAt || null,
           selected: false
         }));
-        this.staffList = [...this.originalStaffList];
+        this.filteredStaffList = [...this.originalStaffList];
+        this.updatePagination();
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -70,31 +77,59 @@ export class StaffComponent implements OnInit {
         console.error('Lỗi khi lấy danh sách nhân viên:', error);
         alert('Không thể tải danh sách nhân viên. Vui lòng thử lại.');
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     );
   }
 
+  updatePagination(): void {
+    this.totalPages = Math.ceil(this.filteredStaffList.length / this.pageSize) || 1;
+    this.currentPage = 1;
+    this.applyPagination();
+  }
+
+  applyPagination(): void {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.staffList = this.filteredStaffList.slice(startIndex, endIndex);
+    this.staffList.forEach(staff => (staff.selected = false));
+    this.selectedStaffId = null;
+    this.selectedStaff = null;
+    this.cdr.detectChanges();
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.applyPagination();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.applyPagination();
+    }
+  }
+
   onSearch(): void {
     this.zone.run(() => {
-      if (!this.searchQuery.trim()) {
-        this.staffList = [...this.originalStaffList];
+      const query = this.searchQuery.trim().toLowerCase();
+      if (!query) {
+        this.filteredStaffList = [...this.originalStaffList];
       } else {
-        const query = this.searchQuery.trim().toLowerCase();
-        this.staffList = this.originalStaffList.filter(staff =>
-          staff.name.toLowerCase().includes(query) ||
-          staff.email.toLowerCase().includes(query)
+        this.filteredStaffList = this.originalStaffList.filter(staff =>
+          (staff.name?.toLowerCase().includes(query) || '') ||
+          (staff.email?.toLowerCase().includes(query) || '')
         );
       }
-      this.staffList.forEach(staff => staff.selected = false);
-      this.selectedStaffId = null;
-      this.selectedStaff = null;
-      this.cdr.detectChanges();
+      this.updatePagination();
     });
   }
 
   toggleSelection(staffId: string): void {
     this.zone.run(() => {
-      this.staffList.forEach(staff => staff.selected = false);
+      this.staffList.forEach(staff => (staff.selected = false));
       const selectedStaff = this.staffList.find(staff => staff.uid === staffId);
       if (selectedStaff) {
         selectedStaff.selected = true;
@@ -129,7 +164,7 @@ export class StaffComponent implements OnInit {
           gender: staff.gender,
           birthday: staff.birthday ? new Date(staff.birthday).toISOString().split('T')[0] : '',
           pin: staff.pin,
-          createdAt: new Date(staff.createdAt).toLocaleString(),
+          createdAt: staff.createdAt ? new Date(staff.createdAt).toLocaleString() : '',
           updatedAt: staff.updatedAt ? new Date(staff.updatedAt).toLocaleString() : 'Chưa cập nhật'
         });
         this.staffForm.get('password')?.clearValidators();
@@ -209,6 +244,7 @@ export class StaffComponent implements OnInit {
       alert('Lỗi khi lưu nhân viên: ' + (error.message || 'Vui lòng thử lại.'));
     } finally {
       this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -231,6 +267,7 @@ export class StaffComponent implements OnInit {
         alert('Lỗi khi xóa nhân viên: ' + (error.message || 'Vui lòng thử lại.'));
       } finally {
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     }
   }

@@ -1,0 +1,148 @@
+<div class="main-content">
+    <div class="container">
+      <div class="table-container">
+        <h3 class="table-title"><i class="fas fa-arrow-up"></i> Quản lý phiếu xuất hàng</h3>
+        <div class="toolbar-container">
+          <div class="search-container">
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Tìm kiếm phiếu xuất..."
+              [(ngModel)]="searchQuery"
+              (input)="onSearch()"
+            />
+            <i class="fas fa-search search-icon"></i>
+          </div>
+          <div class="action-container">
+            <button class="btn-add" (click)="openAddModal()">
+              <i class="fas fa-plus"></i> Thêm mới
+            </button>
+            <button class="btn-edit" [disabled]="isEditDeleteDisabled" (click)="openEditModal()">
+              <i class="fas fa-edit"></i> Sửa
+            </button>
+            <button class="btn-delete" [disabled]="isEditDeleteDisabled" (click)="deleteIssue()">
+              <i class="fas fa-trash"></i> Xóa
+            </button>
+            <button class="btn-view" [disabled]="isEditDeleteDisabled" (click)="openViewModal()">
+              <i class="fas fa-eye"></i> Xem
+            </button>
+          </div>
+        </div>
+        <table class="data-table" *ngIf="!isLoading; else loadingTemplate">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Mô tả</th>
+              <th>Số lượng</th>
+              <th>Ngày xuất</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let issue of issues; trackBy: trackByIssueId"
+              [ngClass]="{ selected: issue.selected }"
+              (click)="toggleSelection(issue.id)"
+            >
+              <td>
+                <input
+                  type="checkbox"
+                  [checked]="issue.selected"
+                  (click)="toggleSelection(issue.id)"
+                />
+              </td>
+              <td>{{ issue.description }}</td>
+              <td>{{ issue.quantity }}</td>
+              <td>{{ issue.date | date: 'dd/MM/yyyy' }}</td>
+            </tr>
+            <tr *ngIf="issues.length === 0">
+              <td colspan="4" class="no-data">
+                <i class="fas fa-info-circle"></i> Chưa có phiếu xuất hàng nào
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #loadingTemplate>
+          <div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</div>
+        </ng-template>
+      </div>
+  
+      <!-- Modal for Add/Edit -->
+      <div class="modal" *ngIf="showModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>{{ isEditMode ? 'Sửa phiếu xuất hàng' : 'Thêm phiếu xuất hàng' }}</h3>
+            <button class="btn-close" (click)="closeModal()">×</button>
+          </div>
+          <form [formGroup]="issueForm" (ngSubmit)="saveIssue()">
+            <div class="modal-body">
+              <div class="form-group">
+                <label>Mô tả:</label>
+                <input formControlName="description" class="form-control" />
+                <div
+                  class="error"
+                  *ngIf="issueForm.get('description')?.touched && issueForm.get('description')?.errors"
+                >
+                  Vui lòng nhập mô tả (ít nhất 5 ký tự).
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Số lượng:</label>
+                <input formControlName="quantity" type="number" class="form-control" />
+                <div
+                  class="error"
+                  *ngIf="issueForm.get('quantity')?.touched && issueForm.get('quantity')?.errors"
+                >
+                  Vui lòng nhập số lượng hợp lệ (số nguyên dương).
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Ngày xuất:</label>
+                <input formControlName="date" type="date" class="form-control" />
+                <div
+                  class="error"
+                  *ngIf="issueForm.get('date')?.touched && issueForm.get('date')?.errors"
+                >
+                  Vui lòng chọn ngày xuất.
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Ngày tạo:</label>
+                <input formControlName="createdAt" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label>Ngày cập nhật:</label>
+                <input formControlName="updatedAt" class="form-control" />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn-save" [disabled]="isFormInvalid || isLoading">
+                {{ isEditMode ? 'Cập nhật' : 'Lưu' }}
+              </button>
+              <button type="button" class="btn-cancel" (click)="closeModal()">Hủy</button>
+            </div>
+          </form>
+        </div>
+      </div>
+  
+      <!-- Modal for View -->
+      <div class="modal" *ngIf="showViewModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Chi tiết phiếu xuất hàng</h3>
+            <button class="btn-close" (click)="closeViewModal()">×</button>
+          </div>
+          <div class="modal-body">
+            <p><strong>Mô tả:</strong> {{ selectedIssue?.description }}</p>
+            <p><strong>Số lượng:</strong> {{ selectedIssue?.quantity }}</p>
+            <p><strong>Ngày xuất:</strong> {{ selectedIssue?.date | date: 'dd/MM/yyyy' }}</p>
+            <p><strong>Ngày tạo:</strong> {{ selectedIssue?.createdAt | date: 'dd/MM/yyyy HH:mm:ss' }}</p>
+            <p><strong>Ngày cập nhật:</strong> {{ selectedIssue?.updatedAt ? (selectedIssue.updatedAt | date: 'dd/MM/yyyy HH:mm:ss') : 'Chưa cập nhật' }}</p>
+            <p><strong>Người tạo:</strong> {{ selectedIssue?.userId }}</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-cancel" (click)="closeViewModal()">Đóng</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

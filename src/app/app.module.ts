@@ -48,6 +48,10 @@ import { SelectStaffComponent } from './select-staff/select-staff.component';
 import { PinModalComponent } from './pin-modal/pin-modal.component';
 import { SetAccountComponent } from './set-account/set-account.component';
 import { ChatComponent } from './chat/chat.component';
+import { ExpenseManagementComponent } from './expense-management/expense-management.component';
+import { FundStatisticsComponent } from './fund-statistics/fund-statistics.component';
+import { GoodsReceiptComponent } from './goods-receipt/goods-receipt.component';
+import { GoodsIssueComponent } from './goods-issue/goods-issue.component';
 
 @NgModule({
   declarations: [
@@ -83,7 +87,11 @@ import { ChatComponent } from './chat/chat.component';
     SelectStaffComponent,
     PinModalComponent,
     SetAccountComponent,
-    ChatComponent
+    ChatComponent,
+    ExpenseManagementComponent,
+    FundStatisticsComponent,
+    GoodsReceiptComponent,
+    GoodsIssueComponent
   ],
   imports: [
     BrowserModule,

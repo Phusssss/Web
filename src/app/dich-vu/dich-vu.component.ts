@@ -9,15 +9,19 @@ import { DichVuService } from '../services/dichvu.service';
 })
 export class DichVuComponent implements OnInit {
   dichVuForm: FormGroup;
-  dichVus: any[] = [];
-  originalDichVus: any[] = []; // Store the original unfiltered list
-  isLoading = false;
+  originalDichVus: any[] = [];
+  filteredDichVus: any[] = [];
+  paginatedDichVus: any[] = [];
+  isLoading: boolean = false;
   selectedDichVuId: string | null = null;
   selectedDichVu: any = null;
-  showModal = false;
-  showViewModal = false;
-  isEditMode = false;
-  searchQuery: string = ''; // Bind to search input
+  showModal: boolean = false;
+  showViewModal: boolean = false;
+  isEditMode: boolean = false;
+  searchQuery: string = '';
+  currentPage: number = 1;
+  pageSize: number = 10;
+  totalPages: number = 1;
 
   constructor(
     private fb: FormBuilder,
@@ -42,7 +46,7 @@ export class DichVuComponent implements OnInit {
     this.isLoading = true;
     this.dichVuService.getDichVus().subscribe(
       (dichVus) => {
-        this.originalDichVus = dichVus.map((dichVu) => {
+        this.originalDichVus = dichVus.map((dichVu: any) => {
           const data = dichVu.payload.doc.data();
           return {
             id: dichVu.payload.doc.id,
@@ -53,49 +57,78 @@ export class DichVuComponent implements OnInit {
             selected: false,
           };
         });
-        this.dichVus = [...this.originalDichVus]; // Initialize with original list
+        this.filteredDichVus = [...this.originalDichVus];
+        this.updatePagination();
         this.isLoading = false;
         this.cdr.detectChanges();
       },
       (error) => {
-        console.error('Lỗi khi lấy danh sách dịch vụ:', error);
+        alert('Không thể tải danh sách dịch vụ: ' + (error.message || 'Vui lòng thử lại.'));
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     );
+  }
+
+  updatePagination(): void {
+    this.totalPages = Math.ceil(this.filteredDichVus.length / this.pageSize) || 1;
+    this.currentPage = Math.min(this.currentPage, this.totalPages);
+    this.applyPagination();
+  }
+
+  applyPagination(): void {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.paginatedDichVus = this.filteredDichVus.slice(startIndex, endIndex);
+    this.paginatedDichVus.forEach(dv => (dv.selected = false));
+    this.selectedDichVuId = null;
+    this.selectedDichVu = null;
+    this.cdr.detectChanges();
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.applyPagination();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.applyPagination();
+    }
   }
 
   onSearch(): void {
     this.zone.run(() => {
       if (!this.searchQuery.trim()) {
-        this.dichVus = [...this.originalDichVus]; // Reset to original list if search is empty
+        this.filteredDichVus = [...this.originalDichVus];
       } else {
         const query = this.searchQuery.trim().toLowerCase();
-        this.dichVus = this.originalDichVus.filter((dichVu) =>
-          dichVu.name.toLowerCase().includes(query) ||
-          dichVu.description.toLowerCase().includes(query)
+        this.filteredDichVus = this.originalDichVus.filter(
+          (dichVu) =>
+            dichVu.name.toLowerCase().includes(query) ||
+            dichVu.description.toLowerCase().includes(query)
         );
       }
-      // Reset selection when filtering
-      this.dichVus.forEach(dv => dv.selected = false);
-      this.selectedDichVuId = null;
-      this.selectedDichVu = null;
-      this.cdr.detectChanges();
+      this.currentPage = 1;
+      this.updatePagination();
     });
   }
 
   toggleSelection(dichVuId: string): void {
     this.zone.run(() => {
-      // Bỏ chọn tất cả trước
-      this.dichVus.forEach(dv => dv.selected = false);
-      
-      // Chọn dịch vụ hiện tại
-      const selectedDichVu = this.dichVus.find(dv => dv.id === dichVuId);
+      this.paginatedDichVus.forEach(dv => (dv.selected = false));
+      const selectedDichVu = this.paginatedDichVus.find(dv => dv.id === dichVuId);
       if (selectedDichVu) {
         selectedDichVu.selected = true;
         this.selectedDichVuId = dichVuId;
         this.selectedDichVu = selectedDichVu;
+      } else {
+        this.selectedDichVuId = null;
+        this.selectedDichVu = null;
       }
-      
       this.cdr.detectChanges();
     });
   }
@@ -109,23 +142,30 @@ export class DichVuComponent implements OnInit {
   openEditModal(): void {
     if (this.selectedDichVuId) {
       this.isEditMode = true;
-      const dichVu = this.dichVus.find((dv) => dv.id === this.selectedDichVuId);
+      const dichVu = this.paginatedDichVus.find((dv) => dv.id === this.selectedDichVuId);
       if (dichVu) {
         this.dichVuForm.patchValue({
           name: dichVu.name,
           description: dichVu.description,
           price: dichVu.price,
-          createdAt: new Date(dichVu.createdAt).toLocaleString(),
+          createdAt: dichVu.createdAt ? new Date(dichVu.createdAt).toLocaleString() : '',
           updatedAt: dichVu.updatedAt ? new Date(dichVu.updatedAt).toLocaleString() : 'Chưa cập nhật',
         });
         this.showModal = true;
+      } else {
+        alert('Không tìm thấy dịch vụ để chỉnh sửa.');
       }
+    } else {
+      alert('Vui lòng chọn một dịch vụ để chỉnh sửa.');
     }
   }
 
   openViewModal(): void {
     if (this.selectedDichVuId) {
+      this.selectedDichVu = this.paginatedDichVus.find(dv => dv.id === this.selectedDichVuId);
       this.showViewModal = true;
+    } else {
+      alert('Vui lòng chọn một dịch vụ để xem chi tiết.');
     }
   }
 
@@ -137,66 +177,69 @@ export class DichVuComponent implements OnInit {
 
   closeViewModal(): void {
     this.showViewModal = false;
+    this.selectedDichVu = null;
   }
 
   saveDichVu(): void {
-    if (this.dichVuForm.valid) {
-      this.isLoading = true;
-      const formValue = this.dichVuForm.value;
-      if (this.isEditMode && this.selectedDichVuId) {
-        this.dichVuService
-          .updateDichVu(this.selectedDichVuId, {
-            ...formValue,
-            updatedAt: new Date().toISOString(),
-          })
-          .subscribe(
-            () => {
-              this.getDichVus();
-              this.closeModal();
-              this.selectedDichVuId = null;
-              this.selectedDichVu = null;
-              this.isLoading = false;
-            },
-            (error) => {
-              console.error('Lỗi khi cập nhật dịch vụ:', error);
-              this.isLoading = false;
-            }
-          );
-      } else {
-        this.dichVuService
-          .addDichVu({
-            ...formValue,
-            createdAt: new Date().toISOString(),
-            updatedAt: null,
-          })
-          .subscribe(
-            () => {
-              this.getDichVus();
-              this.closeModal();
-              this.isLoading = false;
-            },
-            (error) => {
-              console.error('Lỗi khi thêm dịch vụ:', error);
-              this.isLoading = false;
-            }
-          );
-      }
+    if (this.dichVuForm.invalid) {
+      this.dichVuForm.markAllAsTouched();
+      alert('Vui lòng nhập đầy đủ và đúng thông tin.');
+      return;
     }
+
+    this.isLoading = true;
+    const formValue = this.dichVuForm.getRawValue();
+    const dichVuData = {
+      name: formValue.name,
+      description: formValue.description,
+      price: parseInt(formValue.price, 10),
+      createdAt: this.isEditMode ? undefined : new Date().toISOString(),
+      updatedAt: this.isEditMode ? new Date().toISOString() : null,
+    };
+
+    const operation = this.isEditMode && this.selectedDichVuId
+      ? this.dichVuService.updateDichVu(this.selectedDichVuId, dichVuData)
+      : this.dichVuService.addDichVu(dichVuData);
+
+    operation.subscribe(
+      () => {
+        alert(this.isEditMode ? 'Cập nhật dịch vụ thành công!' : 'Thêm dịch vụ thành công!');
+        this.getDichVus();
+        this.closeModal();
+        this.selectedDichVuId = null;
+        this.selectedDichVu = null;
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        alert('Lỗi khi lưu dịch vụ: ' + (error.message || 'Vui lòng thử lại.'));
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
+    );
   }
 
   deleteDichVu(): void {
-    if (this.selectedDichVuId && confirm('Bạn có chắc chắn muốn xóa dịch vụ này?')) {
+    if (!this.selectedDichVuId) {
+      alert('Vui lòng chọn một dịch vụ để xóa.');
+      return;
+    }
+
+    if (confirm('Bạn có chắc chắn muốn xóa dịch vụ này?')) {
       this.isLoading = true;
       this.dichVuService.deleteDichVu(this.selectedDichVuId).subscribe(
         () => {
+          alert('Xóa dịch vụ thành công!');
           this.getDichVus();
           this.selectedDichVuId = null;
           this.selectedDichVu = null;
           this.isLoading = false;
+          this.cdr.detectChanges();
         },
         (error) => {
-          console.error('Lỗi khi xóa dịch vụ:', error);
+          alert('Lỗi khi xóa dịch vụ: ' + (error.message || 'Vui lòng thử lại.'));
           this.isLoading = false;
+          this.cdr.detectChanges();
         }
       );
     }
@@ -204,10 +247,6 @@ export class DichVuComponent implements OnInit {
 
   get isEditDeleteDisabled(): boolean {
     return !this.selectedDichVuId;
-  }
-
-  get isFormInvalid(): boolean {
-    return this.dichVuForm.invalid;
   }
 
   trackByDichVuId(index: number, item: any): string {

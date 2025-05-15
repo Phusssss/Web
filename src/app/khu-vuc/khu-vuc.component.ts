@@ -18,18 +18,7 @@ export class KhuVucComponent implements OnInit {
   ngOnInit(): void {}
 
   // Hàm thêm khu vực mới
-  async addKhuVuc() {
-    try {
-      if (this.name && this.description) {
-        await this.khuVucService.addKhuVuc(this.name, this.description);
-        this.resetForm();
-      } else {
-        alert('Vui lòng nhập đủ thông tin khu vực!');
-      }
-    } catch (error) {
-      console.error('Error adding KhuVuc:', error);
-    }
-  }
+
 
   // Hàm chỉnh sửa khu vực
   async editKhuVuc() {

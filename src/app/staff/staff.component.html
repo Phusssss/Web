@@ -1,6 +1,6 @@
 <div class="main-content">
   <div class="container">
-    <div class="table-container">
+    <div class="header-container">
       <h3 class="table-title"><i class="fas fa-list"></i> Danh sách nhân viên</h3>
       <div class="toolbar-container">
         <div class="search-container">
@@ -28,6 +28,8 @@
           </button>
         </div>
       </div>
+    </div>
+    <div class="table-container">
       <table class="service-table" *ngIf="!isLoading; else loadingTemplate">
         <thead>
           <tr>
@@ -68,6 +70,30 @@
       <ng-template #loadingTemplate>
         <div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</div>
       </ng-template>
+      <div class="pagination-container">
+        <div class="record-count">
+          Hiển thị {{ staffList.length }} / {{ filteredStaffList.length }} nhân viên
+        </div>
+        <div class="pagination">
+          <button
+            class="btn-pagination"
+            [disabled]="currentPage === 1"
+            (click)="previousPage()"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <span class="page-info">
+            Trang {{ currentPage }} / {{ totalPages }}
+          </span>
+          <button
+            class="btn-pagination"
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()"
+          >
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Modal for Add/Edit -->

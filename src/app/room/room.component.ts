@@ -14,34 +14,46 @@ export class RoomComponent implements OnInit {
   roomForm: FormGroup;
   userRooms: any[] = [];
   filteredRooms: any[] = [];
+  paginatedRooms: any[] = [];
   selectedRoomId: string | null = null;
   selectedRoom: any = null;
   roomSearchTerm: string = '';
   isRoomModalOpen: boolean = false;
   isRoomViewModalOpen: boolean = false;
   isRoomEditMode: boolean = false;
+  roomCurrentPage: number = 1;
+  roomPageSize: number = 10;
+  roomTotalPages: number = 1;
 
   // Room Type properties
   loaiPhongForm: FormGroup;
   userLoaiPhong: any[] = [];
   filteredLoaiPhong: any[] = [];
+  paginatedLoaiPhong: any[] = [];
   selectedLoaiPhongId: string | null = null;
   selectedLoaiPhong: any = null;
   loaiPhongSearchTerm: string = '';
   isLoaiPhongModalOpen: boolean = false;
   isLoaiPhongViewModalOpen: boolean = false;
   isLoaiPhongEditMode: boolean = false;
+  loaiPhongCurrentPage: number = 1;
+  loaiPhongPageSize: number = 10;
+  loaiPhongTotalPages: number = 1;
 
   // Area properties
   khuVucForm: FormGroup;
   areaList: any[] = [];
   filteredAreas: any[] = [];
+  paginatedAreas: any[] = [];
   selectedAreaId: string | null = null;
   selectedArea: any = null;
   areaSearchTerm: string = '';
   isKhuVucModalOpen: boolean = false;
   isKhuVucViewModalOpen: boolean = false;
   isKhuVucEditMode: boolean = false;
+  areaCurrentPage: number = 1;
+  areaPageSize: number = 10;
+  areaTotalPages: number = 1;
 
   activeTab: string = 'room-types';
   isLoading: boolean = false;
@@ -71,7 +83,8 @@ export class RoomComponent implements OnInit {
 
     this.khuVucForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
-      description: ['']
+      description: [''],
+      sortOrder: [0, [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -83,14 +96,14 @@ export class RoomComponent implements OnInit {
     window.addEventListener('resize', this.checkScreenSize.bind(this));
   }
 
-  // Load and filter methods
+  // Load methods
   loadRooms(): void {
     this.isLoading = true;
     this.roomService.getUserRooms().subscribe(
       (rooms) => {
         this.userRooms = rooms.map(room => ({ ...room, selected: false }));
         this.filteredRooms = [...this.userRooms];
-        this.searchRooms();
+        this.updateRoomPagination();
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -106,7 +119,7 @@ export class RoomComponent implements OnInit {
       (loaiPhong) => {
         this.userLoaiPhong = loaiPhong.map(type => ({ ...type, selected: false }));
         this.filteredLoaiPhong = [...this.userLoaiPhong];
-        this.searchLoaiPhong();
+        this.updateLoaiPhongPagination();
         this.cdr.detectChanges();
       },
       (error) => {
@@ -120,13 +133,104 @@ export class RoomComponent implements OnInit {
       (areas) => {
         this.areaList = areas.map(area => ({ ...area, selected: false }));
         this.filteredAreas = [...this.areaList];
-        this.searchAreas();
+        this.updateAreaPagination();
         this.cdr.detectChanges();
       },
       (error) => {
         alert('Không thể tải danh sách khu vực: ' + (error.message || 'Vui lòng thử lại.'));
       }
     );
+  }
+
+  // Pagination methods
+  updateRoomPagination(): void {
+    this.roomTotalPages = Math.ceil(this.filteredRooms.length / this.roomPageSize) || 1;
+    this.roomCurrentPage = Math.min(this.roomCurrentPage, this.roomTotalPages);
+    this.applyRoomPagination();
+  }
+
+  applyRoomPagination(): void {
+    const startIndex = (this.roomCurrentPage - 1) * this.roomPageSize;
+    const endIndex = startIndex + this.roomPageSize;
+    this.paginatedRooms = this.filteredRooms.slice(startIndex, endIndex);
+    this.paginatedRooms.forEach(room => (room.selected = false));
+    this.selectedRoomId = null;
+    this.selectedRoom = null;
+    this.cdr.detectChanges();
+  }
+
+  roomPreviousPage(): void {
+    if (this.roomCurrentPage > 1) {
+      this.roomCurrentPage--;
+      this.applyRoomPagination();
+    }
+  }
+
+  roomNextPage(): void {
+    if (this.roomCurrentPage < this.roomTotalPages) {
+      this.roomCurrentPage++;
+      this.applyRoomPagination();
+    }
+  }
+
+  updateLoaiPhongPagination(): void {
+    this.loaiPhongTotalPages = Math.ceil(this.filteredLoaiPhong.length / this.loaiPhongPageSize) || 1;
+    this.loaiPhongCurrentPage = Math.min(this.loaiPhongCurrentPage, this.loaiPhongTotalPages);
+    this.applyLoaiPhongPagination();
+  }
+
+  applyLoaiPhongPagination(): void {
+    const startIndex = (this.loaiPhongCurrentPage - 1) * this.loaiPhongPageSize;
+    const endIndex = startIndex + this.loaiPhongPageSize;
+    this.paginatedLoaiPhong = this.filteredLoaiPhong.slice(startIndex, endIndex);
+    this.paginatedLoaiPhong.forEach(type => (type.selected = false));
+    this.selectedLoaiPhongId = null;
+    this.selectedLoaiPhong = null;
+    this.cdr.detectChanges();
+  }
+
+  loaiPhongPreviousPage(): void {
+    if (this.loaiPhongCurrentPage > 1) {
+      this.loaiPhongCurrentPage--;
+      this.applyLoaiPhongPagination();
+    }
+  }
+
+  loaiPhongNextPage(): void {
+    if (this.loaiPhongCurrentPage < this.loaiPhongTotalPages) {
+      this.loaiPhongCurrentPage++;
+      this.applyLoaiPhongPagination();
+    }
+  }
+
+  updateAreaPagination(): void {
+    this.areaTotalPages = Math.ceil(this.filteredAreas.length / this.areaPageSize) || 1;
+    this.areaCurrentPage = Math.min(this.areaCurrentPage, this.areaTotalPages);
+    this.applyAreaPagination();
+  }
+
+  applyAreaPagination(): void {
+    const startIndex = (this.areaCurrentPage - 1) * this.areaPageSize;
+    const endIndex = startIndex + this.areaPageSize;
+    this.paginatedAreas = this.filteredAreas.slice(startIndex, endIndex);
+    this.paginatedAreas.forEach(area => (area.selected = false));
+    this.selectedAreaId = null;
+    this.selectedArea = null;
+    this.cdr.detectChanges();
+  }
+
+  areaPreviousPage(): void {
+    if (this.areaCurrentPage > 1) {
+      this.areaCurrentPage--;
+      this.applyAreaPagination();
+    }
+  }
+
+  areaNextPage(): void {
+    if (this.areaCurrentPage < this.areaTotalPages) {
+      this.areaCurrentPage++;
+      this.applyAreaPagination();
+    }
   }
 
   // Search methods
@@ -138,10 +242,7 @@ export class RoomComponent implements OnInit {
         room.roomtypename.toLowerCase().includes(this.roomSearchTerm.toLowerCase()) ||
         room.khuVucName.toLowerCase().includes(this.roomSearchTerm.toLowerCase())
       );
-      this.filteredRooms.forEach(room => room.selected = false);
-      this.selectedRoomId = null;
-      this.selectedRoom = null;
-      this.cdr.detectChanges();
+      this.updateRoomPagination();
     });
   }
 
@@ -151,10 +252,7 @@ export class RoomComponent implements OnInit {
         type.name.toLowerCase().includes(this.loaiPhongSearchTerm.toLowerCase()) ||
         type.description.toLowerCase().includes(this.loaiPhongSearchTerm.toLowerCase())
       );
-      this.filteredLoaiPhong.forEach(type => type.selected = false);
-      this.selectedLoaiPhongId = null;
-      this.selectedLoaiPhong = null;
-      this.cdr.detectChanges();
+      this.updateLoaiPhongPagination();
     });
   }
 
@@ -164,10 +262,7 @@ export class RoomComponent implements OnInit {
         area.name.toLowerCase().includes(this.areaSearchTerm.toLowerCase()) ||
         area.description.toLowerCase().includes(this.areaSearchTerm.toLowerCase())
       );
-      this.filteredAreas.forEach(area => area.selected = false);
-      this.selectedAreaId = null;
-      this.selectedArea = null;
-      this.cdr.detectChanges();
+      this.updateAreaPagination();
     });
   }
 
@@ -200,8 +295,8 @@ export class RoomComponent implements OnInit {
   // Room Management
   toggleRoomSelection(roomId: string): void {
     this.zone.run(() => {
-      this.filteredRooms.forEach(room => room.selected = false);
-      const selectedRoom = this.filteredRooms.find(room => room.id === roomId);
+      this.paginatedRooms.forEach(room => (room.selected = false));
+      const selectedRoom = this.paginatedRooms.find(room => room.id === roomId);
       if (selectedRoom) {
         selectedRoom.selected = true;
         this.selectedRoomId = roomId;
@@ -223,7 +318,7 @@ export class RoomComponent implements OnInit {
   openRoomEditModal(): void {
     if (this.selectedRoomId) {
       this.isRoomEditMode = true;
-      const room = this.filteredRooms.find(room => room.id === this.selectedRoomId);
+      const room = this.paginatedRooms.find(room => room.id === this.selectedRoomId);
       if (room) {
         this.roomForm.patchValue({
           name: room.name,
@@ -242,7 +337,7 @@ export class RoomComponent implements OnInit {
 
   openRoomViewModal(): void {
     if (this.selectedRoomId) {
-      this.selectedRoom = this.filteredRooms.find(room => room.id === this.selectedRoomId);
+      this.selectedRoom = this.paginatedRooms.find(room => room.id === this.selectedRoomId);
       this.isRoomViewModalOpen = true;
     } else {
       alert('Vui lòng chọn một phòng để xem chi tiết.');
@@ -333,8 +428,8 @@ export class RoomComponent implements OnInit {
   // Room Type Management
   toggleLoaiPhongSelection(loaiPhongId: string): void {
     this.zone.run(() => {
-      this.filteredLoaiPhong.forEach(type => type.selected = false);
-      const selectedType = this.filteredLoaiPhong.find(type => type.id === loaiPhongId);
+      this.paginatedLoaiPhong.forEach(type => (type.selected = false));
+      const selectedType = this.paginatedLoaiPhong.find(type => type.id === loaiPhongId);
       if (selectedType) {
         selectedType.selected = true;
         this.selectedLoaiPhongId = loaiPhongId;
@@ -356,7 +451,7 @@ export class RoomComponent implements OnInit {
   openLoaiPhongEditModal(): void {
     if (this.selectedLoaiPhongId) {
       this.isLoaiPhongEditMode = true;
-      const type = this.filteredLoaiPhong.find(type => type.id === this.selectedLoaiPhongId);
+      const type = this.paginatedLoaiPhong.find(type => type.id === this.selectedLoaiPhongId);
       if (type) {
         this.loaiPhongForm.patchValue({
           name: type.name,
@@ -372,7 +467,7 @@ export class RoomComponent implements OnInit {
 
   openLoaiPhongViewModal(): void {
     if (this.selectedLoaiPhongId) {
-      this.selectedLoaiPhong = this.filteredLoaiPhong.find(type => type.id === this.selectedLoaiPhongId);
+      this.selectedLoaiPhong = this.paginatedLoaiPhong.find(type => type.id === this.selectedLoaiPhongId);
       this.isLoaiPhongViewModalOpen = true;
     } else {
       alert('Vui lòng chọn một loại phòng để xem chi tiết.');
@@ -453,8 +548,8 @@ export class RoomComponent implements OnInit {
   // Area Management
   toggleAreaSelection(areaId: string): void {
     this.zone.run(() => {
-      this.filteredAreas.forEach(area => area.selected = false);
-      const selectedArea = this.filteredAreas.find(area => area.id === areaId);
+      this.paginatedAreas.forEach(area => (area.selected = false));
+      const selectedArea = this.paginatedAreas.find(area => area.id === areaId);
       if (selectedArea) {
         selectedArea.selected = true;
         this.selectedAreaId = areaId;
@@ -476,11 +571,12 @@ export class RoomComponent implements OnInit {
   openKhuVucEditModal(): void {
     if (this.selectedAreaId) {
       this.isKhuVucEditMode = true;
-      const area = this.filteredAreas.find(area => area.id === this.selectedAreaId);
+      const area = this.paginatedAreas.find(area => area.id === this.selectedAreaId);
       if (area) {
         this.khuVucForm.patchValue({
           name: area.name,
-          description: area.description
+          description: area.description,
+          sortOrder: area.sortOrder
         });
         this.isKhuVucModalOpen = true;
       }
@@ -491,7 +587,7 @@ export class RoomComponent implements OnInit {
 
   openKhuVucViewModal(): void {
     if (this.selectedAreaId) {
-      this.selectedArea = this.filteredAreas.find(area => area.id === this.selectedAreaId);
+      this.selectedArea = this.paginatedAreas.find(area => area.id === this.selectedAreaId);
       this.isKhuVucViewModalOpen = true;
     } else {
       alert('Vui lòng chọn một khu vực để xem chi tiết.');
@@ -520,7 +616,8 @@ export class RoomComponent implements OnInit {
     const formValue = this.khuVucForm.getRawValue();
     const khuVucData = {
       name: formValue.name,
-      description: formValue.description
+      description: formValue.description,
+      sortOrder: formValue.sortOrder
     };
 
     try {
@@ -528,7 +625,7 @@ export class RoomComponent implements OnInit {
         await this.khuVucService.editKhuVuc(this.selectedAreaId, khuVucData);
         alert('Cập nhật khu vực thành công!');
       } else {
-        await this.khuVucService.addKhuVuc(khuVucData.name, khuVucData.description);
+        await this.khuVucService.addKhuVuc(khuVucData.name, khuVucData.description, khuVucData.sortOrder);
         alert('Thêm khu vực thành công!');
       }
       this.closeKhuVucModal();

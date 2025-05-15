@@ -1,43 +1,44 @@
 .main-content {
-  margin-left: 250px;
   padding: 3rem 2rem;
-  background: #f0f5ff; /* Nền nhạt giống Hotel Manager */
+  background: #f0f5ff;
   min-height: 100vh;
   transition: margin-left 0.3s ease;
 }
 
 .room-container {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 20px;
+  position: relative;
 }
 
-.title {
-  color: #2d3748;
-  font-size: 28px;
-  font-weight: 600;
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .filter-container {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
-  margin-bottom: 20px;
   background: white;
   padding: 15px;
-  border-radius: 8px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
 .filter-group {
   flex: 1;
-  min-width: 150px;
+  min-width: 250px;
 }
 
 .filter-group label {
   font-size: 14px;
-  color: #2d3748;
+  color: #4a5568;
   font-weight: 500;
   margin-bottom: 5px;
   display: block;
@@ -59,18 +60,119 @@
   outline: none;
 }
 
+.stats-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  flex-wrap: nowrap;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #2d3748;
+  white-space: nowrap;
+  position: relative;
+  cursor: pointer;
+}
+
+.stat-item i {
+  font-size: 16px;
+  color: #4a5568;
+}
+
+.stat-item.total i { color: #2d3748; }
+.stat-item.empty i { color: #00A65A; }
+.stat-item.occupied i { color: #FF0D00; }
+.stat-item.dirty i { color: #A9A9A9; }
+
+/* Tooltip styles */
+.stat-item:hover::after {
+  content: attr(title);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  color: #2d3748;
+  padding: 6px 12px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 100;
+  margin-top: 8px;
+}
+
+.stat-item:hover::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-bottom-color: white;
+  margin-top: 2px;
+}
+
+.content-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.khu-vuc-groups {
+  margin-top: 20px;
+  border: #bbbcc1 2px solid;
+  overflow-x: auto;
+  flex: 1;
+  min-width: 0;
+}
+
+.khu-vuc-group {
+  display: flex;
+  align-items: flex-start;
+  border-top: 2px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.khu-vuc-group:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.khu-vuc-title {
+  color: #2d3748;
+  font-size: 10px;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  width: 60px;
+  text-align: center;
+  background: #f0f5ff;
+  border-radius: 4px;
+}
+
 .room-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(calc(150px * var(--zoom-level, 1)), 1fr));
+  gap: 2px;
+  flex: 1;
+  transition: all 0.3s ease;
 }
 
 .room-card {
   background: white;
-  border-radius: 8px;
+  padding: 6px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-  padding: 8px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
 .room-card:hover {
@@ -79,186 +181,384 @@
 }
 
 .status-empty {
-  border-left: 3px solid #38b2ac;
+  background: #00A65A;
 }
 
 .status-dirty {
-  border-left: 3px solid #e53e3e;
-  background: #fefcbf;
+  background: #A9A9A9;
 }
 
 .status-rented {
-  border-left: 3px solid #ed8936;
+  background: #FF0D00;
 }
 
 .status-checked-in {
-  border-left: 3px solid #e53e3e; /* Viền đỏ cho Đã nhận phòng */
-  background: #fff5f5; /* Nền nhạt đỏ để phân biệt */
+  background: #FF0D00;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .card-header h3 {
   margin: 0;
-  font-size: 12px;
-  color: #2d3748;
+  font-size: 11px;
+  color: #ffffff;
   font-weight: 600;
 }
 
 .badge {
-  padding: 4px 6px;
-  font-size: 10px;
-  border-radius: 10px;
-  color: white; /* Đảm bảo chữ trắng trên nền màu */
+  padding: 3px 5px;
+  font-size: 9px;
+  border-radius: 4px;
+  color: #ffffff;
 }
 
 .bg-success {
-  background: #38b2ac !important;
+  background: #38b2ac;
 }
 
 .bg-danger {
-  background: #e53e3e !important;
+  background: #e53e3e;
 }
 
 .bg-warning {
-  background: #ed8936 !important;
+  background: #ed8936;
 }
 
 .card-body {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .card-body p {
-  margin: 2px 0;
-  font-size: 10px;
-  color: #4a5568;
+  margin: 1px 0;
+  font-size: 9px;
+  color: #ffffff;
   display: flex;
   align-items: center;
 }
 
 .card-body i {
-  font-size: 12px;
+  font-size: 10px;
+  margin-right: 4px;
+  color: #ffffff;
 }
 
 .text-danger {
-  color: #e53e3e !important;
+  color: #ffffff;
   font-weight: 600;
 }
 
-.card-actions {
+.context-menu {
+  position: fixed;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  min-width: 180px;
+  overflow: hidden;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.context-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.context-menu li {
+  padding: 8px 16px;
+  cursor: pointer;
   display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
+  align-items: center;
+  font-size: 14px;
+  color: #2d3748;
+  transition: all 0.2s ease;
 }
 
-.btn-sm {
-  padding: 4px 8px;
-  border-radius: 25px;
-  font-size: 10px;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+.context-menu li:hover {
+  background-color: #f0f5ff;
 }
 
-.btn-primary {
-  background: #2c5282;
-  border: none;
-  color: white;
+.context-menu li i {
+  margin-right: 8px;
+  width: 16px;
+  text-align: center;
+  color: #4a5568;
 }
 
-.btn-primary:hover:not(:disabled) {
-  background: #1a3656;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+.context-menu-divider {
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 4px 0;
 }
 
-.btn-success {
-  background: #38b2ac;
-  border: none;
-  color: white;
+.notification-board {
+  background: white;
+  padding: 15px;
+  width: 300px;
+  overflow-y: auto;
+  position: sticky;
+  height: 100vh;
+  align-self: flex-start;
+  border: #bbbcc1 2px solid;
+
 }
 
-.btn-success:hover:not(:disabled) {
-  background: #2d9c97;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+.notification-board h3 {
+  font-size: 16px;
+  color: #2d3748;
+  margin: 0 0 10px 0;
+  font-weight: 600;
 }
 
-.btn-warning {
-  background: #ed8936;
-  border: none;
-  color: white;
+.notification-board table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  color: #2d3748;
 }
 
-.btn-warning:hover:not(:disabled) {
-  background: #dd6b20;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+.notification-board td {
+  padding: 8px;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.notification-board i {
+  font-size: 14px;
 }
 
-.mr-2 {
-  margin-right: 4px;
+.notification-board .fa-sign-in-alt {
+  color: #00A65A; /* Green for check-in */
+}
+
+.notification-board .fa-sign-out-alt {
+  color: #e53e3e; /* Red for check-out */
+}
+
+.notification-board tr:last-child td {
+  border-bottom: none;
+}
+
+.notification-board::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notification-board::-webkit-scrollbar-track {
+  background: #f0f5ff;
+  border-radius: 4px;
+}
+
+.notification-board::-webkit-scrollbar-thumb {
+  background: #a0aec0;
+  border-radius: 4px;
+}
+
+.notification-board::-webkit-scrollbar-thumb:hover {
+  background: #718096;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .main-content {
+    padding: 2rem 1rem;
+  }
+
+  .filter-group {
+    min-width: 200px;
+  }
+
+  .stats-container {
+    gap: 15px;
+  }
+
+  .stat-item {
+    font-size: 13px;
+  }
+
+  .stat-item i {
+    font-size: 15px;
+  }
+
+  .notification-board {
+    width: 250px;
+  }
 }
 
 @media (max-width: 768px) {
   .main-content {
     margin-left: 0;
-    padding: 1.5rem 0.5rem; /* Giảm padding ngang */
+    padding: 1.5rem 0.5rem;
   }
 
   .room-container {
-    max-width: none; /* Bỏ giới hạn 1200px */
-    padding: 10px; /* Giảm padding */
+    padding: 10px;
   }
 
-  .content-wrapper {
-    grid-template-columns: 1fr; /* Chuyển thành 1 cột trên mobile */
-  }
-
-  .btn-primary, .btn-edit, .btn-delete {
-    width: 100%;
-    padding: 8px 15px;
-  }
-  .title {
-    font-size: 24px;
-  }
-
-  .room-cards {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Tăng min-width để rộng hơn */
-    gap: 8px; /* Giảm gap */
+  .header-container {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .filter-container {
-    padding: 10px; /* Giảm padding */
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .filter-group {
+    min-width: 100%;
+  }
+
+  .stats-container {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    padding: 8px 10px;
+  }
+
+  .stat-item {
+    font-size: 12px;
+  }
+
+  .stat-item i {
+    font-size: 14px;
+  }
+
+  .stat-item:hover::after {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .content-container {
+    flex-direction: column;
+  }
+
+  .khu-vuc-group {
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: 15px;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .khu-vuc-group:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .khu-vuc-title {
+    width: auto;
+    margin-right: 0;
+    margin-bottom: 10px;
+    font-size: 10px;
+    padding: 8px;
+  }
+
+  .room-cards {
+    grid-template-columns: repeat(auto-fill, minmax(calc(120px * var(--zoom-level, 1)), 1fr));
+    gap: 8px;
   }
 
   .room-card {
-    padding: 6px;
+    padding: 5px;
   }
 
   .card-header h3 {
     font-size: 10px;
+    color: #ffffff;
   }
 
   .card-body p {
     font-size: 8px;
+    color: #ffffff;
+  }
+
+  .badge {
+    font-size: 8px;
+    color: #ffffff;
   }
 
   .card-body i {
-    font-size: 10px;
+    font-size: 9px;
+    color: #ffffff;
   }
 
-  .btn-sm {
-    padding: 3px 6px;
-    font-size: 8px;
+  .context-menu {
+    min-width: 160px;
+  }
+
+  .context-menu li {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .notification-board {
+    width: 100%;
+    position: static;
+    max-height: none;
+    margin-top: 20px;
+  }
+
+  .notification-board td {
+    font-size: 11px;
+    padding: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 1rem 0.5rem;
+  }
+
+  .filter-group {
+    min-width: 100%;
+  }
+
+  .form-select {
+    font-size: 11px;
+    padding: 6px;
+  }
+
+  .stats-container {
+    gap: 10px;
+    padding: 6px 8px;
+  }
+
+  .stat-item {
+    font-size: 11px;
+  }
+
+  .stat-item i {
+    font-size: 13px;
+  }
+
+  .room-cards {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+
+  .notification-board td {
+    font-size: 10px;
+    padding: 5px;
+  }
+
+  .notification-board i {
+    font-size: 12px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

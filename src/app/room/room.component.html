@@ -1,6 +1,6 @@
 <div class="main-content">
   <div class="container">
-    <!-- Mobile Tab Navigation -->
+    <!-- Tab Navigation -->
     <div class="tab-container">
       <div class="tab-buttons">
         <button class="tab-button active" (click)="switchTab('room-types')" data-tab="room-types">
@@ -19,7 +19,7 @@
     <div class="content-wrapper">
       <!-- Room Type Management -->
       <div id="room-types" class="room-type-section tab-content active">
-        <div class="table-container">
+        <div class="header-container">
           <h3 class="table-title"><i class="fas fa-list"></i> Danh sách loại phòng</h3>
           <div class="toolbar-container">
             <div class="search-container">
@@ -40,13 +40,15 @@
                 <i class="fas fa-edit"></i> Sửa
               </button>
               <button class="btn-toolbar btn-view" [disabled]="isLoaiPhongEditDeleteDisabled" (click)="openLoaiPhongViewModal()">
-                <i class="fas fa-eye"></i> Xem
+                <i class="fas fa-eye"></i> Xem chi tiết
               </button>
               <button class="btn-toolbar btn-delete" [disabled]="isLoaiPhongEditDeleteDisabled" (click)="deleteLoaiPhong()">
                 <i class="fas fa-trash"></i> Xóa
               </button>
             </div>
           </div>
+        </div>
+        <div class="table-container">
           <table class="service-table" *ngIf="!isLoading; else loadingTemplate">
             <thead>
               <tr>
@@ -57,19 +59,19 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let type of filteredLoaiPhong; trackBy: trackById" (click)="toggleLoaiPhongSelection(type.id)">
-                <td>
+              <tr *ngFor="let type of paginatedLoaiPhong; trackBy: trackById" (click)="toggleLoaiPhongSelection(type.id)">
+                <td data-label="Chọn">
                   <input
                     type="radio"
                     [checked]="type.selected"
                     (change)="toggleLoaiPhongSelection(type.id)"
                   />
                 </td>
-                <td>{{ type.name }}</td>
-                <td>{{ type.description }}</td>
-                <td>{{ type.maxPeople }}</td>
+                <td data-label="Tên loại phòng">{{ type.name }}</td>
+                <td data-label="Mô tả">{{ type.description }}</td>
+                <td data-label="Số người tối đa">{{ type.maxPeople }}</td>
               </tr>
-              <tr *ngIf="filteredLoaiPhong.length === 0">
+              <tr *ngIf="paginatedLoaiPhong.length === 0">
                 <td colspan="4" class="no-data">
                   <i class="fas fa-info-circle"></i> Chưa có loại phòng nào
                 </td>
@@ -79,12 +81,36 @@
           <ng-template #loadingTemplate>
             <div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</div>
           </ng-template>
+          <div class="pagination-container">
+            <div class="record-count">
+              Hiển thị {{ paginatedLoaiPhong.length }} / {{ filteredLoaiPhong.length }} loại phòng
+            </div>
+            <div class="pagination">
+              <button
+                class="btn-pagination"
+                [disabled]="loaiPhongCurrentPage === 1"
+                (click)="loaiPhongPreviousPage()"
+              >
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <span class="page-info">
+                Trang {{ loaiPhongCurrentPage }} / {{ loaiPhongTotalPages }}
+              </span>
+              <button
+                class="btn-pagination"
+                [disabled]="loaiPhongCurrentPage === loaiPhongTotalPages"
+                (click)="loaiPhongNextPage()"
+              >
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Room Management -->
       <div id="rooms" class="room-section tab-content">
-        <div class="table-container">
+        <div class="header-container">
           <h3 class="table-title"><i class="fas fa-list"></i> Danh sách phòng</h3>
           <div class="toolbar-container">
             <div class="search-container">
@@ -105,13 +131,15 @@
                 <i class="fas fa-edit"></i> Sửa
               </button>
               <button class="btn-toolbar btn-view" [disabled]="isRoomEditDeleteDisabled" (click)="openRoomViewModal()">
-                <i class="fas fa-eye"></i> Xem
+                <i class="fas fa-eye"></i> Xem chi tiết
               </button>
               <button class="btn-toolbar btn-delete" [disabled]="isRoomEditDeleteDisabled" (click)="deleteRoom()">
                 <i class="fas fa-trash"></i> Xóa
               </button>
             </div>
           </div>
+        </div>
+        <div class="table-container">
           <table class="service-table" *ngIf="!isLoading; else loadingTemplate">
             <thead>
               <tr>
@@ -125,34 +153,61 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let room of filteredRooms; trackBy: trackById" (click)="toggleRoomSelection(room.id)">
-                <td>
+              <tr *ngFor="let room of paginatedRooms; trackBy: trackById" (click)="toggleRoomSelection(room.id)">
+                <td data-label="Chọn">
                   <input
                     type="radio"
                     [checked]="room.selected"
                     (change)="toggleRoomSelection(room.id)"
                   />
                 </td>
-                <td>{{ room.name }}</td>
-                <td>{{ room.description }}</td>
-                <td>{{ room.roomPriceByDay | currency:'VND' }}</td>
-                <td>{{ room.roomPriceByHour | currency:'VND' }}</td>
-                <td>{{ room.roomtypename }}</td>
-                <td>{{ room.khuVucName }}</td>
+                <td data-label="Tên phòng">{{ room.name }}</td>
+                <td data-label="Mô tả">{{ room.description }}</td>
+                <td data-label="Giá/ngày">{{ room.roomPriceByDay | currency:'VND' }}</td>
+                <td data-label="Giá/giờ">{{ room.roomPriceByHour | currency:'VND' }}</td>
+                <td data-label="Loại phòng">{{ room.roomtypename }}</td>
+                <td data-label="Khu vực">{{ room.khuVucName }}</td>
               </tr>
-              <tr *ngIf="filteredRooms.length === 0">
+              <tr *ngIf="paginatedRooms.length === 0">
                 <td colspan="7" class="no-data">
                   <i class="fas fa-info-circle"></i> Chưa có phòng nào
                 </td>
               </tr>
             </tbody>
           </table>
+          <ng-template #loadingTemplate>
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</div>
+          </ng-template>
+          <div class="pagination-container">
+            <div class="record-count">
+              Hiển thị {{ paginatedRooms.length }} / {{ filteredRooms.length }} phòng
+            </div>
+            <div class="pagination">
+              <button
+                class="btn-pagination"
+                [disabled]="roomCurrentPage === 1"
+                (click)="roomPreviousPage()"
+              >
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <span class="page-info">
+                Trang {{ roomCurrentPage }} / {{ roomTotalPages }}
+              </span>
+              <button
+                class="btn-pagination"
+                [disabled]="roomCurrentPage === roomTotalPages"
+                (click)="roomNextPage()"
+              >
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Area Management -->
       <div id="areas" class="area-section tab-content">
-        <div class="table-container">
+        <div class="header-container">
           <h3 class="table-title"><i class="fas fa-list"></i> Danh sách khu vực</h3>
           <div class="toolbar-container">
             <div class="search-container">
@@ -173,40 +228,71 @@
                 <i class="fas fa-edit"></i> Sửa
               </button>
               <button class="btn-toolbar btn-view" [disabled]="isKhuVucEditDeleteDisabled" (click)="openKhuVucViewModal()">
-                <i class="fas fa-eye"></i> Xem
+                <i class="fas fa-eye"></i> Xem chi tiết
               </button>
               <button class="btn-toolbar btn-delete" [disabled]="isKhuVucEditDeleteDisabled" (click)="deleteKhuVuc()">
                 <i class="fas fa-trash"></i> Xóa
               </button>
             </div>
           </div>
+        </div>
+        <div class="table-container">
           <table class="service-table" *ngIf="!isLoading; else loadingTemplate">
             <thead>
               <tr>
                 <th style="width: 50px;"></th>
                 <th>Tên khu vực</th>
                 <th>Mô tả</th>
+                <th>Số thứ tự</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let area of filteredAreas; trackBy: trackById" (click)="toggleAreaSelection(area.id)">
-                <td>
+              <tr *ngFor="let area of paginatedAreas; trackBy: trackById" (click)="toggleAreaSelection(area.id)">
+                <td data-label="Chọn">
                   <input
                     type="radio"
                     [checked]="area.selected"
                     (change)="toggleAreaSelection(area.id)"
                   />
                 </td>
-                <td>{{ area.name }}</td>
-                <td>{{ area.description }}</td>
+                <td data-label="Tên khu vực">{{ area.name }}</td>
+                <td data-label="Mô tả">{{ area.description }}</td>
+                <td data-label="Số thứ tự">{{ area.sortOrder }}</td>
               </tr>
-              <tr *ngIf="filteredAreas.length === 0">
-                <td colspan="3" class="no-data">
+              <tr *ngIf="paginatedAreas.length === 0">
+                <td colspan="4" class="no-data">
                   <i class="fas fa-info-circle"></i> Chưa có khu vực nào
                 </td>
               </tr>
             </tbody>
           </table>
+          <ng-template #loadingTemplate>
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</div>
+          </ng-template>
+          <div class="pagination-container">
+            <div class="record-count">
+              Hiển thị {{ paginatedAreas.length }} / {{ filteredAreas.length }} khu vực
+            </div>
+            <div class="pagination">
+              <button
+                class="btn-pagination"
+                [disabled]="areaCurrentPage === 1"
+                (click)="areaPreviousPage()"
+              >
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <span class="page-info">
+                Trang {{ areaCurrentPage }} / {{ areaTotalPages }}
+              </span>
+              <button
+                class="btn-pagination"
+                [disabled]="areaCurrentPage === areaTotalPages"
+                (click)="areaNextPage()"
+              >
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -456,7 +542,7 @@
             <button type="submit" class="btn-save" [disabled]="loaiPhongForm.invalid">
               {{ isLoaiPhongEditMode ? 'Cập nhật' : 'Thêm' }}
             </button>
-          </div>
+            </div>
         </form>
       </div>
     </div>
@@ -534,6 +620,27 @@
               class="form-control"
             />
           </div>
+          <div class="form-group">
+            <input
+              formControlName="sortOrder"
+              type="number"
+              placeholder="Số thứ tự sắp xếp"
+              class="form-control"
+              [class.invalid]="khuVucForm.get('sortOrder')?.touched && khuVucForm.get('sortOrder')?.invalid"
+            />
+            <span
+              class="error"
+              *ngIf="khuVucForm.get('sortOrder')?.touched && khuVucForm.get('sortOrder')?.errors?.['required']"
+            >
+              Số thứ tự sắp xếp là bắt buộc
+            </span>
+            <span
+              class="error"
+              *ngIf="khuVucForm.get('sortOrder')?.touched && khuVucForm.get('sortOrder')?.errors?.['min']"
+            >
+              Số thứ tự sắp xếp phải là số dương
+            </span>
+          </div>
           <div class="modal-actions">
             <button type="button" class="btn-cancel" (click)="closeKhuVucModal()">Hủy</button>
             <button type="submit" class="btn-save" [disabled]="khuVucForm.invalid">
@@ -563,6 +670,15 @@
           <input
             type="text"
             [value]="selectedArea?.description || ''"
+            class="form-control"
+            readonly
+          />
+        </div>
+        <div class="form-group">
+          <label>Số thứ tự sắp xếp:</label>
+          <input
+            type="text"
+            [value]="selectedArea?.sortOrder || ''"
             class="form-control"
             readonly
           />

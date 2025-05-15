@@ -9,15 +9,19 @@ import { CustomerService } from '../services/customer.service';
 })
 export class CustomerComponent implements OnInit {
   customerForm: FormGroup;
-  customers: any[] = [];
-  originalCustomers: any[] = []; // Store the original unfiltered list
-  isLoading = false;
+  originalCustomers: any[] = [];
+  filteredCustomers: any[] = [];
+  paginatedCustomers: any[] = [];
+  isLoading: boolean = false;
   selectedCustomerId: string | null = null;
   selectedCustomer: any = null;
-  showModal = false;
-  showViewModal = false;
-  isEditMode = false;
-  searchQuery: string = ''; // Bind to search input
+  showModal: boolean = false;
+  showViewModal: boolean = false;
+  isEditMode: boolean = false;
+  searchQuery: string = '';
+  currentPage: number = 1;
+  pageSize: number = 10;
+  totalPages: number = 1;
 
   constructor(
     private fb: FormBuilder,
@@ -45,61 +49,88 @@ export class CustomerComponent implements OnInit {
     this.isLoading = true;
     this.customerService.getUserCustomers().subscribe(
       (customers) => {
-        this.originalCustomers = customers.map((customer: any) => {
-          return {
-            id: customer.id,
-            ...customer,
-            createdAt: customer.createdAt || new Date().toISOString(),
-            updatedAt: customer.updatedAt || null,
-            selected: false,
-          };
-        });
-        this.customers = [...this.originalCustomers]; // Initialize with original list
+        this.originalCustomers = customers.map((customer: any) => ({
+          id: customer.id,
+          ...customer,
+          createdAt: customer.createdAt || new Date().toISOString(),
+          updatedAt: customer.updatedAt || null,
+          selected: false,
+        }));
+        this.filteredCustomers = [...this.originalCustomers];
+        this.updatePagination();
         this.isLoading = false;
         this.cdr.detectChanges();
       },
       (error) => {
-        console.error('Lỗi khi lấy danh sách khách hàng:', error);
+        alert('Không thể tải danh sách khách hàng: ' + (error.message || 'Vui lòng thử lại.'));
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     );
+  }
+
+  updatePagination(): void {
+    this.totalPages = Math.ceil(this.filteredCustomers.length / this.pageSize) || 1;
+    this.currentPage = Math.min(this.currentPage, this.totalPages);
+    this.applyPagination();
+  }
+
+  applyPagination(): void {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.paginatedCustomers = this.filteredCustomers.slice(startIndex, endIndex);
+    this.paginatedCustomers.forEach(cust => (cust.selected = false));
+    this.selectedCustomerId = null;
+    this.selectedCustomer = null;
+    this.cdr.detectChanges();
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.applyPagination();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.applyPagination();
+    }
   }
 
   onSearch(): void {
     this.zone.run(() => {
       if (!this.searchQuery.trim()) {
-        this.customers = [...this.originalCustomers]; // Reset to original list if search is empty
+        this.filteredCustomers = [...this.originalCustomers];
       } else {
         const query = this.searchQuery.trim().toLowerCase();
-        this.customers = this.originalCustomers.filter((customer) =>
-          customer.name.toLowerCase().includes(query) ||
-          customer.email.toLowerCase().includes(query) ||
-          customer.phone.includes(query) ||
-          customer.address.toLowerCase().includes(query) ||
-          customer.cccd.includes(query)
+        this.filteredCustomers = this.originalCustomers.filter(
+          (customer) =>
+            customer.name.toLowerCase().includes(query) ||
+            customer.email.toLowerCase().includes(query) ||
+            customer.phone.includes(query) ||
+            customer.address.toLowerCase().includes(query) ||
+            customer.cccd.includes(query)
         );
       }
-      // Reset selection when filtering
-      this.customers.forEach(cust => cust.selected = false);
-      this.selectedCustomerId = null;
-      this.selectedCustomer = null;
-      this.cdr.detectChanges();
+      this.currentPage = 1;
+      this.updatePagination();
     });
   }
 
   toggleSelection(customerId: string): void {
     this.zone.run(() => {
-      // Bỏ chọn tất cả trước
-      this.customers.forEach(cust => cust.selected = false);
-      
-      // Chọn khách hàng hiện tại
-      const selectedCustomer = this.customers.find(cust => cust.id === customerId);
+      this.paginatedCustomers.forEach(cust => (cust.selected = false));
+      const selectedCustomer = this.paginatedCustomers.find(cust => cust.id === customerId);
       if (selectedCustomer) {
         selectedCustomer.selected = true;
         this.selectedCustomerId = customerId;
         this.selectedCustomer = selectedCustomer;
+      } else {
+        this.selectedCustomerId = null;
+        this.selectedCustomer = null;
       }
-      
       this.cdr.detectChanges();
     });
   }
@@ -107,9 +138,8 @@ export class CustomerComponent implements OnInit {
   openAddModal(): void {
     this.isEditMode = false;
     this.customerForm.reset();
-    // Set default status
     this.customerForm.patchValue({
-      status: 'active'
+      status: 'active',
     });
     this.showModal = true;
   }
@@ -117,7 +147,7 @@ export class CustomerComponent implements OnInit {
   openEditModal(): void {
     if (this.selectedCustomerId) {
       this.isEditMode = true;
-      const customer = this.customers.find((cust) => cust.id === this.selectedCustomerId);
+      const customer = this.paginatedCustomers.find((cust) => cust.id === this.selectedCustomerId);
       if (customer) {
         this.customerForm.patchValue({
           name: customer.name,
@@ -126,17 +156,24 @@ export class CustomerComponent implements OnInit {
           address: customer.address,
           status: customer.status,
           cccd: customer.cccd,
-          createdAt: new Date(customer.createdAt).toLocaleString(),
+          createdAt: customer.createdAt ? new Date(customer.createdAt).toLocaleString() : '',
           updatedAt: customer.updatedAt ? new Date(customer.updatedAt).toLocaleString() : 'Chưa cập nhật',
         });
         this.showModal = true;
+      } else {
+        alert('Không tìm thấy khách hàng để chỉnh sửa.');
       }
+    } else {
+      alert('Vui lòng chọn một khách hàng để chỉnh sửa.');
     }
   }
 
   openViewModal(): void {
     if (this.selectedCustomerId) {
+      this.selectedCustomer = this.paginatedCustomers.find(cust => cust.id === this.selectedCustomerId);
       this.showViewModal = true;
+    } else {
+      alert('Vui lòng chọn một khách hàng để xem chi tiết.');
     }
   }
 
@@ -148,75 +185,80 @@ export class CustomerComponent implements OnInit {
 
   closeViewModal(): void {
     this.showViewModal = false;
+    this.selectedCustomer = null;
   }
 
-  saveCustomer(): void {
-    if (this.customerForm.valid) {
-      this.isLoading = true;
-      const formValue = this.customerForm.value;
+  async saveCustomer(): Promise<void> {
+    if (this.customerForm.invalid) {
+      this.customerForm.markAllAsTouched();
+      alert('Vui lòng nhập đầy đủ và đúng thông tin.');
+      return;
+    }
+
+    this.isLoading = true;
+    const formValue = this.customerForm.getRawValue();
+    const customerData = {
+      name: formValue.name,
+      email: formValue.email,
+      phone: formValue.phone,
+      address: formValue.address,
+      status: formValue.status,
+      cccd: formValue.cccd,
+      updatedAt: this.isEditMode ? new Date().toISOString() : undefined,
+    };
+
+    try {
       if (this.isEditMode && this.selectedCustomerId) {
-        this.customerService
-          .editCustomer(this.selectedCustomerId, {
-            ...formValue,
-            updatedAt: new Date().toISOString(),
-          })
-          .then(() => {
-            this.getCustomers();
-            this.closeModal();
-            this.selectedCustomerId = null;
-            this.selectedCustomer = null;
-            this.isLoading = false;
-          })
-          .catch((error) => {
-            console.error('Lỗi khi cập nhật khách hàng:', error);
-            this.isLoading = false;
-          });
+        await this.customerService.editCustomer(this.selectedCustomerId, customerData);
+        alert('Cập nhật khách hàng thành công!');
       } else {
-        this.customerService
-          .addCustomer(
-            formValue.name,
-            formValue.email,
-            formValue.phone,
-            formValue.address,
-            formValue.status,
-            formValue.cccd
-          )
-          .then(() => {
-            this.getCustomers();
-            this.closeModal();
-            this.isLoading = false;
-          })
-          .catch((error) => {
-            console.error('Lỗi khi thêm khách hàng:', error);
-            this.isLoading = false;
-          });
+        await this.customerService.addCustomer(
+          customerData.name,
+          customerData.email,
+          customerData.phone,
+          customerData.address,
+          customerData.status,
+          customerData.cccd
+        );
+        alert('Thêm khách hàng thành công!');
       }
+      this.closeModal();
+      this.selectedCustomerId = null;
+      this.selectedCustomer = null;
+      this.getCustomers();
+    } catch (error: any) {
+      alert('Lỗi khi lưu khách hàng: ' + (error.message || 'Vui lòng thử lại.'));
+    } finally {
+      this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
 
-  deleteCustomer(): void {
-    if (this.selectedCustomerId && confirm('Bạn có chắc chắn muốn xóa khách hàng này?')) {
+  async deleteCustomer(): Promise<void> {
+    if (!this.selectedCustomerId) {
+      alert('Vui lòng chọn một khách hàng để xóa.');
+      return;
+    }
+
+    if (confirm('Bạn có chắc chắn muốn xóa khách hàng này?')) {
       this.isLoading = true;
-      this.customerService.deleteCustomer(this.selectedCustomerId)
-        .then(() => {
-          this.getCustomers();
-          this.selectedCustomerId = null;
-          this.selectedCustomer = null;
-          this.isLoading = false;
-        })
-        .catch((error) => {
-          console.error('Lỗi khi xóa khách hàng:', error);
-          this.isLoading = false;
-        });
+      try {
+        await this.customerService.deleteCustomer(this.selectedCustomerId);
+        alert('Xóa khách hàng thành công!');
+        this.selectedCustomerId = null;
+        this.selectedCustomer = null;
+        this.getCustomers();
+      } catch (error: any) {
+        alert('Lỗi khi xóa khách hàng: ' + (error.message || 'Vui lòng thử lại.'));
+      } finally {
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
     }
   }
 
   get isEditDeleteDisabled(): boolean {
     return !this.selectedCustomerId;
-  }
-
-  get isFormInvalid(): boolean {
-    return this.customerForm.invalid;
   }
 
   trackByCustomerId(index: number, item: any): string {

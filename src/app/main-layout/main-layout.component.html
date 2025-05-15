@@ -118,6 +118,50 @@
           </ul>
         </li>
 
+        <!-- Expense Management Group -->
+        <li class="menu-group">
+          <a class="menu-group-header" (click)="toggleGroup('expense')">
+            <span><i class="fas fa-wallet"></i> Quản lý chi tiêu</span>
+            <i class="fas fa-chevron-down" [ngClass]="{'rotate': activeGroup === 'expense'}"></i>
+          </a>
+          <ul class="submenu" [ngClass]="{'open': activeGroup === 'expense'}">
+            <li>
+              <a routerLink="/expense-management" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-money-bill-wave"></i>
+                <span>Chi tiêu</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/fund-statistics" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-chart-line"></i>
+                <span>Thống kê tồn quỹ</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Inventory Management Group -->
+        <li class="menu-group">
+          <a class="menu-group-header" (click)="toggleGroup('inventory')">
+            <span><i class="fas fa-box"></i> Quản lý nhập xuất</span>
+            <i class="fas fa-chevron-down" [ngClass]="{'rotate': activeGroup === 'inventory'}"></i>
+          </a>
+          <ul class="submenu" [ngClass]="{'open': activeGroup === 'inventory'}">
+            <li>
+              <a routerLink="/goods-receipt" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-arrow-down"></i>
+                <span>Phiếu nhập hàng</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/goods-issue" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-arrow-up"></i>
+                <span>Phiếu xuất hàng</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+
         <!-- Authentication Links -->
         <li *ngIf="userEmail">
           <a href="#" (click)="logout($event)">
@@ -151,15 +195,15 @@
       <div class="header-content">
         <span class="greeting">Xin chào {{ userEmail || 'Khách' }}</span>
         <div class="header-actions">
-          <a href="#" class="header-link" >Hướng Dẫn</a>
-          <button class="header-icon-btn"  aria-label="Notifications">
+          <a href="#" class="header-link">Hướng Dẫn</a>
+          <button class="header-icon-btn" aria-label="Notifications">
             <i class="fas fa-bell"></i>
-            <span class="badge" ></span>
+            <span class="badge"></span>
           </button>
-          <button class="header-icon-btn"  aria-label="Account">
+          <button class="header-icon-btn" aria-label="Account">
             <i class="fas fa-user"></i>
           </button>
-          <button class="header-btn" >Đổi Nhân Viên</button>
+          <button class="header-btn">Đổi Nhân Viên</button>
         </div>
       </div>
     </header>
