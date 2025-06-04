@@ -27,6 +27,7 @@ import { ExpenseManagementComponent } from './expense-management/expense-managem
 import { FundStatisticsComponent } from './fund-statistics/fund-statistics.component';
 import { GoodsReceiptComponent } from './goods-receipt/goods-receipt.component';
 import { GoodsIssueComponent } from './goods-issue/goods-issue.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -60,6 +61,8 @@ const routes: Routes = [
       { path: 'expense-management', component: ExpenseManagementComponent }, 
       { path: 'fund-statistics', component: FundStatisticsComponent },
       { path: 'goods-receipt', component: GoodsReceiptComponent },
+            { path: 'change-password', component: ChangePasswordComponent },
+
   { path: 'goods-issue', component: GoodsIssueComponent },
     ]
   },

@@ -2,3 +2,32 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* Định nghĩa biến CSS cho sidebar */
+:root {
+  --sidebar-bg: #468cbb;
+  --text-white: white;
+  --hover-bg: #ec9f1f;
+  --active-bg: #ec9f1f;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --bg-all: #e2e8f0;
+  --color-title: #1E40AF;
+  --bg-box:#ffff;
+}
+
+[data-theme="dark"] {
+  --sidebar-bg: linear-gradient(to bottom, #2a2a2a, #171717);
+  --text-white: white;
+  --text-menu-active: #DB7291;
+  --hover-bg: #2C1B1F;
+  --active-bg: #2C1B1F;
+  --border-color: none;
+  --bg-all: #2a2a2a;
+      --color-title: #e2e8f0;
+--bg-box:rgba(255, 255, 255, 0.1);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}

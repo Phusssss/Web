@@ -1,0 +1,44 @@
+<div class="notification-popup">
+  <div class="popup-header">
+    <h2><i class="fas fa-bell mr-2"></i> Danh Sách Thông Báo Hôm Nay</h2>
+    <button class="close-btn" (click)="close()" aria-label="Đóng">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="popup-body">
+    <table class="notification-table">
+      <thead>
+        <tr>
+          <th>Thông báo</th>
+          <th>Thời gian</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let event of data.events">
+          <td>
+            <i class="fas" [ngClass]="{
+              'fa-sign-in-alt': event.eventType === 'Check-in',
+              'fa-sign-out-alt': event.eventType === 'Check-out'
+            }"></i>
+            {{ event.customerName }}, phòng {{ event.roomName }} sẽ {{ event.eventType === 'Check-in' ? 'Check-in' : 'Check-out' }}
+          </td>
+          <td>{{ event.time | date:'HH:mm' }}</td>
+          <td>
+            <button class="action-btn" (click)="markAsRead(event.id)">
+              <i class="fas fa-check"></i> Đã đọc
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="!data.events || data.events.length === 0">
+          <td colspan="3" class="no-data">
+            <i class="fas fa-info-circle mr-2"></i> Không có thông báo hôm nay
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="popup-footer">
+    <button class="btn btn-secondary" (click)="close()">Đóng</button>
+  </div>
+</div>

@@ -1,8 +1,7 @@
 /* Main content styling */
 .main-content {
-  margin-left: 250px;
   padding: 3rem 2rem;
-  background: linear-gradient(135deg, #f0f5ff 0%, #e6f0fa 100%);
+  background: var(--bg-all);
   min-height: 100vh;
   transition: margin-left 0.3s ease;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -10,7 +9,7 @@
 
 /* Container styling */
 .container {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 30px;
   background: #ffffff;

@@ -1,5 +1,4 @@
-// main-layout.component.ts
-import { Component, OnInit, OnDestroy, HostListener, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { NotificationService } from '../notification.service';
@@ -7,6 +6,8 @@ import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TemplateRef } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { MatDialog } from '@angular/material/dialog';
+import { NotificationListPopupComponent } from '../notification-list-popup/notification-list-popup.component';
 
 @Component({
   selector: 'app-main-layout',
@@ -16,7 +17,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 export class MainLayoutComponent implements OnInit, OnDestroy {
   @ViewChild('notificationModal') notificationModal!: TemplateRef<any>;
   @ViewChild('notificationSound') notificationSound!: any;
-
+  isAccountDropdownOpen = false;
   isSidebarCollapsed = false;
   isMobileMenuOpen = false;
   isMobileView = window.innerWidth <= 768;
@@ -24,23 +25,29 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   selectedStaffName: string | null = null;
   selectedStaffUid: string | null = null;
   notifications: any[] = [];
-  showNotifications = false;
   subscription: Subscription | undefined;
   latestNotification: any;
   private previousNotifications: any[] = [];
   activeGroup: string | null = null;
   userId: string | null = null;
   hasPin: boolean = false;
+  currentTheme: 'light' | 'dark' = 'light';
 
   constructor(
     private router: Router,
     private authService: AuthService,
     private notificationService: NotificationService,
     private modalService: NgbModal,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
+    this.currentTheme = savedTheme || 'light';
+    document.documentElement.setAttribute('data-theme', this.currentTheme);
+
     this.authService.getUser().subscribe(user => {
       this.userEmail = user ? user.email : null;
       this.userId = user ? user.uid : null;
@@ -48,6 +55,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       this.selectedStaffName = selectedStaff?.name || null;
       this.selectedStaffUid = localStorage.getItem('staffUid') || selectedStaff?.uid || null;
       this.checkPinStatus();
+      this.cdr.detectChanges();
     });
     this.updateSidebarState();
 
@@ -64,6 +72,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
           }
         }
         this.previousNotifications = [...notifications];
+        this.cdr.detectChanges(); // Tránh lỗi NG0100
       });
   }
 
@@ -110,22 +119,28 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     });
   }
 
+  toggleTheme() {
+    this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', this.currentTheme);
+    localStorage.setItem('theme', this.currentTheme);
+  }
+
   private updateSidebarState() {
     if (this.isMobileView) {
-      this.isSidebarCollapsed = false; // No collapse on mobile
-      this.isMobileMenuOpen = false; // Ensure menu is closed initially
-    } else {
-      // Allow sidebar to be collapsed or open on desktop
+      this.isSidebarCollapsed = false;
+      this.isMobileMenuOpen = false;
     }
   }
 
   toggleNotifications() {
-    this.showNotifications = !this.showNotifications;
+    this.dialog.open(NotificationListPopupComponent, {
+      width: '600px',
+      data: { notifications: this.notifications }
+    });
   }
 
   markAsRead(notificationId: string) {
     this.notificationService.markAsRead(notificationId);
-    this.showNotifications = false;
   }
 
   get unreadCount(): number {
@@ -173,6 +188,14 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
     const pinDoc = await this.firestore.collection('pins').doc(this.userId).get().toPromise();
     this.hasPin = pinDoc && pinDoc.exists ? true : false;
+  }
+
+  toggleAccountDropdown() {
+    this.isAccountDropdownOpen = !this.isAccountDropdownOpen;
+  }
+
+  closeAccountDropdown() {
+    this.isAccountDropdownOpen = false;
   }
 
   private async promptForPin(group: string) {

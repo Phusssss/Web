@@ -5,7 +5,7 @@
         <h2 class="section-title">
           <i class="fas fa-calendar-alt mr-2"></i> Lịch Đặt Phòng
         </h2>
-        <div class="calendar-wrapper shadow-lg p-4 bg-white rounded">
+        <div class="calendar-wrapper shadow-lg p-4 rounded">
           <full-calendar [options]="calendarOptions"></full-calendar>
         </div>
       </div>
@@ -40,7 +40,7 @@
         </div>
 
         <div class="room-lists">
-          <div class="room-list shadow-lg bg-white rounded">
+          <div class="room-list shadow-lg rounded">
             <h4><i class="fas fa-key mr-2"></i> Danh sách nhận phòng hôm nay</h4>
             <ul *ngIf="todayCheckins.length > 0; else noCheckins">
               <li *ngFor="let room of todayCheckins">
@@ -52,7 +52,7 @@
             </ng-template>
           </div>
 
-          <div class="room-list shadow-lg bg-white rounded">
+          <div class="room-list shadow-lg rounded">
             <h4><i class="fas fa-sign-out-alt mr-2"></i> Danh sách trả phòng hôm nay</h4>
             <ul *ngIf="todayCheckouts.length > 0; else noCheckouts">
               <li *ngFor="let room of todayCheckouts">
@@ -64,7 +64,7 @@
             </ng-template>
           </div>
 
-          <div class="room-list shadow-lg bg-white rounded">
+          <div class="room-list shadow-lg rounded">
             <h4><i class="fas fa-moon mr-2"></i> Danh sách phòng ở qua đêm</h4>
             <ul *ngIf="overnightRooms.length > 0; else noOvernight">
               <li *ngFor="let room of overnightRooms">
@@ -75,8 +75,29 @@
               <p class="no-data"><i class="fas fa-info-circle mr-2"></i> Không có phòng ở qua đêm</p>
             </ng-template>
           </div>
+
+          <div class="notification-board shadow-lg rounded">
+            <h4><i class="fas fa-bell mr-2"></i> Thông Báo Hôm Nay</h4>
+            <table>
+              <tbody>
+                <tr *ngFor="let event of todayEvents">
+                  <td>
+                    <i class="fas" [ngClass]="{
+                      'fa-sign-in-alt': event.eventType === 'Check-in',
+                      'fa-sign-out-alt': event.eventType === 'Check-out'
+                    }"></i>
+                    {{ event.customerName }}, phòng {{ event.roomName }} sẽ {{ event.eventType === 'Check-in' ? 'Check-in' : 'Check-out' }} lúc {{ event.time | date:'HH:mm' }}
+                  </td>
+                </tr>
+                <tr *ngIf="!todayEvents.length">
+                  <td><i class="fas fa-info-circle mr-2"></i> Không có sự kiện hôm nay</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+

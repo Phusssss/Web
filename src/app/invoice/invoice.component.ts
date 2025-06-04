@@ -1,9 +1,11 @@
+
 import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { BookingService } from '../services/booking.service';
 import { DichVuService, ServiceRequest } from '../services/dichvu.service';
 import { RoomService } from '../services/room.service';
 import { CustomerService } from '../services/customer.service';
 import { LoaiPhongService } from '../services/loaiphong.service';
+import { ExpenseService, Expense } from '../services/expense.service';
 import { Timestamp } from 'firebase/firestore';
 import { Chart, ChartConfiguration } from 'chart.js';
 import { LineController, BarController, PieController, ScatterController, CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend, TooltipItem } from 'chart.js';
@@ -30,6 +32,8 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
   filteredBookings: any[] = [];
   totalRevenue = 0;
   totalServiceRevenue = 0;
+  totalExpenses = 0;
+  totalProfit = 0;
   serviceRequests: { [key: string]: ServiceRequest[] } = {};
   startDate: string;
   endDate: string;
@@ -52,6 +56,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
     private customerService: CustomerService,
     private serviceRequestService: DichVuService,
     private loaiPhongService: LoaiPhongService,
+    private expenseService: ExpenseService,
     private cdr: ChangeDetectorRef
   ) {
     const today = new Date();
@@ -60,7 +65,9 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.resetFilters();
     this.loadBookings();
+    this.loadExpenses();
   }
 
   ngAfterViewInit() {
@@ -69,44 +76,93 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
     }, 100);
   }
 
-  loadBookings(): void {
-    this.bookingService.getUserBookings().subscribe((bookings) => {
-      this.bookings = bookings.filter((b) => b.status === 'Đã thanh toán');
-      this.filteredBookings = [...this.bookings];
-      this.fetchAdditionalData();
-      this.filterBookings();
+  private loadBookings(): void {
+    this.bookingService.getUserBookings().subscribe({
+      next: (bookings) => {
+        this.bookings = bookings.filter((b) => b.status === 'Đã thanh toán');
+        this.filteredBookings = [...this.bookings];
+        this.fetchAdditionalData();
+        this.filterBookings();
+      },
+      error: (error) => {
+        console.error('Error loading bookings:', error);
+        alert('Có lỗi xảy ra khi tải danh sách đặt chỗ');
+      }
+    });
+  }
+
+  private loadExpenses(): void {
+    this.expenseService.getExpenses().subscribe({
+      next: (expenses: Expense[]) => {
+        this.calculateFilteredExpenses(expenses);
+        this.calculateProfit();
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading expenses:', error);
+        alert('Có lỗi xảy ra khi tải danh sách chi tiêu');
+      }
     });
   }
 
   private fetchAdditionalData(): void {
     this.bookings.forEach((booking) => {
-      this.serviceRequestService.getServiceRequestsByBooking(booking.id).subscribe((requests) => {
-        this.serviceRequests[booking.id] = requests;
-        this.calculateFilteredRevenue();
-        this.updateCharts();
+      this.serviceRequestService.getServiceRequestsByBooking(booking.id).subscribe({
+        next: (requests) => {
+          this.serviceRequests[booking.id] = requests;
+          this.calculateFilteredRevenue();
+          this.calculateProfit();
+          this.updateCharts();
+        },
+        error: (error) => {
+          console.error(`Error loading service requests for booking ${booking.id}:`, error);
+        }
       });
 
       booking.details.forEach((detail: BookingDetail) => {
-        this.roomService.getRoomName(detail.idRoom).subscribe((roomName) => {
-          detail.roomName = roomName;
-          if (roomName && !this.availableRooms.includes(roomName)) {
-            this.availableRooms.push(roomName);
+        this.roomService.getRoomName(detail.idRoom).subscribe({
+          next: (roomName) => {
+            detail.roomName = roomName;
+            if (roomName && !this.availableRooms.includes(roomName)) {
+              this.availableRooms.push(roomName);
+            }
+            this.cdr.detectChanges();
+          },
+          error: (error) => {
+            console.error(`Error loading room name for room ${detail.idRoom}:`, error);
           }
         });
 
-        this.roomService.getRoom(detail.idRoom).subscribe((room) => {
-          if (room && room.roomTypeId) {
-            this.loaiPhongService.getNameTypeRoom(room.roomTypeId).subscribe((roomTypeName) => {
-              detail.roomTypeName = roomTypeName;
-              this.calculateFilteredRevenue();
-              this.updateCharts();
-            });
+        this.roomService.getRoom(detail.idRoom).subscribe({
+          next: (room) => {
+            if (room && room.roomTypeId) {
+              this.loaiPhongService.getNameTypeRoom(room.roomTypeId).subscribe({
+                next: (roomTypeName) => {
+                  detail.roomTypeName = roomTypeName;
+                  this.calculateFilteredRevenue();
+                  this.calculateProfit();
+                  this.updateCharts();
+                },
+                error: (error) => {
+                  console.error(`Error loading room type name for room ${detail.idRoom}:`, error);
+                }
+              });
+            }
+          },
+          error: (error) => {
+            console.error(`Error loading room ${detail.idRoom}:`, error);
           }
         });
       });
 
-      this.customerService.getCustomerNameByBookingId(booking.id).subscribe((customerName) => {
-        booking.customerName = customerName;
+      this.customerService.getCustomerNameByBookingId(booking.id).subscribe({
+        next: (customerName) => {
+          booking.customerName = customerName;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error(`Error loading customer name for booking ${booking.id}:`, error);
+        }
       });
     });
   }
@@ -120,6 +176,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
           this.filteredBookings = this.filteredBookings.filter(b => b.id !== bookingId);
           delete this.serviceRequests[bookingId];
           this.calculateFilteredRevenue();
+          this.calculateProfit();
           this.updateCharts();
           this.cdr.detectChanges();
         },
@@ -167,6 +224,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
       this.isBookingInRange(booking) && this.isBookingInRoom(booking)
     );
     this.calculateFilteredRevenue();
+    this.loadExpenses();
     this.updateCharts();
   }
 
@@ -200,6 +258,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
     this.calculateMonthlyRevenue();
     this.calculateRoomTypeRevenue();
     this.calculateDailyRoomUsage();
+    this.calculateProfit();
   }
 
   private calculateRoomRevenue(): void {
@@ -226,14 +285,11 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
 
   private calculateDailyRoomUsage(): void {
     this.dailyRoomUsage = {};
-    
-    // Initialize date range
     const startDate = this.startDate ? new Date(this.startDate) : this.getEarliestCheckinDate();
     const endDate = this.endDate ? new Date(this.endDate) : this.getLatestCheckoutDate();
     
     if (!startDate || !endDate) return;
 
-    // Initialize all dates in range with 0
     const currentDate = new Date(startDate);
     while (currentDate <= endDate) {
       const dateKey = currentDate.toISOString().split('T')[0];
@@ -241,7 +297,6 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
       currentDate.setDate(currentDate.getDate() + 1);
     }
 
-    // Count rooms for each day
     this.filteredBookings.forEach(booking => {
       booking.details.forEach((detail: BookingDetail) => {
         const checkin = this.getDateFromTimestamp(detail.checkin);
@@ -261,9 +316,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
 
   private getEarliestCheckinDate(): Date | null {
     if (this.filteredBookings.length === 0) return null;
-    
-    let earliestDate = new Date(9999, 11, 31); // Far future date
-    
+    let earliestDate = new Date(9999, 11, 31);
     this.filteredBookings.forEach(booking => {
       booking.details.forEach((detail: BookingDetail) => {
         const checkin = this.getDateFromTimestamp(detail.checkin);
@@ -272,15 +325,12 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
         }
       });
     });
-    
     return earliestDate;
   }
 
   private getLatestCheckoutDate(): Date | null {
     if (this.filteredBookings.length === 0) return null;
-    
-    let latestDate = new Date(1970, 0, 1); // Far past date
-    
+    let latestDate = new Date(1970, 0, 1);
     this.filteredBookings.forEach(booking => {
       booking.details.forEach((detail: BookingDetail) => {
         const checkout = this.getDateFromTimestamp(detail.checkout);
@@ -289,7 +339,6 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
         }
       });
     });
-    
     return latestDate;
   }
 
@@ -321,6 +370,24 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
     });
   }
 
+  private calculateFilteredExpenses(expenses: Expense[]): void {
+    this.totalExpenses = expenses
+      .filter((expense) => this.isExpenseInRange(expense))
+      .reduce((sum, expense) => sum + expense.amount, 0);
+  }
+
+  private isExpenseInRange(expense: Expense): boolean {
+    if (!this.startDate && !this.endDate) return true;
+    const expenseDate = new Date(expense.date);
+    const start = this.startDate ? new Date(this.startDate) : null;
+    const end = this.endDate ? new Date(this.endDate) : null;
+    return (!start || expenseDate >= start) && (!end || expenseDate <= end);
+  }
+
+  private calculateProfit(): void {
+    this.totalProfit = (this.totalRevenue + this.totalServiceRevenue) - this.totalExpenses;
+  }
+
   private updateCharts(): void {
     setTimeout(() => {
       this.destroyCharts();
@@ -331,7 +398,6 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
   private createCharts(): void {
     this.destroyCharts();
 
-    // Biểu đồ tròn: Doanh thu theo phòng
     const pieCtx = document.getElementById('revenueChart') as HTMLCanvasElement;
     if (pieCtx && !Chart.getChart('revenueChart')) {
       try {
@@ -342,8 +408,8 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
             datasets: [{
               data: Object.values(this.roomRevenue),
               backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#9966FF', 
-                                '#FF9F40', '#E74C3C', '#8E44AD', '#3498DB', '#2ECC71', 
-                                '#F1C40F', '#D35400'],
+                               '#FF9F40', '#E74C3C', '#8E44AD', '#3498DB', '#2ECC71', 
+                               '#F1C40F', '#D35400'],
               hoverOffset: 4
             }]
           },
@@ -365,7 +431,6 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
       }
     }
 
-    // Biểu đồ cột: Doanh thu theo tháng
     const barCtx = document.getElementById('monthlyRevenueChart') as HTMLCanvasElement;
     if (barCtx && !Chart.getChart('monthlyRevenueChart')) {
       try {
@@ -419,7 +484,6 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
       }
     }
 
-    // Biểu đồ phân tán: Doanh thu theo loại phòng
     const roomTypeScatterCtx = document.getElementById('roomTypeRevenueChart') as HTMLCanvasElement;
     if (roomTypeScatterCtx && !Chart.getChart('roomTypeRevenueChart')) {
       try {
@@ -481,7 +545,6 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
       }
     }
 
-    // Biểu đồ đường: Số lượng phòng sử dụng theo ngày
     const roomUsageLineCtx = document.getElementById('roomUsageChart') as HTMLCanvasElement;
     if (roomUsageLineCtx && !Chart.getChart('roomUsageChart')) {
       try {
@@ -573,6 +636,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
     this.selectedRoom = '';
     this.filteredBookings = [...this.bookings];
     this.calculateFilteredRevenue();
+    this.loadExpenses();
     this.updateCharts();
   }
 }

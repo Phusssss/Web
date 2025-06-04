@@ -50,65 +50,177 @@
 
             <div class="input-group">
               <label for="checkinDate">Ngày nhận phòng <span class="required">*</span></label>
-              <input id="checkinDate" type="date" [(ngModel)]="checkinDate" (change)="calculateNights()" />
+              <input 
+                id="checkinDate" 
+                type="date" 
+                [(ngModel)]="checkinDate" 
+                (change)="calculateNights()"
+                [min]="todayDate"
+              />
             </div>
 
             <div class="input-group">
               <label for="checkoutDate">Ngày trả phòng <span class="required">*</span></label>
-              <input id="checkoutDate" type="date" [(ngModel)]="checkoutDate" (change)="calculateNights()" />
+              <input 
+                id="checkoutDate" 
+                type="date" 
+                [(ngModel)]="checkoutDate" 
+                (change)="calculateNights()"
+                [min]="checkinDate"
+              />
             </div>
 
-            <button class="search-button" (click)="findRoomsByType()" data-text="Tìm phòng"></button>
+            <!-- Hiển thị số đêm -->
+            <div class="nights-info" *ngIf="numberOfNights > 0">
+              <span><i class="fas fa-calendar-alt"></i> Số đêm: {{ numberOfNights }}</span>
+            </div>
+
+            <div class="search-actions">
+              <button 
+                class="search-button" 
+                (click)="findRoomsByType()" 
+                [disabled]="isSearching"
+                data-text="Tìm phòng"
+              >
+                <i class="fas fa-search" *ngIf="!isSearching"></i>
+                <i class="fas fa-spinner fa-spin" *ngIf="isSearching"></i>
+                {{ isSearching ? 'Đang tìm...' : 'Tìm phòng' }}
+              </button>
+
+              <button 
+                class="optimize-button" 
+                (click)="optimizeWithGA()" 
+                [disabled]="rooms.length === 0 || isOptimizing"
+                data-text="Đề xuất tối ưu"
+                *ngIf="rooms.length > 0"
+              >
+                <i class="fas fa-magic" *ngIf="!isOptimizing"></i>
+                <i class="fas fa-spinner fa-spin" *ngIf="isOptimizing"></i>
+                {{ isOptimizing ? 'Đang tối ưu...' : 'Đề xuất tối ưu' }}
+              </button>
+            </div>
+
+            <!-- Progress bar cho tối ưu hóa -->
+            <div class="optimization-progress" *ngIf="isOptimizing">
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="optimizationProgress"></div>
+              </div>
+              <span class="progress-text">{{ optimizationProgress }}%</span>
+            </div>
           </div>
         </section>
-        <div *ngIf="rooms.length > 0">
-          <h3>Phòng khả dụng</h3>
-          <ul>
-            <li *ngFor="let room of rooms">
-              <input type="checkbox" (change)="toggleRoomSelection(room)" [checked]="selectedRooms.includes(room)">
-              {{ room.name }} - Giá: {{ room.roomPriceByDay | currency }} / ngày
-              <span>(Khoảng trống: {{ room.totalGapDays }} ngày)</span>
-            </li>
-          </ul>
-        </div>
+
         <!-- Cột phải: Kết quả phòng trống -->
         <section class="rooms-section" *ngIf="rooms.length > 0; else noRoomsFound">
-          <h3><i class="fas fa-door-open"></i> Danh sách phòng trống</h3>
+          <h3><i class="fas fa-door-open"></i> Danh sách phòng trống ({{ rooms.length }} phòng)</h3>
+          
           <div class="rooms-grid">
-            <div *ngFor="let room of rooms" class="room-card">
+            <div 
+              *ngFor="let room of rooms" 
+              class="room-card"
+              [class.selected]="selectedRooms.includes(room)"
+              [class.recommended]="isRecommendedRoom(room)"
+            >
               <input
                 type="checkbox"
                 class="room-checkbox"
                 [checked]="selectedRooms.includes(room)"
                 (change)="toggleRoomSelection(room)"
               />
+              
+              <!-- Badge đề xuất -->
+              <div class="recommended-badge" *ngIf="isRecommendedRoom(room)">
+                <i class="fas fa-star"></i> Đề xuất
+              </div>
+
               <div class="room-info">
                 <h4 class="room-name">{{ room.name }}</h4>
                 <p class="room-id">Mã phòng: {{ room.id }}</p>
+                
                 <div class="price-info">
                   <span>Giá ngày:</span>
                   <span class="price-tag">{{ room.roomPriceByDay | number:'1.0-0' }} ₫</span>
                 </div>
+                
                 <div class="price-info">
                   <span>Giá giờ:</span>
                   <span class="price-tag">{{ room.roomPriceByHour | number:'1.0-0' }} ₫</span>
+                </div>
+
+                <!-- Hiển thị thông tin khoảng trống -->
+                <div class="gap-info" *ngIf="room.totalGapDays">
+                  <span class="gap-days">
+                    <i class="fas fa-calendar-times"></i>
+                    Khoảng trống: {{ room.totalGapDays }} ngày
+                  </span>
+                </div>
+
+                <!-- Tính toán chi phí cho phòng này -->
+                <div class="room-cost" *ngIf="numberOfNights > 0">
+                  <strong>
+                    Chi phí: {{ (room.roomPriceByDay * numberOfNights) | number:'1.0-0' }} ₫
+                    ({{ numberOfNights }} đêm)
+                  </strong>
                 </div>
               </div>
             </div>
           </div>
 
+          <!-- Phần tóm tắt đặt phòng -->
           <div class="booking-section" *ngIf="selectedRooms.length > 0">
             <div class="booking-summary">
-              <span>Tổng tiền: {{ totalCost | number:'1.0-0' }} ₫ ({{ selectedRooms.length }} phòng)</span>
-              <button class="book-button" (click)="createBooking()" data-text="Đặt phòng"></button>
+              <div class="summary-details">
+                <h4><i class="fas fa-receipt"></i> Tóm tắt đặt phòng</h4>
+                <div class="summary-item">
+                  <span>Số phòng đã chọn:</span>
+                  <span class="highlight">{{ selectedRooms.length }} phòng</span>
+                </div>
+                <div class="summary-item">
+                  <span>Số đêm:</span>
+                  <span class="highlight">{{ numberOfNights }} đêm</span>
+                </div>
+                <div class="summary-item total">
+                  <span>Tổng tiền:</span>
+                  <span class="price-highlight">{{ totalCost | number:'1.0-0' }} ₫</span>
+                </div>
+              </div>
+              
+              <div class="booking-actions">
+                <button 
+                  class="book-button" 
+                  (click)="createBooking()" 
+                  [disabled]="isBookingInProgress || !selectedCustomerId"
+                  data-text="Đặt phòng"
+                >
+                  <i class="fas fa-check" *ngIf="!isBookingInProgress"></i>
+                  <i class="fas fa-spinner fa-spin" *ngIf="isBookingInProgress"></i>
+                  {{ isBookingInProgress ? 'Đang đặt...' : 'Đặt phòng' }}
+                </button>
+
+                <button 
+                  class="clear-button" 
+                  (click)="selectedRooms = []; calculateTotalCost()"
+                  data-text="Xóa chọn"
+                >
+                  <i class="fas fa-times"></i> Xóa chọn
+                </button>
+              </div>
             </div>
           </div>
         </section>
 
+        <!-- Template khi không tìm thấy phòng -->
         <ng-template #noRoomsFound>
-          <div class="no-rooms">
+          <div class="no-rooms" *ngIf="!isSearching">
             <i class="fas fa-exclamation-circle"></i>
             <p>Không tìm thấy phòng phù hợp với yêu cầu của bạn.</p>
+            <p class="suggestion">Hãy thử thay đổi ngày hoặc loại phòng khác.</p>
+          </div>
+          
+          <!-- Loading state -->
+          <div class="loading-state" *ngIf="isSearching">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p>Đang tìm kiếm phòng trống...</p>
           </div>
         </ng-template>
       </div>
@@ -117,32 +229,86 @@
       <div class="modal" *ngIf="showAddCustomerForm">
         <div class="modal-overlay" (click)="toggleAddCustomerForm()"></div>
         <div class="modal-content">
-          <h4><i class="fas fa-user-plus"></i> Thêm khách hàng mới</h4>
-          <div class="form-group">
-            <div class="input-group">
-              <label for="customerName">Họ tên <span class="required">*</span></label>
-              <input id="customerName" type="text" [(ngModel)]="newCustomer.name" placeholder="Nhập họ tên" />
-            </div>
-            <div class="input-group">
-              <label for="customerEmail">Email <span class="required">*</span></label>
-              <input id="customerEmail" type="email" [(ngModel)]="newCustomer.email" placeholder="Nhập email" />
-            </div>
-            <div class="input-group">
-              <label for="customerPhone">Số điện thoại <span class="required">*</span></label>
-              <input id="customerPhone" type="text" [(ngModel)]="newCustomer.phone" placeholder="Nhập số điện thoại" />
-            </div>
-            <div class="input-group">
-              <label for="customerAddress">Địa chỉ</label>
-              <input id="customerAddress" type="text" [(ngModel)]="newCustomer.address" placeholder="Nhập địa chỉ" />
-            </div>
-            <div class="input-group">
-              <label for="customerCCCD">CCCD <span class="optional">(Tùy chọn)</span></label>
-              <input id="customerCCCD" type="text" [(ngModel)]="newCustomer.cccd" placeholder="Nhập CCCD" />
+          <div class="modal-header">
+            <h4><i class="fas fa-user-plus"></i> Thêm khách hàng mới</h4>
+            <button class="close-modal" (click)="toggleAddCustomerForm()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          
+          <div class="modal-body">
+            <div class="form-group">
+              <div class="input-group">
+                <label for="customerName">Họ tên <span class="required">*</span></label>
+                <input 
+                  id="customerName" 
+                  type="text" 
+                  [(ngModel)]="newCustomer.name" 
+                  placeholder="Nhập họ tên"
+                  required 
+                />
+              </div>
+              
+              <div class="input-group">
+                <label for="customerEmail">Email <span class="required">*</span></label>
+                <input 
+                  id="customerEmail" 
+                  type="email" 
+                  [(ngModel)]="newCustomer.email" 
+                  placeholder="Nhập email"
+                  required 
+                />
+              </div>
+              
+              <div class="input-group">
+                <label for="customerPhone">Số điện thoại <span class="required">*</span></label>
+                <input 
+                  id="customerPhone" 
+                  type="text" 
+                  [(ngModel)]="newCustomer.phone" 
+                  placeholder="Nhập số điện thoại"
+                  required 
+                />
+              </div>
+              
+              <div class="input-group">
+                <label for="customerAddress">Địa chỉ</label>
+                <input 
+                  id="customerAddress" 
+                  type="text" 
+                  [(ngModel)]="newCustomer.address" 
+                  placeholder="Nhập địa chỉ" 
+                />
+              </div>
+              
+              <div class="input-group">
+                <label for="customerCCCD">CCCD <span class="optional">(Tùy chọn)</span></label>
+                <input 
+                  id="customerCCCD" 
+                  type="text" 
+                  [(ngModel)]="newCustomer.cccd" 
+                  placeholder="Nhập CCCD" 
+                />
+              </div>
             </div>
           </div>
+          
           <div class="modal-actions">
-            <button class="save-customer-btn" (click)="addNewCustomer()" data-text="Lưu"></button>
-            <button class="cancel-btn" (click)="toggleAddCustomerForm()" data-text="Hủy"></button>
+            <button 
+              class="save-customer-btn" 
+              (click)="addNewCustomer()" 
+              data-text="Lưu"
+              [disabled]="!newCustomer.name || !newCustomer.email || !newCustomer.phone"
+            >
+              <i class="fas fa-save"></i> Lưu
+            </button>
+            <button 
+              class="cancel-btn" 
+              (click)="toggleAddCustomerForm()" 
+              data-text="Hủy"
+            >
+              <i class="fas fa-times"></i> Hủy
+            </button>
           </div>
         </div>
       </div>

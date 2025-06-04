@@ -6,7 +6,7 @@
         <span class="brand-name">Hotel Manager</span>
       </div>
       <h2>Đăng ký</h2>
-      <form (ngSubmit)="register()">
+      <form (ngSubmit)="register()" #registerForm="ngForm">
         <div class="input-group">
           <label for="email">Email</label>
           <input 
@@ -15,7 +15,14 @@
             [(ngModel)]="email" 
             name="email" 
             placeholder="Nhập email" 
-            required />
+            required
+            email />
+          <div *ngIf="registerForm.submitted && !email" class="error">
+            Vui lòng nhập email
+          </div>
+          <div *ngIf="registerForm.submitted && !registerForm.form.controls['email']?.valid" class="error">
+            Email không hợp lệ
+          </div>
         </div>
         <div class="input-group">
           <label for="password">Mật khẩu</label>
@@ -25,12 +32,19 @@
             [(ngModel)]="password" 
             name="password" 
             placeholder="Nhập mật khẩu" 
-            required />
+            required
+            minlength="6" />
+          <div *ngIf="registerForm.submitted && !password" class="error">
+            Vui lòng nhập mật khẩu
+          </div>
+          <div *ngIf="registerForm.submitted && registerForm.form.controls['password']?.errors?.['minlength']" class="error">
+            Mật khẩu phải có ít nhất 6 ký tự
+          </div>
         </div>
         <button 
           type="submit" 
           class="register-btn"
-          [disabled]="isLoading">
+          [disabled]="isLoading || registerForm.invalid">
           Đăng ký
         </button>
       </form>

@@ -6,19 +6,19 @@
     <div class="stats-container">
       <div class="stats-box total-revenue">
         <h3>Tổng Thu</h3>
-        <p>120,000,000</p>
+        <p>{{ (totalRevenue + totalServiceRevenue) | currency:'VND' }}</p>
       </div>
       <div class="stats-box expected-revenue">
         <h3>Thu Dự Kiến</h3>
-        <p>120,000,000</p>
+        <p>{{ (totalRevenue + totalServiceRevenue) | currency:'VND' }}</p>
       </div>
       <div class="stats-box total-expenses">
         <h3>Tổng Chi</h3>
-        <p>120,000,000</p>
+        <p>{{ totalExpenses | currency:'VND' }}</p>
       </div>
       <div class="stats-box profit">
         <h3>Lợi Nhuận</h3>
-        <p>120,000,000</p>
+        <p>{{ totalProfit | currency:'VND' }}</p>
       </div>
     </div>
 
@@ -49,48 +49,36 @@
     </div>
 
     <!-- Charts Section -->
-    <div class="row charts-container mb-4">
-      <!-- Pie Chart (Revenue by Room) -->
-      <div class="col-lg-6 mb-4 mb-lg-0">
-        <div class="card shadow chart-container">
-          <div class="card-body">
-            <h3 class="chart-title"><i class="fas fa-chart-pie"></i> Doanh thu theo phòng</h3>
-            <canvas id="revenueChart"></canvas>
-          </div>
+    <div class="charts-container">
+      <div class="card shadow chart-container">
+        <div class="card-body">
+          <h3 class="chart-title"><i class="fas fa-chart-pie"></i> Doanh thu theo phòng</h3>
+          <canvas id="revenueChart"></canvas>
         </div>
       </div>
-      <!-- Bar Chart (Monthly Revenue) -->
-      <div class="col-lg-6 mb-4 mb-lg-0">
-        <div class="card shadow chart-container">
-          <div class="card-body">
-            <h3 class="chart-title"><i class="fas fa-chart-bar"></i> Doanh thu theo tháng</h3>
-            <canvas id="monthlyRevenueChart"></canvas>
-          </div>
+      <div class="card shadow chart-container">
+        <div class="card-body">
+          <h3 class="chart-title"><i class="fas fa-chart-bar"></i> Doanh thu theo tháng</h3>
+          <canvas id="monthlyRevenueChart"></canvas>
         </div>
       </div>
-      <!-- Pie Chart (Revenue by Room Type) -->
-      <div class="col-lg-6 mb-4 mb-lg-0">
-        <div class="card shadow chart-container">
-          <div class="card-body">
-            <h3 class="chart-title"><i class="fas fa-chart-pie"></i> Doanh thu theo loại phòng</h3>
-            <canvas id="roomTypeRevenueChart"></canvas>
-          </div>
+      <div class="card shadow chart-container">
+        <div class="card-body">
+          <h3 class="chart-title"><i class="fas fa-chart-pie"></i> Doanh thu theo loại phòng</h3>
+          <canvas id="roomTypeRevenueChart"></canvas>
         </div>
       </div>
-      <!-- Pie Chart (Revenue by Service) -->
-      <div class="col-lg-6 mb-4 mb-lg-0">
-        <div class="card shadow chart-container">
-          <div class="card-body">
-            <h3 class="chart-title"><i class="fas fa-chart-pie"></i> Phòng sử dụng </h3>
-            <canvas id="roomUsageChart"></canvas>
-          </div>
+      <div class="card shadow chart-container">
+        <div class="card-body">
+          <h3 class="chart-title"><i class="fas fa-chart-pie"></i> Phòng sử dụng</h3>
+          <canvas id="roomUsageChart"></canvas>
         </div>
       </div>
     </div>
 
     <!-- Revenue Summary -->
     <div class="card mb-4 shadow revenue-summary">
-      <div class="card-body text-end">
+      <div class="card-body">
         <h3 class="mb-3">Tổng doanh thu đặt chỗ: <span>{{ totalRevenue | currency:'VND' }}</span></h3>
         <h3 class="mb-3">Tổng doanh thu dịch vụ: <span>{{ totalServiceRevenue | currency:'VND' }}</span></h3>
         <h3>Tổng doanh thu: <span>{{ (totalRevenue + totalServiceRevenue) | currency:'VND' }}</span></h3>

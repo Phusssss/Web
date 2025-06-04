@@ -1,5 +1,5 @@
 .main-content {
-  background: #f0f5ff;
+  background: var(--bg-all);
   min-height: 100vh;
   transition: margin-left 0.3s ease;
 }
@@ -12,19 +12,19 @@
 
 .content-wrapper {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  grid-template-columns: 1fr 1fr;
   gap: 30px;
+  color: var(--color-title);
 }
 
 .section-title {
-  color: #2d3748;
+  color: var(--color-title);
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 20px;
 }
 
 .calendar-container {
-  /* No additional changes needed */
 }
 
 .calendar-wrapper {
@@ -33,12 +33,11 @@
 }
 
 .calendar-wrapper ::ng-deep .fc {
-  background: white;
+  background: var(--bg-all);
 }
 
 .calendar-wrapper ::ng-deep .fc-toolbar {
-  background: linear-gradient(135deg, #2c5282, #38b2ac);
-  color: white;
+  background: var(--sidebar-bg);
   padding: 10px;
 }
 
@@ -55,7 +54,6 @@
 }
 
 .room-summary {
-  /* No additional changes needed */
 }
 
 .stats {
@@ -66,7 +64,7 @@
 }
 
 .stat-card {
-  background: white;
+  background: var(--bg-all);
   border-radius: 15px;
   padding: 15px;
   display: flex;
@@ -109,29 +107,30 @@
 .stat-label {
   margin: 0;
   font-size: 14px;
-  color: #4a5568;
+  color: var(--color-title);
 }
 
 .stat-value {
   margin: 5px 0 0;
   font-size: 24px;
   font-weight: 600;
-  color: #2d3748;
+  color: var(--color-title);
 }
 
 .room-lists {
   display: grid;
-  grid-template-columns: 1fr; /* Single column for room lists */
+  grid-template-columns: 1fr;
   gap: 20px;
 }
 
 .room-list {
+  background: var(--sidebar-all);
   padding: 20px;
   border-radius: 15px;
 }
 
 .room-list h4 {
-  color: #2d3748;
+  color: var(--color-title);
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 15px;
@@ -146,7 +145,7 @@
 .room-list li {
   padding: 8px 0;
   font-size: 14px;
-  color: #4a5568;
+  color: var(--color-title);
   border-bottom: 1px solid #e2e8f0;
   display: flex;
   align-items: center;
@@ -154,6 +153,69 @@
 
 .room-list li:last-child {
   border-bottom: none;
+}
+
+.notification-board {
+  background: var(--sidebar-all);
+  padding: 20px;
+  border-radius: 15px;
+}
+
+.notification-board h4 {
+  color: var(--color-title);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.notification-board table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  color: var(--color-title);
+}
+
+.notification-board td {
+  padding: 8px;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notification-board i {
+  font-size: 14px;
+}
+
+.notification-board .fa-sign-in-alt {
+  color: #00A65A;
+}
+
+.notification-board .fa-sign-out-alt {
+  color: #e53e3e;
+}
+
+.notification-board tr:last-child td {
+  border-bottom: none;
+}
+
+.notification-board::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notification-board::-webkit-scrollbar-track {
+  background: #f0f5ff;
+  border-radius: 4px;
+}
+
+.notification-board::-webkit-scrollbar-thumb {
+  background: #a0aec0;
+  border-radius: 4px;
+}
+
+.notification-board::-webkit-scrollbar-thumb:hover {
+  background: #718096;
 }
 
 .no-data {
@@ -171,28 +233,28 @@
 @media (max-width: 768px) {
   .main-content {
     margin-left: 0;
-    padding: 1.5rem 0.5rem; /* Giảm padding ngang từ 1rem xuống 0.5rem để mở rộng không gian */
+    padding: 1.5rem 0.5rem;
   }
 
   .container {
-    max-width: none; /* Xóa giới hạn max-width để chiếm toàn bộ chiều ngang */
-    padding: 0 10px; /* Giảm padding ngang để nội dung sát mép hơn */
+    max-width: none;
+    padding: 0 10px;
   }
 
   .content-wrapper {
-    grid-template-columns: 1fr; /* Giữ 1 cột */
-    padding: 0; /* Loại bỏ padding để phù hợp với container */
-    width: 100%; /* Đảm bảo chiếm toàn bộ chiều ngang */
+    grid-template-columns: 1fr;
+    padding: 0;
+    width: 100%;
   }
 
   .stats {
-    grid-template-columns: 1fr; /* Giữ 1 cột cho stats */
-    gap: 15px; /* Giảm gap để tiết kiệm không gian */
+    grid-template-columns: 1fr;
+    gap: 15px;
   }
 
   .stat-card {
     padding: 10px;
-    width: 100%; /* Đảm bảo stat-card chiếm toàn bộ chiều ngang */
+    width: 100%;
   }
 
   .stat-icon {
@@ -206,16 +268,16 @@
   }
 
   .room-lists {
-    grid-template-columns: 1fr; /* Giữ 1 cột */
-    gap: 15px; /* Giảm gap để tiết kiệm không gian */
+    grid-template-columns: 1fr;
+    gap: 15px;
   }
 
-  .room-list {
-    padding: 15px 10px; /* Giảm padding ngang để mở rộng nội dung */
-    width: 100%; /* Đảm bảo chiếm toàn bộ chiều ngang */
+  .room-list, .notification-board {
+    padding: 15px 10px;
+    width: 100%;
   }
 
-  .room-list h4 {
+  .room-list h4, .notification-board h4 {
     font-size: 16px;
   }
 
@@ -224,6 +286,15 @@
   }
 
   .calendar-wrapper {
-    width: 100%; /* Đảm bảo lịch chiếm toàn bộ chiều ngang */
+    width: 100%;
+  }
+
+  .notification-board td {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  .notification-board i {
+    font-size: 12px;
   }
 }

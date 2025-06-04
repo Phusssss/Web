@@ -9,7 +9,7 @@ import { NotificationPopupComponent } from '../notification-popup/notification-p
 
 @Component({
   selector: 'app-home',
-  templateUrl: './home1.component.html', 
+  templateUrl: './home1.component.html',
   styleUrls: ['./home1.component.css']
 })
 export class Home1Component implements OnInit {
@@ -17,9 +17,10 @@ export class Home1Component implements OnInit {
   todayCheckins: any[] = [];
   todayCheckouts: any[] = [];
   overnightRooms: any[] = [];
+  todayEvents: any[] = [];
   totalCheckins: number = 0;
   totalCheckouts: number = 0;
-  isLoading: boolean = false; // Thêm biến loading
+  isLoading: boolean = false;
 
   calendarOptions: any = {
     initialView: 'dayGridMonth',
@@ -38,11 +39,12 @@ export class Home1Component implements OnInit {
   constructor(
     private bookingService: BookingService,
     public dialog: MatDialog,
-    private modalService: NgbModal // Thêm NgbModal để dùng popup
+    private modalService: NgbModal
   ) {}
 
   ngOnInit(): void {
     this.loadBookings();
+    this.loadTodayEvents();
   }
 
   loadBookings(): void {
@@ -59,6 +61,20 @@ export class Home1Component implements OnInit {
         this.showNotification('Lỗi khi tải danh sách đặt phòng: ' + error.message, 'error');
       }
     );
+  }
+
+  loadTodayEvents(): void {
+    this.isLoading = true;
+    this.bookingService.getTodayCheckInOut().subscribe({
+      next: (events) => {
+        this.todayEvents = events;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.showNotification('Lỗi khi tải thông báo check-in/check-out: ' + error.message, 'error');
+      }
+    });
   }
 
   updateCalendarEvents(): void {
@@ -109,10 +125,10 @@ export class Home1Component implements OnInit {
 
   getStatusColor(status: string): string {
     switch (status) {
-      case 'Đã thanh toán': return '#38b2ac'; // Đồng bộ màu xanh ngọc
-      case 'Đã nhận phòng': return '#2c5282'; // Xanh đậm
-      case 'Đang chờ xử lý': return '#ed8936'; // Cam
-      default: return '#9E9E9E'; // Xám
+      case 'Đã thanh toán': return '#38b2ac';
+      case 'Đã nhận phòng': return '#2c5282';
+      case 'Đang chờ xử lý': return '#ed8936';
+      default: return '#9E9E9E';
     }
   }
 

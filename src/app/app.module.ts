@@ -25,15 +25,11 @@ import { ServiceRequestComponent } from './service-request/service-request.compo
 import { CheckoutBillComponent } from './checkout-bill/checkout-bill.component';
 import { InvoiceComponent } from './invoice/invoice.component';
 import { KhuVucComponent } from './khu-vuc/khu-vuc.component';
-import { Home1Component } from './honme1/honme1.component'; // Typo? Should it be 'home1'?
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { DateModalComponent } from './date-modal/date-modal.component';
 import { ThangThaiPhongComponent } from './thang-thai-phong/thang-thai-phong.component';
-import { HttpClientModule } from '@angular/common/http'; // Required for VietQRService
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap'; // Required for NgbActiveModal
-// FullCalendar plugins (optional, only if you're using them elsewhere)
-import DayGridPlugin from '@fullcalendar/daygrid';
-import InteractionPlugin from '@fullcalendar/interaction';
+import { HttpClientModule } from '@angular/common/http';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { QRManagerComponent } from './qrmanager/qrmanager.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { NotificationModalComponent } from './notification-modal/notification-modal.component';
@@ -52,6 +48,9 @@ import { ExpenseManagementComponent } from './expense-management/expense-managem
 import { FundStatisticsComponent } from './fund-statistics/fund-statistics.component';
 import { GoodsReceiptComponent } from './goods-receipt/goods-receipt.component';
 import { GoodsIssueComponent } from './goods-issue/goods-issue.component';
+import { Home1Component } from './honme1/honme1.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
+import { NotificationListPopupComponent } from './notification-list-popup/notification-list-popup.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +67,7 @@ import { GoodsIssueComponent } from './goods-issue/goods-issue.component';
     HomeComponent,
     PlaceServiceRequestComponent,
     ServiceRequestComponent,
-    CheckoutBillComponent, // Already correctly declared
+    CheckoutBillComponent,
     InvoiceComponent,
     KhuVucComponent,
     Home1Component,
@@ -91,23 +90,25 @@ import { GoodsIssueComponent } from './goods-issue/goods-issue.component';
     ExpenseManagementComponent,
     FundStatisticsComponent,
     GoodsReceiptComponent,
-    GoodsIssueComponent
+    GoodsIssueComponent,
+    ChangePasswordComponent,
+    NotificationListPopupComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    AngularFireModule.initializeApp(environment.firebase),
     BrowserAnimationsModule,
+    AngularFireModule.initializeApp(environment.firebase),
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
     FullCalendarModule,
-    HttpClientModule, // Already included, necessary for VietQRService
-    NgbModule // Already included, necessary for CheckoutBillComponent
+    HttpClientModule,
+    NgbModule
   ],
-  providers: [], // VietQRService uses providedIn: 'root', so no need to list here
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

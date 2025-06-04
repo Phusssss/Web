@@ -12,7 +12,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class RegisterComponent {
   email: string = '';
   password: string = '';
-  isLoading: boolean = false; // Biến để kiểm soát trạng thái loading
+  isLoading: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -21,17 +21,17 @@ export class RegisterComponent {
   ) {}
 
   register() {
-    this.isLoading = true; // Bật loading
+    this.isLoading = true;
     this.authService.register(this.email, this.password)
-      .then(() => {
-        this.isLoading = false; // Tắt loading
-        this.showNotification('Đăng ký thành công! Vui lòng đăng nhập.', 'success');
+      .then((result) => {
+        this.isLoading = false;
+        this.showNotification(result.message, 'success');
         setTimeout(() => {
           this.router.navigate(['/login']);
-        }, 1500);
+        }, 2000);
       })
       .catch(error => {
-        this.isLoading = false; // Tắt loading
+        this.isLoading = false;
         this.showNotification('Lỗi: ' + error.message, 'error');
       });
   }
