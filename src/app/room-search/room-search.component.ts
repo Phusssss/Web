@@ -158,11 +158,7 @@ export class RoomSearchComponent implements OnInit, OnDestroy {
       availableRooms => {
         this.rooms = availableRooms;
         this.isSearching = false;
-        if (availableRooms.length > 0) {
-          alert(`Đã tìm thấy ${availableRooms.length} phòng phù hợp. Nhấn "Đề xuất tối ưu" để chọn phòng tốt nhất!`);
-        } else {
-          alert("Không tìm thấy phòng phù hợp!");
-        }
+      
       },
       error => {
         console.error('Lỗi khi lấy danh sách phòng:', error);
@@ -205,7 +201,6 @@ export class RoomSearchComponent implements OnInit, OnDestroy {
       this.optimizationProgress = 100;
       setTimeout(() => {
         this.isOptimizing = false;
-        alert(`Đã tìm thấy phân bổ tối ưu! Phòng đề xuất: ${this.selectedRooms[0]?.name || 'Không có phòng phù hợp'}`);
       }, 500);
     }, 2000);
   }
@@ -475,7 +470,6 @@ export class RoomSearchComponent implements OnInit, OnDestroy {
       (bookingResponse) => {
         console.log('Đặt phòng thành công:', bookingResponse);
         alert('Đặt phòng thành công!');
-        this.resetBookingForm();
       },
       (error) => {
         console.error('Lỗi khi đặt phòng:', error);

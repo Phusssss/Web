@@ -34,7 +34,7 @@ export class LoginComponent implements AfterViewInit {
         this.isLoading = false;
         this.showNotification('Đăng nhập thành công!', 'success');
         setTimeout(() => {
-          this.router.navigate(['/select-staff']).then(() => {
+          this.router.navigate(['/home1']).then(() => {
             window.location.reload();
           });
         }, 1500);

@@ -26,12 +26,12 @@ export class GoodsReceiptComponent implements OnInit {
     private zone: NgZone
   ) {
     this.receiptForm = this.fb.group({
-      description: ['', [Validators.required, Validators.minLength(5)]],
-      quantity: ['', [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)]],
-      date: ['', [Validators.required]],
-      createdAt: [{ value: '', disabled: true }],
-      updatedAt: [{ value: '', disabled: true }],
-    });
+  description: ['', [Validators.required, Validators.minLength(5)]],
+  quantity: ['', [Validators.required, Validators.min(0), Validators.pattern(/^\d+$/)]], // Change min to 0 if zero is allowed, or keep 1 if not
+  date: ['', [Validators.required]],
+  createdAt: [{ value: '', disabled: true }],
+  updatedAt: [{ value: '', disabled: true }],
+});
   }
 
   ngOnInit(): void {

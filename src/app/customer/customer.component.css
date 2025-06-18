@@ -1,4 +1,4 @@
-/* Import font hiện đại */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 .main-content {
@@ -9,13 +9,13 @@
 }
 
 .container {
-  max-width: 100%; /* Tăng độ rộng container */
+  max-width: 100%; 
   margin: 0 auto;
   padding: 20px;
 }
 
 .header-container {
-  background: var(--bg-all);
+  background: var(--bg-table);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   padding: 20px;
   display: flex;
@@ -59,7 +59,7 @@
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 0.95rem;
-  color: #1f2937;
+  color: var(--color-title);
   background: var(--bg-all);
   height: 40px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -140,7 +140,7 @@
 }
 
 .table-container {
-  background: var(--bg-all);
+  background: var(--bg-table);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   padding: 20px;
   border-radius: 8px;
@@ -164,17 +164,17 @@
 }
 
 .service-table th {
-  background: var(--bg-all);
+  background: var(--bg-table);
   font-weight: 600;
   color: var(--color-title);
 }
 
 .service-table td {
-  background: var(--bg-all);
+  background: var(--bg-table);
 }
 
 .service-table tr:nth-child(even) td {
-  background: var(--bg-all);
+  background: var(--bg-table);
 }
 
 .service-table th:first-child,
@@ -399,7 +399,7 @@
 
 .page-info {
   font-size: 0.95rem;
-  color: #1f2937;
+  color: var(--color-title);
 }
 
 @media (max-width: 768px) {

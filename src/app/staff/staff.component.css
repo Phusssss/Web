@@ -15,7 +15,7 @@
 }
 
 .header-container {
-  background: var(--bg-all);
+  background: var(--bg-table);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   padding: 20px;
   display: flex;
@@ -60,7 +60,7 @@
   border-radius: 6px;
   font-size: 0.95rem;
   color: #1f2937;
-  background: white;
+  background:var(--bg-all);
   height: 40px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -140,7 +140,7 @@
 }
 
 .table-container {
-  background: var(--bg-all);
+  background: var(--bg-table);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   padding: 20px;
   border-radius: 8px;
@@ -164,17 +164,17 @@
 }
 
 .service-table th {
-  background: var(--bg-all);
+  background: var(--bg-table);
   font-weight: 600;
   color: var(--color-title);
 }
 
 .service-table td {
-  background: var(--bg-all);
+  background: var(--bg-table);
 }
 
 .service-table tr:nth-child(even) td {
-  background: var(--bg-all);
+  background: var(--bg-table);
 }
 
 .service-table th:first-child,

@@ -14,90 +14,98 @@
         <h3 class="section-title">
           <i class="fas fa-chart-bar mr-2"></i> Thống kê phòng hôm nay
         </h3>
-
         <div class="stats">
           <div class="stat-card shadow-sm">
             <span class="stat-icon bg-success"><i class="fas fa-sign-in-alt"></i></span>
             <div class="stat-info">
-              <p class="stat-label">Số phòng nhận hôm nay</p>
+              <p class="stat-label">Check-in</p>
               <p class="stat-value">{{ totalCheckins }}</p>
             </div>
           </div>
           <div class="stat-card shadow-sm">
             <span class="stat-icon bg-warning"><i class="fas fa-sign-out-alt"></i></span>
             <div class="stat-info">
-              <p class="stat-label">Số phòng trả hôm nay</p>
+              <p class="stat-label">Check-out</p>
               <p class="stat-value">{{ totalCheckouts }}</p>
             </div>
           </div>
           <div class="stat-card shadow-sm">
             <span class="stat-icon bg-primary"><i class="fas fa-moon"></i></span>
             <div class="stat-info">
-              <p class="stat-label">Số phòng ở qua đêm</p>
+              <p class="stat-label">Ở qua đêm</p>
               <p class="stat-value">{{ overnightRooms.length }}</p>
             </div>
           </div>
         </div>
 
         <div class="room-lists">
-          <div class="room-list shadow-lg rounded">
-            <h4><i class="fas fa-key mr-2"></i> Danh sách nhận phòng hôm nay</h4>
-            <ul *ngIf="todayCheckins.length > 0; else noCheckins">
-              <li *ngFor="let room of todayCheckins">
-                <i class="fas fa-door-open mr-2"></i> Phòng {{ room.nameRoom }}
-              </li>
-            </ul>
-            <ng-template #noCheckins>
-              <p class="no-data"><i class="fas fa-info-circle mr-2"></i> Không có phòng nhận hôm nay</p>
-            </ng-template>
+          <div class="room-list shadow-sm rounded">
+            <h4><i class="fas fa-key mr-2"></i> Nhận phòng hôm nay</h4>
+            <div class="room-list-wrap">
+              <ul *ngIf="todayCheckins.length > 0; else noCheckins">
+                <li *ngFor="let room of todayCheckins">
+                  <i class="fas fa-door-open mr-2"></i> Phòng {{ room.nameRoom }}
+                </li>
+              </ul>
+              <ng-template #noCheckins>
+                <p class="no-data"><i class="fas fa-info-circle mr-2"></i> Không có phòng nhận hôm nay</p>
+              </ng-template>
+            </div>
           </div>
 
-          <div class="room-list shadow-lg rounded">
-            <h4><i class="fas fa-sign-out-alt mr-2"></i> Danh sách trả phòng hôm nay</h4>
-            <ul *ngIf="todayCheckouts.length > 0; else noCheckouts">
-              <li *ngFor="let room of todayCheckouts">
-                <i class="fas fa-door-closed mr-2"></i> Phòng {{ room.nameRoom }}
-              </li>
-            </ul>
-            <ng-template #noCheckouts>
-              <p class="no-data"><i class="fas fa-info-circle mr-2"></i> Không có phòng trả hôm nay</p>
-            </ng-template>
+          <div class="room-list shadow-sm rounded">
+            <h4><i class="fas fa-sign-out-alt mr-2"></i> Trả phòng hôm nay</h4>
+            <div class="room-list-wrap">
+              <ul *ngIf="todayCheckouts.length > 0; else noCheckouts">
+                <li *ngFor="let room of todayCheckouts">
+                  <i class="fas fa-door-closed mr-2"></i> Phòng {{ room.nameRoom }}
+                </li>
+              </ul>
+              <ng-template #noCheckouts>
+                <p class="no-data"><i class="fas fa-info-circle mr-2"></i> Không có phòng trả hôm nay</p>
+              </ng-template>
+            </div>
           </div>
 
-          <div class="room-list shadow-lg rounded">
-            <h4><i class="fas fa-moon mr-2"></i> Danh sách phòng ở qua đêm</h4>
-            <ul *ngIf="overnightRooms.length > 0; else noOvernight">
-              <li *ngFor="let room of overnightRooms">
-                <i class="fas fa-bed mr-2"></i> Phòng {{ room.nameRoom }}
-              </li>
-            </ul>
-            <ng-template #noOvernight>
-              <p class="no-data"><i class="fas fa-info-circle mr-2"></i> Không có phòng ở qua đêm</p>
-            </ng-template>
+          <div class="room-list shadow-sm rounded">
+            <h4><i class="fas fa-moon mr-2"></i> Phòng ở qua đêm</h4>
+            <div class="room-list-wrap">
+              <ul *ngIf="overnightRooms.length > 0; else noOvernight">
+                <li *ngFor="let room of overnightRooms">
+                  <i class="fas fa-bed mr-2"></i> Phòng {{ room.nameRoom }}
+                </li>
+              </ul>
+              <ng-template #noOvernight>
+                <p class="no-data"><i class="fas fa-info-circle mr-2"></i> Không có phòng ở qua đêm</p>
+              </ng-template>
+            </div>
           </div>
+        </div>
+      </div>
 
-          <div class="notification-board shadow-lg rounded">
-            <h4><i class="fas fa-bell mr-2"></i> Thông Báo Hôm Nay</h4>
-            <table>
-              <tbody>
-                <tr *ngFor="let event of todayEvents">
-                  <td>
-                    <i class="fas" [ngClass]="{
-                      'fa-sign-in-alt': event.eventType === 'Check-in',
-                      'fa-sign-out-alt': event.eventType === 'Check-out'
-                    }"></i>
-                    {{ event.customerName }}, phòng {{ event.roomName }} sẽ {{ event.eventType === 'Check-in' ? 'Check-in' : 'Check-out' }} lúc {{ event.time | date:'HH:mm' }}
-                  </td>
-                </tr>
-                <tr *ngIf="!todayEvents.length">
-                  <td><i class="fas fa-info-circle mr-2"></i> Không có sự kiện hôm nay</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+      <div class="notification-board shadow-lg rounded">
+        <h4 class="section-title">
+          <i class="fas fa-bell mr-2"></i> Thông Báo Hôm Nay
+        </h4>
+        <div class="notification-scroll">
+          <table>
+            <tbody>
+              <tr *ngFor="let event of todayEvents">
+                <td>
+                  <i class="fas" [ngClass]="{
+                    'fa-sign-in-alt': event.eventType === 'Check-in',
+                    'fa-sign-out-alt': event.eventType === 'Check-out'
+                  }"></i>
+                  <span class="event-text">{{ event.customerName }}, phòng {{ event.roomName }} sẽ {{ event.eventType === 'Check-in' ? 'Check-in' : 'Check-out' }} lúc {{ event.time | date:'HH:mm' }}</span>
+                </td>
+              </tr>
+              <tr *ngIf="!todayEvents.length">
+                <td><i class="fas fa-info-circle mr-2"></i> Không có sự kiện hôm nay</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
 </div>
-

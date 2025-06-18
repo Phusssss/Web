@@ -361,7 +361,7 @@ export class BookingService {
         if (!user) {
           throw new Error('Vui lòng đăng nhập để xem thông báo check-in/check-out!');
         }
-        const today = new Date('2025-05-02'); // Fixed date based on context
+        const today = new Date(); // Fixed date based on context
         const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
         const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
         const startTimestamp = Timestamp.fromDate(startOfDay);

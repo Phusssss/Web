@@ -1,4 +1,4 @@
-/* Import font Inter */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 * {
@@ -60,13 +60,13 @@ body {
 }
 
 .table-container {
-  background: var(--bg-all);
+  background: var(--bg-table);
   border-radius: 8px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   padding: 20px;
   transition: all 0.3s ease;
-  overflow-x: auto; /* Enable horizontal scrolling for large tables */
-  max-width: 100%; /* Ensure the table container doesn't exceed its parent */
+  overflow-x: auto; 
+  max-width: 100%; 
 }
 
 .table-container:hover {
@@ -103,17 +103,17 @@ body {
 }
 
 .custom-table th {
-  background: var(--bg-all);
+  background: var(--bg-table);
   font-weight: 600;
   color: var(--color-title);
 }
 
 .custom-table td {
-  background: var(--bg-all);
+  background: var(--bg-table);
 }
 
 .custom-table tr:nth-child(even) td {
-  background: var(--bg-all);
+  background: var(--bg-table);
 }
 
 .custom-table tr {
@@ -160,7 +160,7 @@ body {
 }
 
 .form-container {
-  background: var(--bg-all);
+  background: var(--bg-table);
   border-radius: 8px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   padding: 20px;
@@ -239,7 +239,7 @@ body {
 }
 
 .btn-primary {
-  background: #3b82f6;
+  background: #3982B4;
   color: white;
   width: 100%;
 }

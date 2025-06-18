@@ -1,46 +1,53 @@
 <div class="main-content">
-    <div class="chat-container" [class.mobile-view]="isMobile">
-      <!-- Mobile toggle button -->
-      <button *ngIf="isMobile" class="staff-toggle" (click)="toggleStaffList()">
-        {{ showStaffList ? 'Ẩn' : 'Hiện' }}
-      </button>
-      
-      <!-- Staff list section -->
-      <div class="staff-list" *ngIf="showStaffList">
-        <h3>Danh sách nhân viên</h3>
-        <ul>
-          <li
-            *ngFor="let staff of staffList"
-            (click)="selectStaff(staff)"
-            [class.active]="staff === selectedStaff"
-          >
-            {{ staff.name }}
-          </li>
-        </ul>
+  <!-- Show login button if no staff is logged in -->
+  <div *ngIf="!currentStaffUid" class="login-container">
+    <h3>Vui lòng đăng nhập</h3>
+    <button (click)="goToLogin()">Đăng nhập nhân viên</button>
+  </div>
+
+  <!-- Show chat interface only if staff is logged in -->
+  <div *ngIf="currentStaffUid" class="chat-container" [class.mobile-view]="isMobile">
+    <!-- Mobile toggle button -->
+    <button *ngIf="isMobile" class="staff-toggle" (click)="toggleStaffList()">
+      {{ showStaffList ? 'Ẩn' : 'Danh sách cuộc trò chuyện' }}
+    </button>
+    
+    <!-- Staff list section -->
+    <div class="staff-list" *ngIf="showStaffList">
+      <h3>Danh sách nhân viên</h3>
+      <ul>
+        <li
+          *ngFor="let staff of staffList"
+          (click)="selectStaff(staff)"
+          [class.active]="staff === selectedStaff"
+        >
+          {{ staff.name }}
+        </li>
+      </ul>
+    </div>
+    
+    <!-- Chat box section -->
+    <div class="chat-box" [class.full-width]="isMobile && !showStaffList" *ngIf="selectedStaff">
+      <h3>Chat với {{ selectedStaff.name }}</h3>
+      <div class="messages" #messagesContainer>
+        <div
+          *ngFor="let msg of messages"
+          [class.sent]="msg.senderUid === currentStaffUid"
+          [class.received]="msg.senderUid !== currentStaffUid"
+        >
+          <p>{{ msg.message }}</p>
+          <small>{{ msg.timestamp | date : "short" }}</small>
+        </div>
       </div>
-      
-      <!-- Chat box section -->
-      <div class="chat-box" [class.full-width]="isMobile && !showStaffList" *ngIf="selectedStaff">
-        <h3>Chat với {{ selectedStaff.name }}</h3>
-        <div class="messages" #messagesContainer>
-          <div
-            *ngFor="let msg of messages"
-            [class.sent]="msg.senderUid === currentStaffUid"
-            [class.received]="msg.senderUid !== currentStaffUid"
-          >
-            <p>{{ msg.message }}</p>
-            <small>{{ msg.timestamp | date : "short" }}</small>
-          </div>
-        </div>
-        <div class="message-input">
-          <input
-            type="text"
-            [(ngModel)]="newMessage"
-            (keyup.enter)="sendMessage()"
-            placeholder="Nhập tin nhắn..."
-          />
-          <button (click)="sendMessage()">Gửi</button>
-        </div>
+      <div class="message-input">
+        <input
+          type="text"
+          [(ngModel)]="newMessage"
+          (keyup.enter)="sendMessage()"
+          placeholder="Nhập tin nhắn..."
+        />
+        <button (click)="sendMessage()">Gửi</button>
       </div>
     </div>
   </div>
+</div>

@@ -1,4 +1,4 @@
-/* CSS chung cho tất cả giao diện */
+
 .main-content,
 .customer-container {
   margin-left: 250px;
@@ -163,7 +163,7 @@
   align-items: center;
 }
 
-/* CSS cho nút */
+
 .btn-add,
 .btn-edit,
 .btn-delete,
@@ -222,26 +222,26 @@
 }
 
 .btn-add:hover::before {
-  content: '\f067'; /* Icon "plus" */
+  content: '\f067'; 
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
 }
 
 .btn-edit:hover::before,
 .btn-save:hover::before {
-  content: '\f044'; /* Icon "edit" */
+  content: '\f044'; 
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
 }
 
 .btn-delete:hover::before {
-  content: '\f2ed'; /* Icon "trash" */
+  content: '\f2ed'; 
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
 }
 
 .btn-cancel:hover::before {
-  content: '\f00d'; /* Icon "times" */
+  content: '\f00d'; 
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
 }
@@ -296,7 +296,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Modal */
+
 .modal {
   position: fixed;
   top: 0;

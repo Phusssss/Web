@@ -1,3 +1,4 @@
+
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -13,6 +14,7 @@ export class RegisterComponent {
   email: string = '';
   password: string = '';
   isLoading: boolean = false;
+  isFormIncomplete: boolean = true;
 
   constructor(
     private authService: AuthService,
@@ -38,6 +40,10 @@ export class RegisterComponent {
 
   navigateToLogin() {
     this.router.navigate(['/login']);
+  }
+
+  onInputChange() {
+    this.isFormIncomplete = !this.email || !this.password;
   }
 
   private showNotification(message: string, type: 'success' | 'error') {

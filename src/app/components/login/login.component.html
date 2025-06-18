@@ -2,8 +2,7 @@
   <div class="login-form-wrapper">
     <div class="login-box">
       <div class="brand">
-        <i class="fas fa-hotel logo-icon"></i>
-        <span class="brand-name">Hotel Manager</span>
+        <img src="../../../assets/images/logo.png" alt="">
       </div>
       <h2>Đăng nhập</h2>
       <form (ngSubmit)="login()">
@@ -36,12 +35,7 @@
           Đăng nhập
         </button>
       </form>
-      <button 
-        class="register-btn"
-        (click)="navigateToRegister()"
-        [disabled]="isLoading">
-        Đăng ký tài khoản mới
-      </button>
+  
       <p *ngIf="isFormIncomplete" class="error-message">
         <i class="fas fa-exclamation-circle"></i> Vui lòng nhập đầy đủ email và mật khẩu!
       </p>

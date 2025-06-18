@@ -1,4 +1,4 @@
-/* Main content styling */
+
 .main-content {
   padding: 3rem 2rem;
   background: var(--bg-all);
@@ -7,27 +7,27 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Container styling */
+
 .container {
   max-width: 100%;
   margin: 0 auto;
   padding: 30px;
-  background: #ffffff;
+   background: var(--bg-all);
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* Title styling */
+
 .title {
   font-size: 2.2rem;
-  color: #2c3e50;
+  color: var(--color-title);
   text-align: center;
   margin-bottom: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.5px;
 }
 
-/* Subtitle styling */
+
 .subtitle {
   font-size: 1rem;
   color: #7f8c8d;
@@ -35,7 +35,7 @@
   margin-bottom: 2.5rem;
 }
 
-/* Staff list styling */
+
 .staff-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -43,7 +43,7 @@
   justify-items: center;
 }
 
-/* Staff item styling */
+
 .staff-item {
   background: #fff;
   padding: 24px;
@@ -61,21 +61,21 @@
   overflow: hidden;
 }
 
-/* Hover effect */
+
 .staff-item:hover {
   transform: translateY(-8px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
   border-color: #e1e8ed;
 }
 
-/* Selected state */
+
 .staff-item.selected {
   background-color: #f0f7ff;
   border: 2px solid #3498db;
   box-shadow: 0 8px 16px rgba(52, 152, 219, 0.2);
 }
 
-/* Icon container */
+
 .icon-container {
   position: relative;
   margin-bottom: 15px;
@@ -86,7 +86,7 @@
   align-items: center;
 }
 
-/* User icon styling */
+
 .user-icon {
   font-size: 80px;
   color: #3498db;
@@ -98,7 +98,7 @@
   color: #2980b9;
 }
 
-/* Online status indicator */
+
 .online-status {
   width: 15px;
   height: 15px;
@@ -114,13 +114,13 @@
   background-color: #2ecc71;
 }
 
-/* Staff details styling */
+
 .staff-details {
   width: 100%;
   margin-bottom: 15px;
 }
 
-/* Staff name styling */
+
 .staff-name {
   margin: 0 0 6px;
   font-size: 1.3rem;
@@ -128,7 +128,7 @@
   color: #2c3e50;
 }
 
-/* Staff email styling */
+
 .staff-email {
   margin: 0 0 6px;
   font-size: 0.9rem;
@@ -136,7 +136,7 @@
   word-break: break-all;
 }
 
-/* Staff position styling */
+
 .staff-position {
   margin: 0;
   font-size: 0.95rem;
@@ -144,7 +144,7 @@
   font-weight: 500;
 }
 
-/* Select button styling */
+
 .select-btn {
   margin-top: 8px;
   padding: 10px 24px;
@@ -165,7 +165,7 @@
   box-shadow: 0 6px 12px rgba(52, 152, 219, 0.4);
 }
 
-/* Empty state styling */
+
 .empty-state {
   text-align: center;
   padding: 40px 20px;
@@ -184,7 +184,7 @@
   font-weight: 500;
 }
 
-/* Responsive adjustments */
+
 @media (max-width: 992px) {
   .staff-list {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));

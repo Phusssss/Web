@@ -1,0 +1,44 @@
+<div class="container">
+  <h2>Thêm Thông Báo Chung</h2>
+  <form [formGroup]="thongBaoForm" (ngSubmit)="onSubmit()">
+    <div class="input-group">
+      <label for="title">Tiêu đề</label>
+      <input id="title" class="input-field" formControlName="title" placeholder="Nhập tiêu đề thông báo">
+      <div class="error" *ngIf="thongBaoForm.get('title')?.hasError('required') && thongBaoForm.get('title')?.touched">
+        Vui lòng nhập tiêu đề
+      </div>
+      <div class="error" *ngIf="thongBaoForm.get('title')?.hasError('maxlength') && thongBaoForm.get('title')?.touched">
+        Tiêu đề không được vượt quá 100 ký tự
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label for="content">Nội dung</label>
+      <textarea id="content" class="input-field textarea-field" formControlName="content" rows="5" placeholder="Nhập nội dung thông báo"></textarea>
+      <div class="error" *ngIf="thongBaoForm.get('content')?.hasError('required') && thongBaoForm.get('content')?.touched">
+        Vui lòng nhập nội dung
+      </div>
+      <div class="error" *ngIf="thongBaoForm.get('content')?.hasError('maxlength') && thongBaoForm.get('content')?.touched">
+        Nội dung không được vượt quá 1000 ký tự
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button class="submit-button" type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Đang gửi...' : 'Thêm thông báo' }}
+      </button>
+    </div>
+  </form>
+
+  <div class="notification-list">
+    <h3>Danh Sách Thông Báo</h3>
+    <div *ngIf="(thongBaoList$ | async)?.length === 0" class="no-notifications">
+      Không có thông báo nào.
+    </div>
+    <div *ngFor="let thongBao of thongBaoList$ | async" class="notification-item">
+      <h4>{{ thongBao.title }}</h4>
+      <p>{{ thongBao.content }}</p>
+      <small>Ngày tạo: {{ thongBao.createdAt.toDate() | date:'dd/MM/yyyy HH:mm' }}</small>
+    </div>
+  </div>
+</div>

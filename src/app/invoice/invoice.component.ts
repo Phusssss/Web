@@ -396,220 +396,299 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
   }
 
   private createCharts(): void {
-    this.destroyCharts();
+  this.destroyCharts();
 
-    const pieCtx = document.getElementById('revenueChart') as HTMLCanvasElement;
-    if (pieCtx && !Chart.getChart('revenueChart')) {
-      try {
-        const pieConfig: ChartConfiguration<'pie'> = {
-          type: 'pie',
-          data: {
-            labels: Object.keys(this.roomRevenue),
-            datasets: [{
-              data: Object.values(this.roomRevenue),
-              backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#9966FF', 
-                               '#FF9F40', '#E74C3C', '#8E44AD', '#3498DB', '#2ECC71', 
-                               '#F1C40F', '#D35400'],
-              hoverOffset: 4
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: { position: 'top' },
-              tooltip: {
-                callbacks: {
-                  label: (context: TooltipItem<'pie'>) => `${context.label}: ${context.raw} VND`
-                }
-              }
-            }
-          }
-        };
-        this.revenueChart = new Chart(pieCtx, pieConfig);
-      } catch (error) {
-        console.error('Lỗi khi tạo biểu đồ tròn:', error);
-      }
-    }
+  // Detect dark mode
+  const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
 
-    const barCtx = document.getElementById('monthlyRevenueChart') as HTMLCanvasElement;
-    if (barCtx && !Chart.getChart('monthlyRevenueChart')) {
-      try {
-        const currentYear = new Date().getFullYear();
-        const labels = Array.from({ length: 12 }, (_, i) => 
-          `${currentYear}-${(i + 1).toString().padStart(2, '0')}`);
-        const data = labels.map(label => this.monthlyRevenue[label] || 0);
+  // Define theme-based colors
+  const chartColors = {
+    textColor: isDarkMode ? '#e2e8f0' : '#1E40AF',
+    gridColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+    tooltipBg: isDarkMode ? '#333' : '#fff',
+    tooltipText: isDarkMode ? '#e2e8f0' : '#333',
+  };
 
-        const barConfig: ChartConfiguration<'bar'> = {
-          type: 'bar',
-          data: {
-            labels: labels.map(label => `Tháng ${parseInt(label.split('-')[1], 10)}`),
-            datasets: [{
-              label: 'Doanh thu',
-              data: data,
-              backgroundColor: '#36A2EB',
-              borderColor: '#2980B9',
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            scales: {
-              x: {
-                title: {
-                  display: true,
-                  text: `Tháng (${currentYear})`
-                }
-              },
-              y: {
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: 'Doanh thu (VND)'
-                }
+  // Revenue Chart (Pie)
+  const pieCtx = document.getElementById('revenueChart') as HTMLCanvasElement;
+  if (pieCtx && !Chart.getChart('revenueChart')) {
+    try {
+      const pieConfig: ChartConfiguration<'pie'> = {
+        type: 'pie',
+        data: {
+          labels: Object.keys(this.roomRevenue),
+          datasets: [{
+            data: Object.values(this.roomRevenue),
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#9966FF', 
+                             '#FF9F40', '#E74C3C', '#8E44AD', '#3498DB', '#2ECC71', 
+                             '#F1C40F', '#D35400'],
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                color: chartColors.textColor,
+                font: { size: 14 }
               }
             },
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                callbacks: {
-                  label: (context: TooltipItem<'bar'>) => `${context.raw} VND`
-                }
-              }
-            }
-          }
-        };
-        this.monthlyRevenueChart = new Chart(barCtx, barConfig);
-      } catch (error) {
-        console.error('Lỗi khi tạo biểu đồ cột:', error);
-      }
-    }
-
-    const roomTypeScatterCtx = document.getElementById('roomTypeRevenueChart') as HTMLCanvasElement;
-    if (roomTypeScatterCtx && !Chart.getChart('roomTypeRevenueChart')) {
-      try {
-        const roomTypeScatterConfig: ChartConfiguration<'scatter'> = {
-          type: 'scatter',
-          data: {
-            datasets: [{
-              label: 'Doanh thu theo loại phòng',
-              data: Object.keys(this.roomTypeRevenue).map((key, index) => ({
-                x: index + 1,
-                y: this.roomTypeRevenue[key],
-                label: key
-              })),
-              backgroundColor: '#FF6384',
-              pointRadius: 8,
-              pointHoverRadius: 12
-            }]
-          },
-          options: {
-            responsive: true,
-            scales: {
-              x: {
-                title: {
-                  display: true,
-                  text: 'Loại phòng'
-                },
-                ticks: {
-                  stepSize: 1,
-                  callback: (value, index) => {
-                    const label = Object.keys(this.roomTypeRevenue)[index];
-                    return label || '';
-                  }
-                }
-              },
-              y: {
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: 'Doanh thu (VND)'
-                }
+            tooltip: {
+              backgroundColor: chartColors.tooltipBg,
+              titleColor: chartColors.tooltipText,
+              bodyColor: chartColors.tooltipText,
+              callbacks: {
+                label: (context: TooltipItem<'pie'>) => `${context.label}: ${context.raw} VND`
               }
             },
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                callbacks: {
-                  label: (context: TooltipItem<'scatter'>) => {
-                    const dataPoint = context.raw as { x: number; y: number; label: string };
-                    return `${dataPoint.label}: ${dataPoint.y} VND`;
-                  }
-                }
-              }
+            title: {
+              display: true,
+              text: 'Doanh thu theo phòng',
+              color: chartColors.textColor,
+              font: { size: 16, weight: 600 } // Changed '600' to 600
             }
           }
-        };
-        this.roomTypeRevenueChart = new Chart(roomTypeScatterCtx, roomTypeScatterConfig);
-      } catch (error) {
-        console.error('Lỗi khi tạo biểu đồ phân tán loại phòng:', error);
-      }
-    }
-
-    const roomUsageLineCtx = document.getElementById('roomUsageChart') as HTMLCanvasElement;
-    if (roomUsageLineCtx && !Chart.getChart('roomUsageChart')) {
-      try {
-        const sortedDates = Object.keys(this.dailyRoomUsage).sort();
-        const data = sortedDates.map(date => this.dailyRoomUsage[date]);
-        
-        const lineConfig: ChartConfiguration<'line'> = {
-          type: 'line',
-          data: {
-            labels: sortedDates.map(date => {
-              const d = new Date(date);
-              return `${d.getDate()}/${d.getMonth() + 1}`;
-            }),
-            datasets: [{
-              label: 'Số phòng sử dụng',
-              data: data,
-              borderColor: '#4CAF50',
-              backgroundColor: 'rgba(76, 175, 80, 0.2)',
-              fill: true,
-              tension: 0.4,
-              pointRadius: 4,
-              pointHoverRadius: 6
-            }]
-          },
-          options: {
-            responsive: true,
-            scales: {
-              x: {
-                title: {
-                  display: true,
-                  text: 'Ngày'
-                }
-              },
-              y: {
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: 'Số phòng'
-                },
-                ticks: {
-                  stepSize: 1,
-                  precision: 0
-                }
-              }
-            },
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: (context: TooltipItem<'line'>) => {
-                    return `${context.dataset.label}: ${context.raw}`;
-                  },
-                  title: (context) => {
-                    return `Ngày ${context[0].label}`;
-                  }
-                }
-              }
-            }
-          }
-        };
-        this.roomUsageChart = new Chart(roomUsageLineCtx, lineConfig);
-      } catch (error) {
-        console.error('Lỗi khi tạo biểu đồ đường số phòng sử dụng:', error);
-      }
+        }
+      };
+      this.revenueChart = new Chart(pieCtx, pieConfig);
+    } catch (error) {
+      console.error('Lỗi khi tạo biểu đồ tròn:', error);
     }
   }
+
+  // Monthly Revenue Chart (Bar)
+  const barCtx = document.getElementById('monthlyRevenueChart') as HTMLCanvasElement;
+  if (barCtx && !Chart.getChart('monthlyRevenueChart')) {
+    try {
+      const currentYear = new Date().getFullYear();
+      const labels = Array.from({ length: 12 }, (_, i) => 
+        `${currentYear}-${(i + 1).toString().padStart(2, '0')}`);
+      const data = labels.map(label => this.monthlyRevenue[label] || 0);
+
+      const barConfig: ChartConfiguration<'bar'> = {
+        type: 'bar',
+        data: {
+          labels: labels.map(label => `Tháng ${parseInt(label.split('-')[1], 10)}`),
+          datasets: [{
+            label: 'Doanh thu',
+            data: data,
+            backgroundColor: '#36A2EB',
+            borderColor: '#2980B9',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: `Tháng (${currentYear})`,
+                color: chartColors.textColor,
+                font: { size: 14 }
+              },
+              ticks: { color: chartColors.textColor }
+            },
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Doanh thu (VND)',
+                color: chartColors.textColor,
+                font: { size: 14 }
+              },
+              ticks: { color: chartColors.textColor },
+              grid: { color: chartColors.gridColor }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: chartColors.tooltipBg,
+              titleColor: chartColors.tooltipText,
+              bodyColor: chartColors.tooltipText,
+              callbacks: {
+                label: (context: TooltipItem<'bar'>) => `${context.raw} VND`
+              }
+            },
+            title: {
+              display: true,
+              text: 'Doanh thu theo tháng',
+              color: chartColors.textColor,
+              font: { size: 16, weight: 600 } // Changed '600' to 600
+            }
+          }
+        }
+      };
+      this.monthlyRevenueChart = new Chart(barCtx, barConfig);
+    } catch (error) {
+      console.error('Lỗi khi tạo biểu đồ cột:', error);
+    }
+  }
+
+  // Room Type Revenue Chart (Scatter)
+  const roomTypeScatterCtx = document.getElementById('roomTypeRevenueChart') as HTMLCanvasElement;
+  if (roomTypeScatterCtx && !Chart.getChart('roomTypeRevenueChart')) {
+    try {
+      const roomTypeScatterConfig: ChartConfiguration<'scatter'> = {
+        type: 'scatter',
+        data: {
+          datasets: [{
+            label: 'Doanh thu theo loại phòng',
+            data: Object.keys(this.roomTypeRevenue).map((key, index) => ({
+              x: index + 1,
+              y: this.roomTypeRevenue[key],
+              label: key
+            })),
+            backgroundColor: '#FF6384',
+            pointRadius: 8,
+            pointHoverRadius: 12
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Loại phòng',
+                color: chartColors.textColor,
+                font: { size: 14 }
+              },
+              ticks: {
+                color: chartColors.textColor,
+                stepSize: 1,
+                callback: (value, index) => {
+                  const label = Object.keys(this.roomTypeRevenue)[index];
+                  return label || '';
+                }
+              }
+            },
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Doanh thu (VND)',
+                color: chartColors.textColor,
+                font: { size: 14 }
+              },
+              ticks: { color: chartColors.textColor },
+              grid: { color: chartColors.gridColor }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: chartColors.tooltipBg,
+              titleColor: chartColors.textColor,
+              bodyColor: chartColors.textColor,
+              callbacks: {
+                label: (context: TooltipItem<'scatter'>) => {
+                  const dataPoint = context.raw as { x: number; y: number; label: string };
+                  return `${dataPoint.label}: ${dataPoint.y} VND`;
+                }
+              }
+            },
+            title: {
+              display: true,
+              text: 'Doanh thu theo loại phòng',
+              color: chartColors.textColor,
+              font: { size: 16, weight: 600 } // Changed '600' to 600
+            }
+          }
+        }
+      };
+      this.roomTypeRevenueChart = new Chart(roomTypeScatterCtx, roomTypeScatterConfig);
+    } catch (error) {
+      console.error('Lỗi khi tạo biểu đồ phân tán loại phòng:', error);
+    }
+  }
+
+  // Room Usage Chart (Line)
+  const roomUsageLineCtx = document.getElementById('roomUsageChart') as HTMLCanvasElement;
+  if (roomUsageLineCtx && !Chart.getChart('roomUsageChart')) {
+    try {
+      const sortedDates = Object.keys(this.dailyRoomUsage).sort();
+      const data = sortedDates.map(date => this.dailyRoomUsage[date]);
+
+      const lineConfig: ChartConfiguration<'line'> = {
+        type: 'line',
+        data: {
+          labels: sortedDates.map(date => {
+            const d = new Date(date);
+            return `${d.getDate()}/${d.getMonth() + 1}`;
+          }),
+          datasets: [{
+            label: 'Số phòng sử dụng',
+            data: data,
+            borderColor: '#4CAF50',
+            backgroundColor: 'rgba(76, 175, 80, 0.2)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Ngày',
+                color: chartColors.textColor,
+                font: { size: 14 }
+              },
+              ticks: { color: chartColors.textColor },
+              grid: { color: chartColors.gridColor }
+            },
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Số phòng',
+                color: chartColors.textColor,
+                font: { size: 14 }
+              },
+              ticks: {
+                color: chartColors.textColor,
+                stepSize: 1,
+                precision: 0
+              },
+              grid: { color: chartColors.gridColor }
+            }
+          },
+          plugins: {
+            tooltip: {
+              backgroundColor: chartColors.tooltipBg,
+              titleColor: chartColors.textColor,
+              bodyColor: chartColors.textColor,
+              callbacks: {
+                label: (context: TooltipItem<'line'>) => {
+                  return `${context.dataset.label}: ${context.raw}`;
+                },
+                title: (context) => {
+                  return `Ngày ${context[0].label}`;
+                }
+              }
+            },
+            title: {
+              display: true,
+              text: 'Phòng sử dụng',
+              color: chartColors.textColor,
+              font: { size: 16, weight: 600 } // Changed '600' to 600
+            }
+          }
+        }
+      };
+      this.roomUsageChart = new Chart(roomUsageLineCtx, lineConfig);
+    } catch (error) {
+      console.error('Lỗi khi tạo biểu đồ đường số phòng sử dụng:', error);
+    }
+  }
+}
 
   private destroyCharts(): void {
     if (this.revenueChart) {

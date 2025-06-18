@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, HostListener } from '@angular/core';
 import { ChatService } from '../services/chat.service';
 import { StaffService } from '../services/staff.service';
+import { Router } from '@angular/router'; // Import Router
 
 @Component({
   selector: 'app-chat',
@@ -8,7 +9,7 @@ import { StaffService } from '../services/staff.service';
   styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit, AfterViewChecked {
-  @ViewChild('messagesContainer') messagesContainer!: ElementRef; // Reference to the messages div
+  @ViewChild('messagesContainer') messagesContainer!: ElementRef;
   
   currentStaffUid: string | null = localStorage.getItem('staffUid');
   staffList: any[] = [];
@@ -20,12 +21,16 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   
   constructor(
     private chatService: ChatService,
-    private staffService: StaffService
+    private staffService: StaffService,
+    private router: Router // Inject Router
   ) {}
   
   ngOnInit() {
     if (this.currentStaffUid) {
       this.loadStaffList();
+    } else {
+      // If no staff is logged in, you can handle it here if needed
+      // For example, you could redirect immediately or wait for user action
     }
     this.checkScreenSize();
   }
@@ -45,7 +50,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
   
   ngAfterViewChecked() {
-    this.scrollToBottom(); // Scroll to bottom after view updates
+    this.scrollToBottom();
   }
   
   loadStaffList() {
@@ -58,7 +63,6 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   selectStaff(staff: any) {
     this.selectedStaff = staff;
     this.loadMessages();
-    // Auto hide staff list on mobile after selection
     if (this.isMobile) {
       this.showStaffList = false;
     }
@@ -77,7 +81,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     if (this.newMessage.trim() && this.currentStaffUid && this.selectedStaff) {
       this.chatService.sendMessage(this.currentStaffUid, this.selectedStaff.uid, this.newMessage)
         .then(() => {
-          this.newMessage = ''; // Clear input
+          this.newMessage = '';
         });
     }
   }
@@ -94,7 +98,12 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   private scrollToBottom() {
     if (this.messagesContainer) {
       const element = this.messagesContainer.nativeElement;
-      element.scrollTop = element.scrollHeight; // Scroll to the bottom
+      element.scrollTop = element.scrollHeight;
     }
+  }
+
+  // New method to handle navigation to select-staff page
+  goToLogin() {
+    this.router.navigate(['select-staff']);
   }
 }

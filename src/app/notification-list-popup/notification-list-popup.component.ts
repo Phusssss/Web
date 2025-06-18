@@ -1,24 +1,36 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
+import { ThongBaoChungService } from '../services/thongbao.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-notification-list-popup',
   templateUrl: './notification-list-popup.component.html',
   styleUrls: ['./notification-list-popup.component.css']
 })
-export class NotificationListPopupComponent {
+export class NotificationListPopupComponent implements OnInit {
+  notifications$: Observable<any[]> | undefined;
+
   constructor(
     public dialogRef: MatDialogRef<NotificationListPopupComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { events: any[] }
+    private thongBaoService: ThongBaoChungService
   ) {}
+
+  ngOnInit(): void {
+    this.notifications$ = this.thongBaoService.getUserThongBaoChung();
+  }
 
   close(): void {
     this.dialogRef.close();
   }
 
-  markAsRead(eventId: string): void {
-    // Logic để đánh dấu thông báo đã đọc (có thể cập nhật trạng thái trong service hoặc backend)
-    console.log(`Đánh dấu thông báo ${eventId} đã đọc`);
-    // Gọi service để cập nhật trạng thái nếu cần
+  async markAsRead(notificationId: string): Promise<void> {
+    try {
+      // Update the notification in Firestore to mark as read
+      await this.thongBaoService.markAsRead(notificationId);
+      alert('Đánh dấu thông báo đã đọc!');
+    } catch (error: any) {
+      alert(`Lỗi: ${error.message}`);
+    }
   }
 }

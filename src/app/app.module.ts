@@ -51,7 +51,8 @@ import { GoodsIssueComponent } from './goods-issue/goods-issue.component';
 import { Home1Component } from './honme1/honme1.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { NotificationListPopupComponent } from './notification-list-popup/notification-list-popup.component';
-
+import { ThongBaoChungComponent } from './thong-bao-chung/thong-bao-chung.component';
+import { FilterUnreadPipe } from './filter-unread.pipe';
 @NgModule({
   declarations: [
     AppComponent,
@@ -92,7 +93,9 @@ import { NotificationListPopupComponent } from './notification-list-popup/notifi
     GoodsReceiptComponent,
     GoodsIssueComponent,
     ChangePasswordComponent,
-    NotificationListPopupComponent
+    NotificationListPopupComponent,
+    ThongBaoChungComponent,
+    FilterUnreadPipe
   ],
   imports: [
     BrowserModule,

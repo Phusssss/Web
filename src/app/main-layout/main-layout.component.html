@@ -1,4 +1,3 @@
-
 <div class="layout-wrapper" [ngClass]="{ 'sidebar-collapsed': isSidebarCollapsed }">
   <!-- Nút menu cho mobile -->
   <button class="mobile-menu-toggle" (click)="toggleSidebar()" aria-label="Toggle mobile menu" *ngIf="isMobileView">
@@ -10,21 +9,31 @@
     <div class="sidebar-header">
       <div class="logo">
         <a routerLink="/home1">
+          <div class="logo-circle"></div>
           <img src="assets/images/logo.png" alt="Hotel Manager Logo" class="logo-img">
         </a>
+        <span class="logo-text">Quản lý khách sạn</span>
       </div>
-      <span class="greeting">Xin chào {{ userEmail || 'Khách' }}</span>
-      <!-- Nút đóng sidebar -->
-      <button class="toggle-btn" (click)="toggleSidebar()" aria-label="Toggle sidebar">
-        <i [ngClass]="isSidebarCollapsed ? 'fas fa-angle-right' : 'fas fa-angle-left'"></i>
-      </button>
+      <!-- Thanh tìm kiếm -->
+      <div class="search-container">
+        <div class="search-wrapper">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" class="search-input" placeholder="Tìm kiếm chức năng..." [(ngModel)]="searchKeyword" (input)="searchMenu()">
+        </div>
+        <div class="search-results" *ngIf="filteredMenuItems.length > 0">
+          <div *ngFor="let item of filteredMenuItems" class="search-result-item" (click)="navigateTo(item.route)">
+            <i [class]="item.icon"></i>
+            <span>{{ item.label }}</span>
+          </div>
+        </div>
+      </div>
     </div>
     <nav class="sidebar-menu">
       <ul>
         <!-- Trang chủ -->
         <li>
           <a routerLink="/home1" routerLinkActive="active" (click)="closeMobileMenu()">
-            <i class="fas fa-home"></i>
+            <img class="icon-menu-sidebar" src="../../assets//images//icon_home.png" alt="">
             <span>Trang Chủ</span>
           </a>
         </li>
@@ -32,8 +41,8 @@
         <!-- Nhóm Nhân viên -->
         <li class="menu-group">
           <a class="menu-group-header" (click)="toggleGroup('staff')">
-            <span><i class="fas fa-user"></i> Nhân viên</span>
-            <span class="chevron" [ngClass]="{'rotate': activeGroup === 'staff'}">▼</span>
+            <span><img class="icon-menu-sidebar" src="../../assets//images//nhanvien.png" alt="">Nhân viên</span>
+            <img src="assets/images/arrow.png" alt="Arrow" class="chevron" [ngClass]="{'rotate': activeGroup === 'staff'}">
           </a>
           <ul class="submenu" [ngClass]="{'open': activeGroup === 'staff'}">
             <li>
@@ -72,8 +81,8 @@
         <!-- Nhóm Quản lý -->
         <li class="menu-group">
           <a class="menu-group-header" (click)="toggleGroup('manager')">
-            <span><i class="fas fa-user-tie"></i> Quản lý</span>
-            <span class="chevron" [ngClass]="{'rotate': activeGroup === 'manager'}">▼</span>
+            <span><img class="icon-menu-sidebar" src="../../assets//images//quanli.png" alt=""> Quản lý</span>
+            <img src="assets/images/arrow.png" alt="Arrow" class="chevron" [ngClass]="{'rotate': activeGroup === 'manager'}">
           </a>
           <ul class="submenu" [ngClass]="{'open': activeGroup === 'manager'}">
             <li>
@@ -101,6 +110,12 @@
               </a>
             </li>
             <li>
+              <a routerLink="/thongbaochung" routerLinkActive="active" (click)="closeMobileMenu()">
+                <i class="fas fa-file-invoice"></i>
+                <span>Thông báo chung</span>
+              </a>
+            </li>
+            <li>
               <a routerLink="/invoice" routerLinkActive="active" (click)="closeMobileMenu()">
                 <i class="fas fa-file-invoice"></i>
                 <span>Hóa Đơn & Doanh Thu</span>
@@ -109,7 +124,7 @@
             <li>
               <a routerLink="/qrmanager" routerLinkActive="active" (click)="closeMobileMenu()">
                 <i class="fas fa-qrcode"></i>
-                <span>Cài Đặt Thanh Toán</span>
+                <span>Cài Đặt Thanh toán</span>
               </a>
             </li>
             <li>
@@ -124,8 +139,8 @@
         <!-- Nhóm Quản lý chi tiêu -->
         <li class="menu-group">
           <a class="menu-group-header" (click)="toggleGroup('expense')">
-            <span><i class="fas fa-money-bill-wave"></i> Quản lý chi tiêu</span>
-            <span class="chevron" [ngClass]="{'rotate': activeGroup === 'expense'}">▼</span>
+            <span><img class="icon-menu-sidebar" src="../../assets//images//chitieu.png" alt=""> Quản lý chi tiêu</span>
+            <img src="assets/images/arrow.png" alt="Arrow" class="chevron" [ngClass]="{'rotate': activeGroup === 'expense'}">
           </a>
           <ul class="submenu" [ngClass]="{'open': activeGroup === 'expense'}">
             <li>
@@ -146,8 +161,8 @@
         <!-- Nhóm Quản lý nhập xuất -->
         <li class="menu-group">
           <a class="menu-group-header" (click)="toggleGroup('inventory')">
-            <span><i class="fas fa-box"></i> Quản lý nhập xuất</span>
-            <span class="chevron" [ngClass]="{'rotate': activeGroup === 'inventory'}">▼</span>
+            <span><img class="icon-menu-sidebar" src="../../assets//images//nhapxuat.png" alt=""> Quản lý nhập xuất</span>
+            <img src="assets/images/arrow.png" alt="Arrow" class="chevron" [ngClass]="{'rotate': activeGroup === 'inventory'}">
           </a>
           <ul class="submenu" [ngClass]="{'open': activeGroup === 'inventory'}">
             <li>
@@ -174,6 +189,10 @@
         </li>
       </ul>
     </nav>
+    <div class="sidebar-footer">
+      <img src="assets/images/profile.png" alt="Staff Avatar" class="footer-avatar">
+      <span>{{ selectedStaffName || 'QUẢN LÝ' }}</span>
+    </div>
   </aside>
 
   <!-- Lớp phủ cho mobile -->
@@ -185,24 +204,36 @@
     <header class="main-header">
       <div class="header-content">
         <div class="header-actions">
-          <a href="#" class="header-link">Hướng Dẫn</a>
-         <button class="header-icon-btn" (click)="toggleNotifications()" aria-label="Thông báo">
-  <span class="icon">🔔</span>
-  <span class="badge">{{ unreadCount }}</span>
-</button>
-          <div class="account-dropdown">
-  <button class="header-icon-btn" (click)="toggleAccountDropdown()" aria-label="Tài khoản">
-    <span class="icon">👤</span>
-  </button>
-  <div class="dropdown-menu" [ngClass]="{'show': isAccountDropdownOpen}">
-    <a class="dropdown-item" routerLink="/change-password" (click)="closeAccountDropdown()">Đổi Mật Khẩu</a>
-    <a class="dropdown-item" href="#" (click)="logout($event); closeAccountDropdown()">Đăng Xuất</a>
-  </div>
-</div>
-          <button class="header-icon-btn" (click)="toggleTheme()" aria-label="Đổi chủ đề">
-            <i [ngClass]="currentTheme === 'light' ? 'fas fa-sun' : 'fas fa-moon'"></i>
+           <div class="notification-marquee" *ngIf="latestNotification">
+            <div class="marquee-content">
+              <span>{{ latestNotification.title }}: {{ latestNotification.content }} - {{ latestNotification.createdAt.toDate() | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+          <div class="notification-wrapper">
+          <button class="header-icon-btn" (click)="toggleNotifications()" aria-label="Danh sách thông báo">
+            <span class="icon">🔔</span>
           </button>
-<button class="header-btn" [routerLink]="['/select-staff']">Đổi Nhân Viên</button>
+         
+        </div>
+          <div class="account-dropdown">
+        <button class="header-icon-btn" (click)="toggleAccountDropdown()" aria-label="Tài khoản">
+          <span class="icon">👤</span>
+        </button>
+        <div class="dropdown-menu" [ngClass]="{'show': isAccountDropdownOpen}">
+          <div class="account-info" *ngIf="userEmail || selectedStaffName">
+            <div class="account-name">{{ selectedStaffName || 'Quản Lý' }}</div>
+            <div class="account-email">{{ userEmail || 'Không có email' }}</div>
+          </div>
+          <hr class="dropdown-divider" *ngIf="userEmail || selectedStaffName">
+          <a class="dropdown-item" routerLink="/change-password" (click)="closeAccountDropdown()">Đổi Mật Khẩu</a>
+          <a class="dropdown-item" href="#" (click)="logout($event); closeAccountDropdown()">Đăng Xuất</a>
+        </div>
+      </div>
+          <button class="header-icon-btn" (click)="toggleTheme()" aria-label="Đổi chủ đề">
+  <i [ngClass]="currentTheme === 'light' ? 'fas fa-sun' : 'fas fa-moon'" class="icon"></i>
+</button>
+
+             <button class="header-btn" (click)="navigateTo('/select-staff')">Đổi Nhân Viên</button>
         </div>
       </div>
     </header>
@@ -210,7 +241,6 @@
     <footer class="footer">
       <div class="footer-content">
         <span class="copyright">Copyright © 2025 Horeca Team. All rights reserved.</span>
-        <span class="version">Version 1.0.0</span>
       </div>
     </footer>
   </main>
@@ -249,5 +279,4 @@
   </ng-template>
 
   <!-- Âm thanh thông báo -->
-  <audio #notificationSound src="assets/notification.mp3" preload="auto"></audio>
 </div>

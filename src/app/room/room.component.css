@@ -1,4 +1,4 @@
-/* Import font Inter */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 .main-content {
@@ -21,7 +21,7 @@
 .tab-buttons {
   display: flex;
   gap: 12px;
-  background: var(--bg-all);
+  background: var(--bg-table);
   padding: 8px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -45,7 +45,7 @@
 }
 
 .tab-button.active {
-  background: #3b82f6;
+  background: #468CBB;
   color: white;
 }
 
@@ -54,7 +54,7 @@
 }
 
 .tab-button.active:hover {
-  background: #2563eb;
+  background: #468CBB;
 }
 
 .content-wrapper {
@@ -70,7 +70,7 @@
 }
 
 .header-container {
-  background: var(--bg-all);
+  background: var(--bg-table);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   padding: 20px;
   display: flex;
@@ -195,7 +195,7 @@
 }
 
 .table-container {
-  background: var(--bg-all);
+  background: var(--bg-table);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   padding: 20px;
   border-radius: 8px;
@@ -207,7 +207,7 @@
   width: 100%;
   border-collapse: collapse;
   min-width: 600px;
-    background: var(--bg-all);
+  background: var(--bg-table);
 
 }
 
@@ -223,17 +223,17 @@
 }
 
 .service-table th {
-  background: var(--bg-all);
+  background: var(--bg-table);
   font-weight: 600;
   color: var(--color-title);
 }
 
 .service-table td {
-  background: var(--bg-all);
+  background: var(--bg-table);
 }
 
 .service-table tr:nth-child(even) td {
-  background: var(--bg-all);
+  background: var(--bg-table);
 }
 
 .service-table th:first-child,

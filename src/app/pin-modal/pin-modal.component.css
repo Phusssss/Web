@@ -1,4 +1,4 @@
-/* pin-modal.component.css */
+
 .modal-header.elegant-header {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     border-bottom: none;
@@ -92,7 +92,7 @@
     border-color: #ddd;
     color: #666;
   }
-  /* pin-modal.component.css - Thêm style cho thông báo lỗi */
+  
 .error-text {
     display: block;
     margin-top: 0.5rem;

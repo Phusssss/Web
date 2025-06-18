@@ -1,29 +1,34 @@
-/* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-/* Định nghĩa biến CSS cho sidebar */
 :root {
-  --sidebar-bg: #468cbb;
+  --sidebar-bg: #3982B4;
   --text-white: white;
-  --hover-bg: #ec9f1f;
-  --active-bg: #ec9f1f;
+  --hover-bg: #75B1D9;
+  --active-bg: #75B1D9;
   --border-color: rgba(255, 255, 255, 0.1);
   --bg-all: #e2e8f0;
-  --color-title: #1E40AF;
+  --color-title: #0d1120;
   --bg-box:#ffff;
+  --bg-table: #ffffff;
+  --bg-header: #ffffff;
+    --bg-booking: #e2e8f0;
+
 }
 
 [data-theme="dark"] {
   --sidebar-bg: linear-gradient(to bottom, #2a2a2a, #171717);
   --text-white: white;
-  --text-menu-active: #DB7291;
-  --hover-bg: #2C1B1F;
-  --active-bg: #2C1B1F;
+  --text-menu-active: white;
+  --hover-bg: #241F35;
+  --active-bg: #241F35;
   --border-color: none;
   --bg-all: #2a2a2a;
       --color-title: #e2e8f0;
 --bg-box:rgba(255, 255, 255, 0.1);
+ --bg-table: #2a2a2a;
+ --bg-header: #2a2a2a;
+ --bg-booking: #666666;
 }
 
 html, body {

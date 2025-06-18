@@ -28,6 +28,7 @@ import { FundStatisticsComponent } from './fund-statistics/fund-statistics.compo
 import { GoodsReceiptComponent } from './goods-receipt/goods-receipt.component';
 import { GoodsIssueComponent } from './goods-issue/goods-issue.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { ThongBaoChungComponent } from './thong-bao-chung/thong-bao-chung.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -39,6 +40,8 @@ const routes: Routes = [
     children: [
       { path: 'set-account', component: SetAccountComponent },
       { path: 'loaiphong', component: LoaiPhongComponent },
+            { path: 'thongbaochung', component: ThongBaoChungComponent },
+
       { path: 'khachhang', component: CustomerComponent },
       { path: 'booking', component: RoomSearchComponent },
       { path: 'bookinglist', component: BookingListComponent },

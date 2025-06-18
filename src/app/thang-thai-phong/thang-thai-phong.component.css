@@ -92,7 +92,7 @@
 .stat-item.occupied i { color: #FF0D00; }
 .stat-item.dirty i { color: #A9A9A9; }
 
-/* Tooltip styles */
+
 .stat-item:hover::after {
   content: attr(title);
   position: absolute;
@@ -336,11 +336,11 @@
 }
 
 .notification-board .fa-sign-in-alt {
-  color: #00A65A; /* Green for check-in */
+  color: #00A65A; 
 }
 
 .notification-board .fa-sign-out-alt {
-  color: #e53e3e; /* Red for check-out */
+  color: #e53e3e; 
 }
 
 .notification-board tr:last-child td {
@@ -365,7 +365,7 @@
   background: #718096;
 }
 
-/* Responsive Styles */
+
 @media (max-width: 1024px) {
   .main-content {
     padding: 2rem 1rem;
