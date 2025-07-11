@@ -1,282 +1,54 @@
-<div class="layout-wrapper" [ngClass]="{ 'sidebar-collapsed': isSidebarCollapsed }">
-  <!-- Nút menu cho mobile -->
-  <button class="mobile-menu-toggle" (click)="toggleSidebar()" aria-label="Toggle mobile menu" *ngIf="isMobileView">
-    <span>☰</span>
-  </button>
-
-  <!-- Thanh bên -->
-  <aside class="sidebar" [ngClass]="{ 'open': isMobileMenuOpen }">
-    <div class="sidebar-header">
+<div class="layout-wrapper">
+  <!-- Header -->
+  <header class="main-header">
+    <div class="header-content">
       <div class="logo">
-        <a routerLink="/home1">
-          <div class="logo-circle"></div>
-          <img src="assets/images/logo.png" alt="Hotel Manager Logo" class="logo-img">
+        <a routerLink="/home">
+          <img src="assets/images/logo.png" alt="Fashion Store Logo" class="logo-img">
+          <span class="logo-text">Trendy Threads</span>
         </a>
-        <span class="logo-text">Quản lý khách sạn</span>
       </div>
-      <!-- Thanh tìm kiếm -->
-      <div class="search-container">
-        <div class="search-wrapper">
-          <i class="fas fa-search search-icon"></i>
-          <input type="text" class="search-input" placeholder="Tìm kiếm chức năng..." [(ngModel)]="searchKeyword" (input)="searchMenu()">
-        </div>
-        <div class="search-results" *ngIf="filteredMenuItems.length > 0">
-          <div *ngFor="let item of filteredMenuItems" class="search-result-item" (click)="navigateTo(item.route)">
-            <i [class]="item.icon"></i>
-            <span>{{ item.label }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <nav class="sidebar-menu">
-      <ul>
-        <!-- Trang chủ -->
-        <li>
-          <a routerLink="/home1" routerLinkActive="active" (click)="closeMobileMenu()">
-            <img class="icon-menu-sidebar" src="../../assets//images//icon_home.png" alt="">
-            <span>Trang Chủ</span>
-          </a>
-        </li>
-
-        <!-- Nhóm Nhân viên -->
-        <li class="menu-group">
-          <a class="menu-group-header" (click)="toggleGroup('staff')">
-            <span><img class="icon-menu-sidebar" src="../../assets//images//nhanvien.png" alt="">Nhân viên</span>
-            <img src="assets/images/arrow.png" alt="Arrow" class="chevron" [ngClass]="{'rotate': activeGroup === 'staff'}">
-          </a>
-          <ul class="submenu" [ngClass]="{'open': activeGroup === 'staff'}">
-            <li>
-              <a routerLink="/booking" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Booking</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/trangthai" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-bed"></i>
-                <span>Trạng Thái Phòng</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/chat" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-comment"></i>
-                <span>Chat</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/bookinglist" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-list"></i>
-                <span>Đơn Đặt Phòng</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/servicerequest" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-concierge-bell"></i>
-                <span>Đặt Dịch Vụ</span>
-              </a>
-            </li>
-          </ul>
-        </li>
-
-        <!-- Nhóm Quản lý -->
-        <li class="menu-group">
-          <a class="menu-group-header" (click)="toggleGroup('manager')">
-            <span><img class="icon-menu-sidebar" src="../../assets//images//quanli.png" alt=""> Quản lý</span>
-            <img src="assets/images/arrow.png" alt="Arrow" class="chevron" [ngClass]="{'rotate': activeGroup === 'manager'}">
-          </a>
-          <ul class="submenu" [ngClass]="{'open': activeGroup === 'manager'}">
-            <li>
-              <a routerLink="/rooms" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-door-open"></i>
-                <span>Quản Lý Phòng</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/staff" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-user"></i>
-                <span>Quản Lý Nhân Viên</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/khachhang" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-users"></i>
-                <span>Danh Sách Khách Hàng</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/dichvu" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-bell"></i>
-                <span>Danh Sách Dịch Vụ</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/thongbaochung" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-file-invoice"></i>
-                <span>Thông báo chung</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/invoice" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-file-invoice"></i>
-                <span>Hóa Đơn & Doanh Thu</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/qrmanager" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-qrcode"></i>
-                <span>Cài Đặt Thanh toán</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/set-account" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-key"></i>
-                <span>Cài Đặt Mã PIN</span>
-              </a>
-            </li>
-          </ul>
-        </li>
-
-        <!-- Nhóm Quản lý chi tiêu -->
-        <li class="menu-group">
-          <a class="menu-group-header" (click)="toggleGroup('expense')">
-            <span><img class="icon-menu-sidebar" src="../../assets//images//chitieu.png" alt=""> Quản lý chi tiêu</span>
-            <img src="assets/images/arrow.png" alt="Arrow" class="chevron" [ngClass]="{'rotate': activeGroup === 'expense'}">
-          </a>
-          <ul class="submenu" [ngClass]="{'open': activeGroup === 'expense'}">
-            <li>
-              <a routerLink="/expense-management" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-wallet"></i>
-                <span>Chi tiêu</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/fund-statistics" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-chart-line"></i>
-                <span>Thống kê tồn quỹ</span>
-              </a>
-            </li>
-          </ul>
-        </li>
-
-        <!-- Nhóm Quản lý nhập xuất -->
-        <li class="menu-group">
-          <a class="menu-group-header" (click)="toggleGroup('inventory')">
-            <span><img class="icon-menu-sidebar" src="../../assets//images//nhapxuat.png" alt=""> Quản lý nhập xuất</span>
-            <img src="assets/images/arrow.png" alt="Arrow" class="chevron" [ngClass]="{'rotate': activeGroup === 'inventory'}">
-          </a>
-          <ul class="submenu" [ngClass]="{'open': activeGroup === 'inventory'}">
-            <li>
-              <a routerLink="/goods-receipt" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-arrow-down"></i>
-                <span>Phiếu nhập hàng</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/goods-issue" routerLinkActive="active" (click)="closeMobileMenu()">
-                <i class="fas fa-arrow-up"></i>
-                <span>Phiếu xuất hàng</span>
-              </a>
-            </li>
-          </ul>
-        </li>
-
-        <!-- Liên kết đăng nhập/đăng xuất -->
-        <li *ngIf="userEmail">
-          <a href="#" (click)="logout($event)">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Đăng Xuất</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-    <div class="sidebar-footer">
-      <img src="assets/images/profile.png" alt="Staff Avatar" class="footer-avatar">
-      <span>{{ selectedStaffName || 'QUẢN LÝ' }}</span>
-    </div>
-  </aside>
-
-  <!-- Lớp phủ cho mobile -->
-  <div class="mobile-overlay" [ngClass]="{'visible': isMobileMenuOpen}" (click)="closeMobileMenu()"></div>
-
-  <!-- Nội dung chính -->
-  <main class="main-content">
-    <!-- Header -->
-    <header class="main-header">
-      <div class="header-content">
-        <div class="header-actions">
-           <div class="notification-marquee" *ngIf="latestNotification">
-            <div class="marquee-content">
-              <span>{{ latestNotification.title }}: {{ latestNotification.content }} - {{ latestNotification.createdAt.toDate() | date:'dd/MM/yyyy HH:mm' }}</span>
-            </div>
-          </div>
-          <div class="notification-wrapper">
-          <button class="header-icon-btn" (click)="toggleNotifications()" aria-label="Danh sách thông báo">
-            <span class="icon">🔔</span>
-          </button>
-         
-        </div>
-          <div class="account-dropdown">
-        <button class="header-icon-btn" (click)="toggleAccountDropdown()" aria-label="Tài khoản">
-          <span class="icon">👤</span>
+      <nav class="main-nav">
+        <ul>
+          <li><a routerLink="/home" routerLinkActive="active">Home</a></li>
+          <li><a routerLink="/products/men" routerLinkActive="active">Men</a></li>
+          <li><a routerLink="/products/women" routerLinkActive="active">Women</a></li>
+          <li><a routerLink="/products/accessories" routerLinkActive="active">Accessories</a></li>
+          <li><a routerLink="/products/shoes" routerLinkActive="active">Shoes</a></li>
+          <li><a routerLink="/cart" routerLinkActive="active">Cart</a></li>
+          <li *ngIf="userEmail"><a href="#" (click)="logout($event)">Logout</a></li>
+          <li *ngIf="!userEmail"><a routerLink="/login">Login</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <input type="text" class="search-input" placeholder="Search products..." [(ngModel)]="searchKeyword" (input)="searchProducts()">
+        <button class="header-icon-btn" (click)="toggleTheme()" aria-label="Toggle theme">
+          <i [ngClass]="currentTheme === 'light' ? 'fas fa-sun' : 'fas fa-moon'" class="icon"></i>
         </button>
-        <div class="dropdown-menu" [ngClass]="{'show': isAccountDropdownOpen}">
-          <div class="account-info" *ngIf="userEmail || selectedStaffName">
-            <div class="account-name">{{ selectedStaffName || 'Quản Lý' }}</div>
-            <div class="account-email">{{ userEmail || 'Không có email' }}</div>
-          </div>
-          <hr class="dropdown-divider" *ngIf="userEmail || selectedStaffName">
-          <a class="dropdown-item" routerLink="/change-password" (click)="closeAccountDropdown()">Đổi Mật Khẩu</a>
-          <a class="dropdown-item" href="#" (click)="logout($event); closeAccountDropdown()">Đăng Xuất</a>
-        </div>
+        <button class="header-icon-btn" routerLink="/cart" aria-label="Cart">
+          <i class="fas fa-shopping-cart"></i>
+        </button>
       </div>
-          <button class="header-icon-btn" (click)="toggleTheme()" aria-label="Đổi chủ đề">
-  <i [ngClass]="currentTheme === 'light' ? 'fas fa-sun' : 'fas fa-moon'" class="icon"></i>
-</button>
+    </div>
+  </header>
 
-             <button class="header-btn" (click)="navigateTo('/select-staff')">Đổi Nhân Viên</button>
-        </div>
-      </div>
-    </header>
+  <!-- Main content -->
+  <main class="main-content">
     <router-outlet></router-outlet>
-    <footer class="footer">
-      <div class="footer-content">
-        <span class="copyright">Copyright © 2025 Horeca Team. All rights reserved.</span>
-      </div>
-    </footer>
   </main>
 
-  <!-- Thanh mạng xã hội -->
-  <div class="social-bar">
-    <a href="http://zaloapp.com/qr/p/12hwzs87v2b9g" target="_blank" class="social-link zalo">
-      <img src="assets/images/zalo.png" alt="Zalo Icon" class="social-icon">
-    </a>
-    <a href="https://www.facebook.com/profile.php?id=100067494805661" target="_blank" class="social-link facebook">
-      <i class="fab fa-facebook-f"></i>
-    </a>
-  </div>
-
-  <!-- Modal thông báo -->
-  <ng-template #notificationModal let-modal>
-    <div class="modal-header custom-header">
-      <h5 class="modal-title"><span class="icon">🔔</span> Thông báo mới</h5>
-      <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
-    </div>
-    <div class="modal-body custom-body">
-      <div class="notification-icon">
-        <span class="icon">✅</span>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="https://www.instagram.com" target="_blank" class="social-link instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://www.facebook.com" target="_blank" class="social-link facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
       </div>
-      <p class="message"><strong>Thông điệp:</strong> {{ latestNotification?.message }}</p>
-      <p class="timestamp"><strong>Thời gian:</strong> {{ latestNotification?.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+      <span class="copyright">Copyright © 2025 Trendy Threads. All rights reserved.</span>
     </div>
-    <div class="modal-footer custom-footer">
-      <button class="btn btn-success" (click)="markAsRead(latestNotification.id); modal.close()">
-        <span class="icon">✔️</span> Đánh dấu đã đọc
-      </button>
-      <button class="btn btn-secondary" (click)="modal.close()">
-        <span class="icon">❌</span> Đóng
-      </button>
-    </div>
-  </ng-template>
-
-  <!-- Âm thanh thông báo -->
+  </footer>
 </div>

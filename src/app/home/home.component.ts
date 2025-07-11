@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RoomService } from '../services/room.service';
-import { CustomerService } from '../services/customer.service';
-import { BookingService } from '../services/booking.service';
+import { Product, ProductService } from '../services/product.service';
 
 @Component({
   selector: 'app-home',
@@ -9,95 +7,49 @@ import { BookingService } from '../services/booking.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  rooms: any[] = [];
-  filteredRooms: any[] = []; // Store filtered rooms
-  isLoading: boolean = true;
-  selectedRoomDetails: any[] = [];
-  
-  selectedRoomType: string = ''; // Filter by room type
-  selectedRoomStatus: string = ''; // Filter by room status
-  roomNameFilter: string = ''; // Filter by room name
-  selectedRoomArea: string = ''; // Bộ lọc khu vực
-  roomAreas: string[] = []; // Danh sách khu vực
-  roomTypes: string[] = []; // Store available room types
+  products: Product[] = [];
+  newProduct: Product = {
+    name: '',
+    category: '',
+    price: 0,
+    imageUrl: '',
+    description: ''
+  };
+  successMessage: string | null = null; // Add success message
+  errorMessage: string | null = null; // Add error message
 
-  constructor(
-    private roomService: RoomService,
-    private customerService: CustomerService,
-    private bookingService: BookingService
-  ) {}
+  constructor(private productService: ProductService) {}
 
   ngOnInit(): void {
-    this.loadRooms();
+    this.loadProducts();
   }
 
-  loadRooms(): void {
-    this.roomService.getUserRooms().subscribe({
-      next: (data) => {
-        this.rooms = data;
-        this.isLoading = false;
-  
-        // Lấy danh sách loại phòng và khu vực
-        this.roomTypes = [...new Set(this.rooms.map(room => room.roomType))];
-        this.roomAreas = [...new Set(this.rooms.map(room => room.khuVucName))];
-  
-        this.applyFilters();
-  
-        this.rooms.forEach(room => {
-          this.roomService.getNameTypeRoom(room.roomTypeId).subscribe({
-            next: (name) => {
-              room.loaiPhongName = name;
-            },
-            error: (err) => {
-              console.error('Lỗi lấy tên loại phòng:', err);
-            }
-          });
-  
-          if (room.currentBookingId) {
-            this.customerService.getCustomerNameByBookingId(room.currentBookingId).subscribe({
-              next: (customerName) => {
-                room.customerName = customerName || 'Không có khách hàng';
-              },
-              error: (err) => {
-                console.error('Lỗi lấy tên khách hàng:', err);
-                room.customerName = 'Lỗi tải dữ liệu';
-              }
-            });
-          } else {
-            room.customerName = 'Chưa đặt phòng';
-          }
-        });
-      },
-      error: (err) => {
-        console.error("Lỗi lấy danh sách phòng:", err);
-        this.isLoading = false;
-      }
-    });
-  }
-  applyFilters(): void {
-    this.filteredRooms = this.rooms.filter(room => {
-      const matchesRoomType = this.selectedRoomType ? room.roomType === this.selectedRoomType : true;
-      const matchesRoomStatus = this.selectedRoomStatus ? room.status === this.selectedRoomStatus : true;
-      const matchesRoomName = this.roomNameFilter ? room.name.toLowerCase().includes(this.roomNameFilter.toLowerCase()) : true;
-      const matchesRoomArea = this.selectedRoomArea ? room.khuVucName === this.selectedRoomArea : true;
-  
-      return matchesRoomType && matchesRoomStatus && matchesRoomName && matchesRoomArea;
+  loadProducts(): void {
+    this.productService.getProducts().subscribe(products => {
+      this.products = products;
     });
   }
 
-  viewRoomDetails(bookingId: string): void {
-    this.bookingService.getDetailBookingById(bookingId).subscribe({
-      next: (details) => {
-        this.selectedRoomDetails = details;
-        console.log('Room Booking Details:', this.selectedRoomDetails);
-      },
-      error: (err) => {
-        console.error('Error fetching room booking details:', err);
-      }
-    });
+  onAddProduct(): void {
+    if (this.newProduct.name && this.newProduct.category && this.newProduct.price && this.newProduct.imageUrl && this.newProduct.description) {
+      this.productService.addProduct(this.newProduct).then(() => {
+        this.successMessage = 'Product added successfully!';
+        this.errorMessage = null;
+        this.newProduct = { name: '', category: '', price: 0, imageUrl: '', description: '' }; // Reset form
+        this.loadProducts(); // Reload products to reflect changes
+        setTimeout(() => this.successMessage = null, 3000); // Clear message after 3 seconds
+      }).catch(error => {
+        this.errorMessage = 'Failed to add product: ' + error.message;
+        this.successMessage = null;
+        console.error('Failed to add product:', error);
+      });
+    } else {
+      this.errorMessage = 'Please fill in all fields.';
+      this.successMessage = null;
+    }
   }
 
-  closeModal(): void {
-    this.selectedRoomDetails = [];
+  addToCart(product: Product): void {
+    console.log('Added to cart:', product);
   }
 }

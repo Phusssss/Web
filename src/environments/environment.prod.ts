@@ -5,12 +5,12 @@
 export const environment = {
   production: true,
    firebase : {
-    apiKey: "AIzaSyCQmBmVhdWP2GB-JB8pEDw54pochPV3HHQ",
-    authDomain: "bluehotel-c6700.firebaseapp.com",
-    projectId: "bluehotel-c6700",
-    storageBucket: "bluehotel-c6700.firebasestorage.app",
-    messagingSenderId: "1098455643358",
-    appId: "1:1098455643358:web:2bc7d25d80d2730fbbfe4f"
+    apiKey: "AIzaSyCOwDkrDt2ITtmFuPoVcjPsVU20JQFkbsg",
+    authDomain: "shopthoitrang-42822.firebaseapp.com",
+    projectId: "shopthoitrang-42822",
+    storageBucket: "shopthoitrang-42822.firebasestorage.app",
+    messagingSenderId: "482049949155",
+    appId: "1:482049949155:web:f3f13ee9fae3ea2b91b4d6"
   }
   
 };
