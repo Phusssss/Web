@@ -1,54 +1,126 @@
-<div class="layout-wrapper">
+<div class="relative flex size-full min-h-screen flex-col bg-neutral-50 dark:bg-gray-900 group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
   <!-- Header -->
-  <header class="main-header">
-    <div class="header-content">
-      <div class="logo">
-        <a routerLink="/home">
-          <img src="assets/images/logo.png" alt="Fashion Store Logo" class="logo-img">
-          <span class="logo-text">Trendy Threads</span>
-        </a>
+  <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#ededed] dark:border-gray-700 px-10 py-3 bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50 transition-all duration-300">
+    <div class="flex items-center gap-8">
+      <!-- Logo -->
+      <div class="flex items-center gap-4 text-[#141414] dark:text-white">
+        <div class="size-4">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z" fill="currentColor"></path>
+          </svg>
+        </div>
+        <a routerLink="/home" class="text-lg font-bold leading-tight tracking-[-0.015em]">Trendy Threads</a>
       </div>
-      <nav class="main-nav">
-        <ul>
-          <li><a routerLink="/home" routerLinkActive="active">Home</a></li>
-          <li><a routerLink="/products/men" routerLinkActive="active">Men</a></li>
-          <li><a routerLink="/products/women" routerLinkActive="active">Women</a></li>
-          <li><a routerLink="/products/accessories" routerLinkActive="active">Accessories</a></li>
-          <li><a routerLink="/products/shoes" routerLinkActive="active">Shoes</a></li>
-          <li><a routerLink="/cart" routerLinkActive="active">Cart</a></li>
-          <li *ngIf="userEmail"><a href="#" (click)="logout($event)">Logout</a></li>
-          <li *ngIf="!userEmail"><a routerLink="/login">Login</a></li>
-        </ul>
+      <!-- Navigation -->
+      <nav class="hidden md:flex items-center gap-9">
+        <a routerLink="/home" routerLinkActive="border-b-[3px] border-[#141414] text-[#141414] dark:border-blue-400 dark:text-blue-400" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Home</a>
+        <a routerLink="/products/men" routerLinkActive="border-b-[3px] border-[#141414] text-[#141414] dark:border-blue-400 dark:text-blue-400" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Men</a>
+        <a routerLink="/products/women" routerLinkActive="border-b-[3px] border-[#141414] text-[#141414] dark:border-blue-400 dark:text-blue-400" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Women</a>
+        <a routerLink="/products/accessories" routerLinkActive="border-b-[3px] border-[#141414] text-[#141414] dark:border-blue-400 dark:text-blue-400" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Accessories</a>
+        <a routerLink="/products/shoes" routerLinkActive="border-b-[3px] border-[#141414] text-[#141414] dark:border-blue-400 dark:text-blue-400" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Shoes</a>
+        <a routerLink="/cart" routerLinkActive="border-b-[3px] border-[#141414] text-[#141414] dark:border-blue-400 dark:text-blue-400" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Cart</a>
+        <a *ngIf="userEmail" href="#" (click)="logout($event)" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Logout</a>
+        <a *ngIf="!userEmail" routerLink="/login" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Login</a>
       </nav>
-      <div class="header-actions">
-        <input type="text" class="search-input" placeholder="Search products..." [(ngModel)]="searchKeyword" (input)="searchProducts()">
-        <button class="header-icon-btn" (click)="toggleTheme()" aria-label="Toggle theme">
-          <i [ngClass]="currentTheme === 'light' ? 'fas fa-sun' : 'fas fa-moon'" class="icon"></i>
+    </div>
+    <!-- Header Actions -->
+    <div class="flex flex-1 justify-end gap-8">
+      <!-- Search Bar -->
+      <label class="flex flex-col min-w-40 !h-10 max-w-64">
+        <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+          <div class="text-neutral-500 dark:text-gray-400 flex border-none bg-[#ededed] dark:bg-gray-700 items-center justify-center pl-4 rounded-l-lg border-r-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+            </svg>
+          </div>
+          <input
+            type="text"
+            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#141414] dark:text-white focus:outline-0 focus:ring-0 border-none bg-[#ededed] dark:bg-gray-700 focus:border-none h-full placeholder:text-neutral-500 dark:placeholder:text-gray-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
+            placeholder="Search products..."
+            [(ngModel)]="searchKeyword"
+            (input)="searchProducts()"
+          />
+        </div>
+      </label>
+      <!-- Action Buttons -->
+      <div class="flex gap-2">
+        <!-- Theme Toggle -->
+        <button
+          class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#ededed] dark:bg-gray-700 text-[#141414] dark:text-gray-200 gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
+          (click)="toggleTheme()"
+          aria-label="Toggle theme"
+        >
+          <i [ngClass]="currentTheme === 'light' ? 'fas fa-sun' : 'fas fa-moon'"></i>
         </button>
-        <button class="header-icon-btn" routerLink="/cart" aria-label="Cart">
+        <!-- Cart -->
+        <button
+          class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#ededed] dark:bg-gray-700 text-[#141414] dark:text-gray-200 gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5 relative"
+          routerLink="/cart"
+          aria-label="Cart"
+        >
           <i class="fas fa-shopping-cart"></i>
+          <span *ngIf="cartCount > 0" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ cartCount }}</span>
         </button>
       </div>
+      <!-- User Profile -->
+      <div
+        class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDDSWnm24EKPHOxL-dHRT2KGu6T7wz-6mZGt7G-HMhlxsrmRJMyPOLXM7dDp7WkdZU2d-FFfuOcG9-MP6OVyfvn0r6g9WuZ20mtx-ZwWrmac4vV2-uCU6cpVa4wf0lE-QEP-KCeey-_OChiqVBIpFgkj9ONYaiBlXH_pX_wX79YUjIrcjbrvQGHei2TAndVXUb_g6bkozcHIL7T2rrhe5Rfs52vCfaL40Fr3TQ-jA3ux_nSvmVDKPOIm-3si-l18wE07hxBDxefWRc");'
+      ></div>
+      <!-- Mobile Menu Toggle -->
+      <button class="md:hidden p-2" (click)="toggleMobileMenu()" aria-label="Toggle menu">
+        <i class="fas fa-bars text-[#141414] dark:text-gray-200"></i>
+      </button>
     </div>
   </header>
 
-  <!-- Main content -->
-  <main class="main-content">
-    <router-outlet></router-outlet>
+  <!-- Mobile Menu -->
+  <div *ngIf="isMobileMenuOpen" class="md:hidden bg-white dark:bg-gray-800 border-t border-[#ededed] dark:border-gray-700">
+    <nav class="px-10 py-4 flex flex-col gap-4">
+      <a routerLink="/home" routerLinkActive="text-[#141414] dark:text-blue-400" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400">Home</a>
+      <a routerLink="/products/men" routerLinkActive="text-[#141414] dark:text-blue-400" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400">Men</a>
+      <a routerLink="/products/women" routerLinkActive="text-[#141414] dark:text-blue-400" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400">Women</a>
+      <a routerLink="/products/accessories" routerLinkActive="text-[#141414] dark:text-blue-400" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400">Accessories</a>
+      <a routerLink="/products/shoes" routerLinkActive="text-[#141414] dark:text-blue-400" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400">Shoes</a>
+      <a routerLink="/cart" routerLinkActive="text-[#141414] dark:text-blue-400" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400">Cart</a>
+      <a *ngIf="userEmail" href="#" (click)="logout($event)" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400">Logout</a>
+      <a *ngIf="!userEmail" routerLink="/login" class="text-[#141414] dark:text-gray-200 text-sm font-medium leading-normal hover:text-blue-600 dark:hover:text-blue-400">Login</a>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <main class="flex-grow px-40 py-5">
+    <div class="layout-content-container flex flex-col max-w-[960px] flex-1 mx-auto">
+      <router-outlet></router-outlet>
+    </div>
   </main>
 
   <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-links">
-        <a href="https://www.instagram.com" target="_blank" class="social-link instagram">
-          <i class="fab fa-instagram"></i>
-        </a>
-        <a href="https://www.facebook.com" target="_blank" class="social-link facebook">
-          <i class="fab fa-facebook-f"></i>
-        </a>
+  <footer class="flex justify-center bg-gray-800 dark:bg-gray-900 text-white py-10">
+    <div class="flex max-w-[960px] flex-1 flex-col">
+      <div class="flex flex-col gap-6 px-5 text-center @container">
+        <div class="flex flex-wrap items-center justify-center gap-6 @[480px]:flex-row @[480px]:justify-around">
+          <a routerLink="/about" class="text-neutral-500 dark:text-gray-400 text-base font-normal leading-normal min-w-40 hover:text-white transition-colors duration-200">About Us</a>
+          <a routerLink="/contact" class="text-neutral-500 dark:text-gray-400 text-base font-normal leading-normal min-w-40 hover:text-white transition-colors duration-200">Contact</a>
+          <a routerLink="/faq" class="text-neutral-500 dark:text-gray-400 text-base font-normal leading-normal min-w-40 hover:text-white transition-colors duration-200">FAQ</a>
+          <a routerLink="/terms" class="text-neutral-500 dark:text-gray-400 text-base font-normal leading-normal min-w-40 hover:text-white transition-colors duration-200">Terms & Conditions</a>
+          <a routerLink="/returns" class="text-neutral-500 dark:text-gray-400 text-base font-normal leading-normal min-w-40 hover:text-white transition-colors duration-200">Returns</a>
+          <a routerLink="/shipping" class="text-neutral-500 dark:text-gray-400 text-base font-normal leading-normal min-w-40 hover:text-white transition-colors duration-200">Shipping Info</a>
+          <a routerLink="/support" class="text-neutral-500 dark:text-gray-400 text-base font-normal leading-normal min-w-40 hover:text-white transition-colors duration-200">Support</a>
+        </div>
+        <div class="flex justify-center gap-4">
+          <a href="https://www.instagram.com" target="_blank" class="text-neutral-500 dark:text-gray-400 hover:text-white transition-colors duration-200">
+            <i class="fab fa-instagram text-2xl"></i>
+          </a>
+          <a href="https://www.facebook.com" target="_blank" class="text-neutral-500 dark:text-gray-400 hover:text-white transition-colors duration-200">
+            <i class="fab fa-facebook-f text-2xl"></i>
+          </a>
+          <a href="https://www.twitter.com" target="_blank" class="text-neutral-500 dark:text-gray-400 hover:text-white transition-colors duration-200">
+            <i class="fab fa-twitter text-2xl"></i>
+          </a>
+        </div>
+        <p class="text-neutral-500 dark:text-gray-400 text-base font-normal leading-normal">Copyright © 2025 Trendy Threads. All rights reserved.</p>
       </div>
-      <span class="copyright">Copyright © 2025 Trendy Threads. All rights reserved.</span>
     </div>
   </footer>
 </div>

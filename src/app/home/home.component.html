@@ -1,27 +1,99 @@
-<div class="home-container">
-  <h1>Featured Products</h1>
-  <div class="product-grid">
-    <div class="product-card" *ngFor="let product of products">
-      <img [src]="product.imageUrl" [alt]="product.name" class="product-image">
-      <h3>{{ product.name }}</h3>
-      <p>{{ product.description }}</p>
-      <p class="price">${{ product.price }}</p>
-      <button class="add-to-cart" (click)="addToCart(product)">Add to Cart</button>
+<div class="flex flex-col flex-1">
+  <!-- Hero Banner -->
+  <div class="@container">
+    <div class="@[480px]:px-4 @[480px]:py-3">
+      <div
+        class="bg-cover bg-center flex flex-col justify-end overflow-hidden bg-neutral-50 @[480px]:rounded-lg min-h-80"
+        style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 25%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuA6x_ESB-7FLvncHyswSgjpCoVqunq4ov3nNa2LjmYgpwOG7dwup8g9eoPlJXqxJtz-Mfl2QqPiITYhspVDYcpXg3c1q08ifUIop0k7jpAUpW8hgOs7M3_M7NbuwBZT-U_hz1-OQ2oB2_yXBlftqmIGXxgIh5DbXY-p2QiXo0Ans4tYK10nsTDJEiJ5feKi3ymjidc8ZgvU3iGv7xT2gs8VhRgkZsoBqiUR05gKNpyz20-ZIRiydHC5DLt6kSMagRk0XL2WAIz2Mvk");'
+      >
+        <div class="flex p-4">
+          <p class="text-white tracking-tight text-[28px] font-bold leading-tight">New Arrivals</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Navigation -->
+  <div class="pb-3">
+    <div class="flex border-b border-[#dbdbdb] px-4 gap-8 justify-center">
+      <a
+        *ngFor="let category of categories"
+        [routerLink]="['/products', category.toLowerCase()]"
+        [routerLinkActive]="['border-b-[3px]', 'border-b-[#141414]', 'text-[#141414]']"
+        class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-neutral-500 gap-2 pb-[7px] pt-2.5"
+      >
+        <div
+          class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-10"
+          [style.background-image]="categoryImages[category]"
+        ></div>
+        <p class="text-sm font-bold leading-normal tracking-[0.015em]">{{ category }}</p>
+      </a>
+    </div>
+  </div>
+
+  <!-- Product Grid -->
+  <div class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-4">
+    <div *ngFor="let product of products" class="flex flex-col gap-3 pb-3">
+      <div
+        class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg cursor-pointer"
+        [style.background-image]="'url(' + product.imageUrl + ')'"
+        (click)="addToCart(product)"
+      ></div>
+      <p class="text-[#141414] text-base font-medium leading-normal">{{ product.name }}</p>
+      <p class="text-neutral-500 text-sm font-normal leading-normal">${{ product.price }}</p>
+      <button
+        class="flex items-center justify-center rounded-lg h-10 bg-[#ededed] text-[#141414] text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
+        (click)="addToCart(product)"
+      >
+        Add to Cart
+      </button>
     </div>
   </div>
 
   <!-- Add Product Form -->
-  <div class="add-product-form">
-    <h2>Add New Product</h2>
-    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
-    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-    <form (ngSubmit)="onAddProduct()">
-      <input type="text" [(ngModel)]="newProduct.name" name="name" placeholder="Product Name" required>
-      <input type="text" [(ngModel)]="newProduct.category" name="category" placeholder="Category (e.g., Men, Women)" required>
-      <input type="number" [(ngModel)]="newProduct.price" name="price" placeholder="Price" required>
-      <input type="text" [(ngModel)]="newProduct.imageUrl" name="imageUrl" placeholder="Image URL" required>
-      <textarea [(ngModel)]="newProduct.description" name="description" placeholder="Description" required></textarea>
-      <button type="submit">Add Product</button>
+  <div class="px-4 py-6 max-w-[960px] mx-auto">
+    <h3 class="text-[#141414] text-lg font-bold leading-tight tracking-[-0.015em] mb-4">Add New Product</h3>
+    <form class="flex flex-col gap-4">
+      <input
+        class="form-input rounded-lg border-none bg-[#ededed] text-[#141414] focus:outline-0 focus:ring-0 h-10 px-4 placeholder:text-neutral-500"
+        placeholder="Product Name"
+        [(ngModel)]="newProduct.name"
+        name="name"
+      />
+      <input
+        class="form-input rounded-lg border-none bg-[#ededed] text-[#141414] focus:outline-0 focus:ring-0 h-10 px-4 placeholder:text-neutral-500"
+        placeholder="Category"
+        [(ngModel)]="newProduct.category"
+        name="category"
+      />
+      <input
+        type="number"
+        class="form-input rounded-lg border-none bg-[#ededed] text-[#141414] focus:outline-0 focus:ring-0 h-10 px-4 placeholder:text-neutral-500"
+        placeholder="Price"
+        [(ngModel)]="newProduct.price"
+        name="price"
+      />
+      <input
+        class="form-input rounded-lg border-none bg-[#ededed] text-[#141414] focus:outline-0 focus:ring-0 h-10 px-4 placeholder:text-neutral-500"
+        placeholder="Image URL"
+        [(ngModel)]="newProduct.imageUrl"
+        name="imageUrl"
+      />
+      <textarea
+        class="form-input rounded-lg border-none bg-[#ededed] text-[#141414] focus:outline-0 focus:ring-0 h-20 px-4 py-2 placeholder:text-neutral-500 resize-none"
+        placeholder="Description"
+        [(ngModel)]="newProduct.description"
+        name="description"
+      ></textarea>
+      <button
+        type="button"
+        class="flex items-center justify-center rounded-lg h-10 bg-[#141414] text-white text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
+        (click)="onAddProduct()"
+      >
+        Add Product
+      </button>
+      <p *ngIf="successMessage" class="text-green-600 text-sm font-medium">{{ successMessage }}</p>
+      <p *ngIf="errorMessage" class="text-red-600 text-sm font-medium">{{ errorMessage }}</p>
     </form>
   </div>
 </div>

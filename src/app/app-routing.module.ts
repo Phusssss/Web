@@ -5,10 +5,17 @@ import { HomeComponent } from './home/home.component';
 
 
 const routes: Routes = [
+  {
+    path: '',
+    component: MainLayoutComponent,
+    children: [
       { path: 'home', component: HomeComponent },
-      { path: '', redirectTo: 'home', pathMatch: 'full' } // Default route
-
+      { path: '', redirectTo: 'home', pathMatch: 'full' }
+    ]
+  },
+  { path: '**', redirectTo: '' } // Optional: redirect unknown routes
 ];
+
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
